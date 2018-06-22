@@ -2,7 +2,7 @@
 tornado web server app. """
 import tornado.ioloop
 import tornado.web
-from app.storage.file_store import FileStore
+from app.storage.review_store import ReviewStore
 
 from app.handlers.reviews_handler import ReviewsHandler
 
@@ -10,7 +10,7 @@ from app.handlers.reviews_handler import ReviewsHandler
 def make_app():
     """ This function returns an Application instance which holds the request handlers for the app.
     """
-    store = FileStore()
+    store = ReviewStore()
 
     return tornado.web.Application([
         (r'/reviews', ReviewsHandler, {'store': store})
