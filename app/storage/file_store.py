@@ -1,5 +1,7 @@
 import json
+
 from app.storage.abstract_store import Store
+from constants import ROOT_PATH
 
 
 class FileStore(Store):
@@ -10,5 +12,6 @@ class FileStore(Store):
     def store_reviews(self, reviews):
 
         json_blob = {'reviews': reviews}
-        with open('reviews.json', 'w') as outfile:
+        file_path = ROOT_PATH + '/app/storage/reviews.json'
+        with open(file_path, 'w') as outfile:
             json.dump(json_blob, outfile)
