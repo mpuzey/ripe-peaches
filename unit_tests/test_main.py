@@ -7,9 +7,10 @@ from app.handlers.reviews_handler import ReviewsHandler
 
 class TestMain(unittest.TestCase):
 
-    @patch('main.FileStore')
+    @patch('main.CollectorService')
+    @patch('main.ReviewStore')
     @patch('main.tornado.web.Application')
-    def test__main__make_app__WillInjectAFileStoreIntoReviewsHandler__WhenCalled(self, mock_app, mock_store):
+    def test__main__make_app__WillInjectStoreIntoReviewsHandler__WhenCalled(self, mock_app, mock_store, _):
 
         store_instance = mock_store.return_value
         expected_args = [('/reviews', ReviewsHandler, {'store': store_instance})]
@@ -17,3 +18,12 @@ class TestMain(unittest.TestCase):
         make_app()
 
         mock_app.assert_called_with(expected_args)
+
+    @patch('main.CollectorService')
+    @patch('main.ReviewStore')
+    @patch('main.tornado.web.Application')
+    def test__main__make_app_WillStartCollector__WhenCalled(self, _, __, mock_collector):
+
+        make_app()
+        collector_instance = mock_collector.return_value
+        collector_instance.start.assert_called_with()
