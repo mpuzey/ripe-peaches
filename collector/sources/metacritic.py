@@ -1,5 +1,8 @@
+import re
 import requests
 from bs4 import BeautifulSoup
+
+from constants import ARTIST_PARTS_REGEX
 
 COLLECTION_SIZE = 60
 URL = 'http://www.metacritic.com/publication/{publication_name}' \
@@ -28,7 +31,7 @@ def extract_reviews(html):
         review = extract_data(review_html)
         reviews.append(review)
 
-    return reviews
+d    return reviews
 
 
 def extract_data(review_html):
@@ -40,8 +43,12 @@ def extract_data(review_html):
                                         attrs={'class': 'review_action publication_title'}).text
     date = review_html.find('li', attrs={'class': 'review_action post_date'}).text
     link = review_html.find('li', attrs={'class': 'review_action full_review'}).a['href']
+    review_product_href = review_html.find('div', attrs={'class': 'review_product'}).a['href']
+    artist_parts = re.search(ARTIST_PARTS_REGEX, review_product_href).group(1).split('-')
+    artist = ' '.join([part.capitalize() for part in artist_parts])
 
     return {
+        'artist': artist,
         'release_name': release_name,
         'score': score,
         'publication_name': publication_name,

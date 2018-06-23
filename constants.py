@@ -6,3 +6,5 @@ ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 CURATED_METACRITIC_PUBLICATIONS = ['pitchfork', 'consequence-of-sound', 'rolling-stone',
                                    'the-guardian', 'downed-in-sound']
+# Regex
+ARTIST_PARTS_REGEX = '(?:.*?\/){3}([^\/?#]+)'
