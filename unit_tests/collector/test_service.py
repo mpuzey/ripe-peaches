@@ -6,7 +6,7 @@ from collector.service import CollectorService
 class TestService(unittest.TestCase):
 
     @patch('collector.service.ReviewStore')
-    @patch('collector.service.Scraper')
+    @patch('collector.service.ReviewScraper')
     def test__service__CollectorService__start__WillCallScraperCollect__WhenCalled(self, mock_scraper, _):
 
         scraper_instance = mock_scraper.return_value
@@ -16,7 +16,7 @@ class TestService(unittest.TestCase):
         assert scraper_instance.collect.called
 
     @patch('collector.service.ReviewStore')
-    @patch('collector.service.Scraper')
+    @patch('collector.service.ReviewScraper')
     def test__service__CollectorService__start__WillStoreReviews__WhenCalled(self, mock_scraper, mock_store):
 
         scraper_instance = mock_scraper.return_value
