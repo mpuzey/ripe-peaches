@@ -4,9 +4,9 @@ from bs4 import BeautifulSoup
 
 from constants import ARTIST_PARTS_REGEX
 
-COLLECTION_SIZE = 60
-URL = 'http://www.metacritic.com/publication/{publication_name}' \
-      '?filter=music&num_items={release_count}'
+COLLECTION_SIZE = 100
+URL = 'http://www.metacritic.com/publication/{publication_name}?' \
+      'filter=music&num_items={release_count}'
 
 REQUEST_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 '
