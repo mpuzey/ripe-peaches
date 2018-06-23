@@ -6,7 +6,7 @@ class CollectorService:
 
     @staticmethod
     def start():
-        store = ReviewStore()
         scraper = Scraper()
         harvested_data = scraper.collect()
+        store = ReviewStore()
         store.store_reviews(harvested_data)
