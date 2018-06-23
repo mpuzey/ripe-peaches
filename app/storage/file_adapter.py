@@ -1,10 +1,10 @@
 import json
 
-from app.storage.store import Store
+from app.storage.storage_adapter import StorageAdapter
 from constants import ROOT_PATH
 
 
-class FileStore(Store):
+class FileAdapter(StorageAdapter):
 
     def __init__(self, file_name):
         self.file_path = ROOT_PATH + '/app/storage/%s.json' % file_name

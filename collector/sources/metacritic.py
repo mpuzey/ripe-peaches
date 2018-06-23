@@ -14,7 +14,7 @@ REQUEST_HEADERS = {
 }
 
 
-def get_publication(name):
+def get_reviews(name):
 
     formatted_uri = URL.format(publication_name=name, release_count=COLLECTION_SIZE)
     response = requests.get(formatted_uri, headers=REQUEST_HEADERS)

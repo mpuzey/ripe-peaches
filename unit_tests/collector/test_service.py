@@ -21,7 +21,7 @@ class TestService(unittest.TestCase):
 
         scraper_instance = mock_scraper.return_value
         store_instance = mock_store.return_value
-        
+
         test_data = {'some_data': 'scoob'}
         scraper_instance.collect.return_value = test_data
 
