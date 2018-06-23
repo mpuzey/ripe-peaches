@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class Store(ABC):
+class StorageAdapter(ABC):
 
     @abstractmethod
     def get(self, key):
