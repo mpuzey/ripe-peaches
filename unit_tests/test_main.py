@@ -26,4 +26,4 @@ class TestMain(unittest.TestCase):
 
         make_app()
         collector_instance = mock_collector.return_value
-        collector_instance.start.assert_called_with()
+        assert collector_instance.start.called
