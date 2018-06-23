@@ -5,11 +5,14 @@ import tornado.web
 from app.storage.review_store import ReviewStore
 
 from app.handlers.reviews_handler import ReviewsHandler
+from collector.service import CollectorService
 
 
 def make_app():
     """ This function returns an Application instance which holds the request handlers for the app.
     """
+    service = CollectorService()
+    service.start()
     store = ReviewStore()
 
     return tornado.web.Application([

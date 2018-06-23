@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 
-class Collector(ABC):
+class DataWorker(ABC):
 
     @abstractmethod
-    def collect(self):
+    def work(self, data):
         pass

@@ -1,5 +1,4 @@
 from app.handlers.base_handler import BaseHandler
-from app.sources import metacritic
 
 
 class ReviewsHandler(BaseHandler):
@@ -8,8 +7,7 @@ class ReviewsHandler(BaseHandler):
         self.store = store
 
     def get(self):
-        reviews = metacritic.get_publication('consequence-of-sound')
-        self.store.store_reviews(reviews)
+        reviews = self.store.get_reviews()
         self.write({'reviews': reviews})
 
 
