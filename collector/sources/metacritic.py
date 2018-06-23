@@ -31,7 +31,7 @@ def extract_reviews(html):
         review = extract_data(review_html)
         reviews.append(review)
 
-    return reviews
+d    return reviews
 
 
 def extract_data(review_html):
