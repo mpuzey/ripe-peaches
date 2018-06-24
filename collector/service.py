@@ -1,5 +1,5 @@
 from collector.sources import metacritic, aoty
-from constants import METACRITIC_CURATED_PUBLICATIONS, AOTY_CURATED_PUBLICATIONS
+from constants import METACRITIC_PUBLICATIONS_SAMPLE, AOTY_PUBLICATIONS_SAMPLE
 
 
 class CollectorService:
@@ -9,7 +9,7 @@ class CollectorService:
         self.store = store
 
     def start(self):
-        harvested_data = self.collector.collect(METACRITIC_CURATED_PUBLICATIONS, metacritic)
-        harvested_data.extend(self.collector.collect(AOTY_CURATED_PUBLICATIONS, aoty))
+        harvested_data = self.collector.collect(METACRITIC_PUBLICATIONS_SAMPLE, metacritic)
+        harvested_data.extend(self.collector.collect(AOTY_PUBLICATIONS_SAMPLE, aoty))
 
         self.store.put(harvested_data)

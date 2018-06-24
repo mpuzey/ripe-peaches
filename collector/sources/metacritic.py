@@ -35,8 +35,9 @@ def extract_data(review_html):
                              attrs={'class': 'review_product_score brief_critscore'}).span.text
     publication_name = review_html.find('li',
                                         attrs={'class': 'review_action publication_title'}).text
-    date = review_html.find('li', attrs={'class': 'review_action post_date'}).text
-    link = review_html.find('li', attrs={'class': 'review_action full_review'}).a['href']
+
+    date, link = extract_full_review(review_html)
+
     review_product_href = review_html.find('div', attrs={'class': 'review_product'}).a['href']
     artist_parts = re.search(ARTIST_PARTS_REGEX, review_product_href).group(1).split('-')
     artist = ' '.join([part.capitalize() for part in artist_parts])
@@ -49,3 +50,16 @@ def extract_data(review_html):
         'date': date,
         'link': link
     }
+
+
+def extract_full_review(review_html):
+    full_review = review_html.findAll('li', attrs={'class': 'review_action full_review'})
+
+    if not full_review:
+        date = review_html.find('div', attrs={'class': 'review_action post_date'}).text
+        return date, None
+
+    link = full_review[0].a['href']
+    date = review_html.find('li', attrs={'class': 'review_action post_date'}).text
+
+    return date, link
