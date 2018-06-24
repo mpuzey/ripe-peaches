@@ -2,22 +2,16 @@ import re
 import requests
 from bs4 import BeautifulSoup
 
-from constants import ARTIST_PARTS_REGEX
-
-COLLECTION_SIZE = 100
-URL = 'http://www.metacritic.com/publication/{publication_name}?' \
-      'filter=music&num_items={release_count}'
-
-REQUEST_HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 '
-                  '(KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
-}
+from constants import ARTIST_PARTS_REGEX, METACRITIC_PUBLICATION_URL, METACRITIC_REQUEST_HEADERS, \
+    METACRITIC_SCRAPE_BATCH_SIZE
 
 
 def get_reviews(name):
 
-    formatted_uri = URL.format(publication_name=name, release_count=COLLECTION_SIZE)
-    response = requests.get(formatted_uri, headers=REQUEST_HEADERS)
+    formatted_uri = METACRITIC_PUBLICATION_URL.format(publication_name=name,
+                                                      release_count=METACRITIC_SCRAPE_BATCH_SIZE)
+
+    response = requests.get(formatted_uri, headers=METACRITIC_REQUEST_HEADERS)
     html = response.text
     return extract_reviews(html)
 
