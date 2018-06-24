@@ -16,6 +16,9 @@ METACRITIC_REQUEST_HEADERS = {
 }
 METACRITIC_SCRAPE_BATCH_SIZE = 100
 
+# AOTY
+AOTY_PUBLICATION_URL = 'https://www.albumoftheyear.org/publication/{publication_name}/reviews/'
+AOTY_REQUEST_HEADERS = METACRITIC_REQUEST_HEADERS
 
 # Regex
 ARTIST_PARTS_REGEX = '(?:.*?\/){3}([^\/?#]+)'
