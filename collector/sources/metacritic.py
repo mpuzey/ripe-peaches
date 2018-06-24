@@ -17,10 +17,13 @@ def get_reviews(name):
 
 
 def extract_reviews(html):
+    """ This function """
 
     reviews = []
-    reviews_html = BeautifulSoup(html, 'html.parser')\
-        .findAll('li', attrs={'class': 'review critic_review'})
+    soup = BeautifulSoup(html, 'html.parser')
+    reviews_html = soup.findAll('li', attrs={'class': 'review critic_review first_review'})
+    reviews_html.extend(soup.findAll('li', attrs={'class': 'review critic_review'}))
+
     for review_html in reviews_html:
         review = extract_data(review_html)
         reviews.append(review)
