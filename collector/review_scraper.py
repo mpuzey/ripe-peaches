@@ -1,19 +1,16 @@
 from collector.collector import Collector
-from collector.sources import metacritic
 
 
 class ReviewScraper(Collector):
 
-    def __init__(self, publications):
-        self.publications = publications
-
-    def collect(self):
+    @staticmethod
+    def collect(publications, source):
 
         reviews = []
 
-        for publication in self.publications:
-            print('scraping ' + publication)
-            publication_reviews = metacritic.get_reviews(publication)
+        for publication in publications:
+            print('scraping ' + publication + ' from ' + str(source))
+            publication_reviews = source.get(publication)
             reviews.extend(publication_reviews)
 
         print(reviews)

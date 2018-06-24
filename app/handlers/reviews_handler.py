@@ -7,7 +7,7 @@ class ReviewsHandler(BaseHandler):
         self.store = store
 
     def get(self):
-        reviews = self.store.get_reviews()
+        reviews = self.store.get()
         self.write({'reviews': reviews})
 
 

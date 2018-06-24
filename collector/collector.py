@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 
 class Collector(ABC):
 
+    @staticmethod
     @abstractmethod
-    def collect(self):
+    def collect(data, source):
         pass

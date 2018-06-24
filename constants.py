@@ -6,8 +6,10 @@ ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 
 # Metacritic
-CURATED_METACRITIC_PUBLICATIONS = ['pitchfork', 'consequence-of-sound', 'rolling-stone',
-                                   'the-guardian', 'downed-in-sound']
+METACRITIC_CURATED_PUBLICATIONS = ['pitchfork', 'consequence-of-sound', 'rolling-stone',
+                                   'the-guardian', 'downed-in-sound', 'the-quietus',
+                                   'sputnikmusic', 'spin',
+                                   'beats-per-minute-formerly-one-thirty-bpm']
 METACRITIC_PUBLICATION_URL = 'http://www.metacritic.com/publication/{publication_name}?' \
       'filter=music&num_items={release_count}'
 METACRITIC_REQUEST_HEADERS = {
@@ -17,6 +19,8 @@ METACRITIC_REQUEST_HEADERS = {
 METACRITIC_SCRAPE_BATCH_SIZE = 100
 
 # AOTY
+AOTY_CURATED_PUBLICATIONS = ['57-the-needle-drop', '/32-exclaim', '18-the-four-oh-five',
+                             '7-popmatters', '31-the-skinny', '8-all-music', '2-av-club']
 AOTY_PUBLICATION_URL = 'https://www.albumoftheyear.org/publication/{publication_name}/reviews/'
 AOTY_REQUEST_HEADERS = METACRITIC_REQUEST_HEADERS
 
