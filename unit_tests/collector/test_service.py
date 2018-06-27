@@ -1,7 +1,7 @@
 from mock import MagicMock, call, patch
 import unittest
 from collector.service import CollectorService
-from constants import METACRITIC_CURATED_PUBLICATIONS, AOTY_CURATED_PUBLICATIONS
+from constants import METACRITIC_PUBLICATIONS_SAMPLE, AOTY_PUBLICATIONS_SAMPLE
 
 
 class TestService(unittest.TestCase):
@@ -19,8 +19,8 @@ class TestService(unittest.TestCase):
         collector_service = CollectorService(collector_instance, store_instance)
         collector_service.start()
 
-        calls = [call(METACRITIC_CURATED_PUBLICATIONS, mock_metacritic),
-                 call(AOTY_CURATED_PUBLICATIONS, mock_aoty)]
+        calls = [call(METACRITIC_PUBLICATIONS_SAMPLE, mock_metacritic),
+                 call(AOTY_PUBLICATIONS_SAMPLE, mock_aoty)]
 
         collector_instance.collect.assert_has_calls(calls)
 

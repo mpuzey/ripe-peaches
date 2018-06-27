@@ -8,6 +8,7 @@ from app.handlers.scores_handler import ScoresHandler
 from collector.service import CollectorService
 from collector.review_scraper import ReviewScraper
 from app.storage.review_store import ReviewStore
+from app.storage.file_adapter import FileAdapter
 from constants import PUBLIC_ROOT
 
 
@@ -16,7 +17,7 @@ def make_app():
     for the app.
     """
     collector = ReviewScraper()
-    store = ReviewStore()
+    store = ReviewStore(FileAdapter('reviews'))
 
     service = CollectorService(collector, store)
     service.start()

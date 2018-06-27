@@ -1,8 +1,11 @@
 from mock import patch
 import unittest
+import tornado.web
 
 from main import make_app
 from app.handlers.reviews_handler import ReviewsHandler
+from app.handlers.scores_handler import ScoresHandler
+from constants import PUBLIC_ROOT
 
 
 class TestMain(unittest.TestCase):
@@ -13,11 +16,14 @@ class TestMain(unittest.TestCase):
     def test__main__make_app__WillInjectStoreIntoReviewsHandler__WhenCalled(self, mock_app, mock_store, _):
 
         store_instance = mock_store.return_value
-        expected_args = [('/reviews', ReviewsHandler, {'store': store_instance})]
+        expected_arg = [
+            (r'/', ScoresHandler),
+            (r'/public/(.*)', tornado.web.StaticFileHandler, {'path': PUBLIC_ROOT}),
+            ('/reviews', ReviewsHandler, {'store': store_instance})]
 
         make_app()
 
-        mock_app.assert_called_with(expected_args)
+        mock_app.assert_called_with(expected_arg)
 
     @patch('main.CollectorService')
     @patch('main.ReviewStore')
