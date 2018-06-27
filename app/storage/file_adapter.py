@@ -1,6 +1,6 @@
 import json
 
-from app.storage.storage_adapter import StorageAdapter
+from app.gateways.storage_adapter import StorageAdapter
 from constants import ROOT_PATH
 
 

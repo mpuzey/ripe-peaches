@@ -3,8 +3,8 @@ import unittest
 import tornado.web
 
 from main import make_app
-from app.handlers.reviews_handler import ReviewsHandler
-from app.handlers.scores_handler import ScoresHandler
+from app.web.reviews_handler import ReviewsHandler
+from app.web.scores_handler import ScoresHandler
 from constants import PUBLIC_ROOT
 
 

@@ -3,7 +3,7 @@
  and their aggregated review scores.
 """
 import os
-from app.handlers.base_handler import BaseHandler
+from app.web.base_handler import BaseHandler
 from constants import PUBLIC_ROOT
 
 
