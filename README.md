@@ -10,8 +10,8 @@ TBA
 ### Dev setup
 This project is in an early stage of development. The instructions for setting
 up the basic Dev tools are as follows:
-* Install python 3.6 using the appropriate tooling for your OS, hitchhikers guide have some good documentation around this,
- such as[Installing python 3.6 on OSX](http://docs.python-guide.org/en/latest/starting/install3/osx/).
+* Install python 3.6 using the appropriate tooling for your OS. Hitchhikers guide have some good documentation around this,No session_id provided to retrieve state model
+ such as [Installing python 3.6 on OSX](http://docs.python-guide.org/en/latest/starting/install3/osx/).
 * Install the project dependencies:
 ```
 pip3 install requirements.txt

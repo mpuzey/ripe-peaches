@@ -9,9 +9,8 @@ class ReviewScraper(Collector):
         reviews = []
 
         for publication in publications:
-            print('scraping ' + publication + ' from ' + str(source))
+            print('scraping ' + publication )
             publication_reviews = source.get_reviews(publication)
             reviews.extend(publication_reviews)
 
-        print(reviews)
         return reviews

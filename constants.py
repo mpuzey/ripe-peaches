@@ -2,7 +2,7 @@
 these values. """
 import os
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
-# PUBLIC_ROOT = os.path.join(ROOT, 'static')
+PUBLIC_ROOT = os.path.join(ROOT_PATH, 'static')
 
 
 # Metacritic
