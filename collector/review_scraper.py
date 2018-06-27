@@ -13,4 +13,5 @@ class ReviewScraper(Collector):
             publication_reviews = source.get_reviews(publication)
             reviews.extend(publication_reviews)
 
+        print('finished scraping!')
         return reviews

@@ -2,14 +2,9 @@
 #set -e
 
 function app() {
-    local apiKey=$1
 
-    pushd client
-    npm install && npx webpack
-    popd
-
-    docker build . -t tmdb-search
-    docker rm -f tmdb-search
+    docker build . -t ripe-peaches
+    docker rm -f ripe-peaches
     docker run -it --publish 8888:8888 --name ripe-peaches ripe-peaches
 }
 
