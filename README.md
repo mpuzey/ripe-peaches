@@ -8,7 +8,7 @@ There will be a strong focus on curation of quality publications from which revi
 
 This application runs on docker.
 
-##### Prerequisites
+#### Prerequisites
 
 For MacOS users:
 * Docker for Mac v 17.06 - 17.12
@@ -20,7 +20,7 @@ For linux distributions (untested):
 * A recent installation of nodeJS (~v8.8.1)
 
 
-##### Run ripe peaches 
+#### Run ripe peaches 
 
 ```
 ./run.sh app
