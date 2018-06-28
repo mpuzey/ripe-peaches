@@ -4,7 +4,7 @@ import tornado.ioloop
 import tornado.web
 
 from app.gateways.review_store import ReviewStore
-from app.storage.file_adapter import FileAdapter
+from app.db.file_adapter import FileAdapter
 from app.web.reviews_handler import ReviewsHandler
 from app.web.scores_handler import ScoresHandler
 from collector.review_scraper import ReviewScraper
