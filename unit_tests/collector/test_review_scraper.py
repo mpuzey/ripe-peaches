@@ -1,6 +1,8 @@
-from mock import MagicMock
 import unittest
-from collector.review_scraper import ReviewScraper
+
+from mock import MagicMock
+
+from collector.controllers.review_scraper import ReviewScraper
 
 
 class TestScraper(unittest.TestCase):

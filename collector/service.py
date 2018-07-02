@@ -1,4 +1,4 @@
-from collector.sources import metacritic, aoty
+from collector.web import metacritic, aoty
 from constants import METACRITIC_PUBLICATIONS_SAMPLE, AOTY_PUBLICATIONS_SAMPLE
 from app.gateways.review_store import ReviewStore
 from app.gateways.release_store import ReleaseStore
@@ -44,6 +44,7 @@ class CollectorService:
     def store_collection(self):
         self.artist_store.put(self.artists)
 
+        # TODO: store documents against ids
         # for artist in self.artists:
         #     releases = artist['releases']
         #     self.release_store.put(releases)

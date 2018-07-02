@@ -1,4 +1,4 @@
-from collector.collector import Collector
+from collector.entities.collector import Collector
 
 
 class ReviewScraper(Collector):
