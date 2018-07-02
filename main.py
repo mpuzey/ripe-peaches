@@ -17,15 +17,15 @@ def make_app():
     for the app.
     """
     collector = ReviewScraper()
-    store = ReviewStore(FileAdapter('reviews'))
+    review_store = ReviewStore(FileAdapter('reviews'))
 
-    service = CollectorService(collector, store)
+    service = CollectorService(collector)
     service.start()
 
     return tornado.web.Application([
         (r'/', ScoresHandler),
         (r'/public/(.*)', tornado.web.StaticFileHandler, {'path': PUBLIC_ROOT}),
-        (r'/reviews', ReviewsHandler, {'store': store})
+        (r'/reviews', ReviewsHandler, {'store': review_store})
     ])
 
 
