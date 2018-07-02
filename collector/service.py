@@ -17,12 +17,8 @@ class CollectorService:
 
     def start(self):
 
-        publication_sources = [
-            (METACRITIC_PUBLICATIONS_SAMPLE, metacritic),
-            (AOTY_PUBLICATIONS_SAMPLE, aoty)
-        ]
-
-        self.collector.collect(publication_sources)
+        self.collector.collect(METACRITIC_PUBLICATIONS_SAMPLE, metacritic)
+        self.collector.collect(AOTY_PUBLICATIONS_SAMPLE, aoty)
         reviews = self.collector.deliver()
 
         for raw_review in reviews:
