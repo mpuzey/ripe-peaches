@@ -21,6 +21,7 @@ def make_app():
 
     service = CollectorService(collector)
     service.start()
+    service.store_collection()
 
     return tornado.web.Application([
         (r'/', ScoresHandler),

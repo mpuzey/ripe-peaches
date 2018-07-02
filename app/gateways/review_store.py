@@ -1,5 +1,7 @@
+from app.use_cases.store import Store
 
-class ReviewStore:
+
+class ReviewStore(Store):
 
     def __init__(self, adapter):
         self.adapter = adapter
