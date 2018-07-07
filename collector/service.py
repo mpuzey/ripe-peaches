@@ -1,3 +1,5 @@
+import uuid
+
 from collector.web import metacritic, aoty
 from constants import METACRITIC_PUBLICATIONS_SAMPLE, AOTY_PUBLICATIONS_SAMPLE
 from app.gateways.review_store import ReviewStore
@@ -17,6 +19,7 @@ class CollectorService:
 
     def start(self):
 
+        # store artists on the collector ?
         self.collector.collect(METACRITIC_PUBLICATIONS_SAMPLE, metacritic)
         self.collector.collect(AOTY_PUBLICATIONS_SAMPLE, aoty)
         reviews = self.collector.deliver()
@@ -24,6 +27,7 @@ class CollectorService:
         for raw_review in reviews:
 
             review = {
+                'id': str(uuid.uuid4()),
                 'score': raw_review.get('score'),
                 'publication_name': raw_review.get('publication_name'),
                 'date': raw_review.get('date'),
@@ -34,20 +38,47 @@ class CollectorService:
             release_name = raw_review.get('release_name')
 
             if not self.artists.get(artist_name):
-                self.artists[artist_name] = {}
+                self.artists[artist_name] = {'id': str(uuid.uuid4())}
 
             if not self.artists.get(artist_name).get(release_name):
-                self.artists[artist_name][release_name] = {'reviews': []}
+                self.artists[artist_name][release_name] = {
+                    'id': str(uuid.uuid4()),
+                    'reviews': []
+                }
 
             self.artists[artist_name][release_name]['reviews'].append(review)
 
     def store_collection(self):
-        self.artist_store.put(self.artists)
 
-        # TODO: store documents against ids
-        # for artist in self.artists:
-        #     releases = artist['releases']
-        #     self.release_store.put(releases)
-        #
-        #     for release in releases:
-        #         self.review_store.put(release.get('reviews'))
+        #TODO nest child ids under parent and not other way round
+        preexisting_artists = self.artist_store.put(self.artists)
+
+        if preexisting_artists:
+            for existing_artist in preexisting_artists:
+                for artist in self.artists:
+                    if existing_artist['name'] == artist['name']:
+                        artist['id'] = existing_artist['id']
+
+        release_bundle = []
+        for artist in self.artists:
+            releases = artist['releases']
+            for release in releases:
+                release['artist'] = artist['id']
+                release_bundle.append(release)
+
+        preexisting_releases = self.release_store.put(release_bundle)
+
+        if preexisting_releases:
+            for preexisting_release in preexisting_releases:
+                for release in release_bundle:
+                    if preexisting_release['title'] == release['title']:
+                        release['id'] = preexisting_release
+
+        review_bundle = []
+        for release in release_bundle:
+            reviews = release['reviews']
+            for review in reviews:
+                review['release'] = release['id']
+                review_bundle.append(review)
+
+        self.review_store.put(review_bundle)

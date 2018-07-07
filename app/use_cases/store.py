@@ -12,5 +12,5 @@ class Store(ABC):
         pass
 
     @abstractmethod
-    def put(self, reviews):
+    def put(self, data):
         pass

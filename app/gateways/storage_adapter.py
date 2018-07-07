@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 class StorageAdapter(ABC):
 
     @abstractmethod
-    def get(self, key):
+    def get(self):
         pass
 
     @abstractmethod
@@ -12,5 +12,5 @@ class StorageAdapter(ABC):
         pass
 
     @abstractmethod
-    def post(self, data):
+    def post(self, data, dedupe_field=None):
         pass
