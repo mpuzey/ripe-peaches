@@ -1,5 +1,3 @@
-import uuid
-
 from collector.web import metacritic, aoty
 from constants import METACRITIC_PUBLICATIONS_SAMPLE, AOTY_PUBLICATIONS_SAMPLE
 from app.gateways.review_store import ReviewStore
@@ -38,43 +36,51 @@ class CollectorService:
             artist_name = raw_review.get('artist')
             release_name = raw_review.get('release_name')
 
-            if not self.artists.get(artist_name):
-                self.artists[artist_name] = {'id': calculate_hash(artist_name)}
-
-            if not self.artists.get(artist_name).get(release_name):
-                self.artists[artist_name][release_name] = {
-                    'id': calculate_hash(artist_name + release_name),
-                    'reviews': []
+            artist_id = calculate_hash(artist_name)
+            if not self.artists.get(artist_id):
+                self.artists[artist_id] = {
+                    'id': artist_id,
+                    'name': artist_name,
+                    'releases': {}
                 }
 
-            review['id']: calculate_hash(artist_name + release_name + publication_name)
+            release_id = calculate_hash(artist_name + release_name)
+            review_id = calculate_hash(artist_name + release_name + publication_name)
+            review['id'] = review_id
 
-            self.artists[artist_name][release_name]['reviews'].append(review)
+            existing_release = self.artists.get(artist_id).get('releases').get(release_id)
+            if not existing_release:
+                self.artists[artist_id]['releases'][release_id] = {
+                 'id': calculate_hash(artist_name + release_name),
+                 'reviews': {}
+                }
+
+            self.artists[artist_id]['releases'][release_id]['reviews'][review_id] = review
 
     def store_collection(self):
 
-        artist_documents = {}
-        for artist in self.artists:
-            release_ids = []
-            for release in artist['releases']:
-                release_ids.append(release['id'])
-            artist['releases'] = release_ids
-            artist_documents[artist['id']] = artist
+            artist_documents = {}
+            for _, artist in self.artists.items():
+                release_ids = []
+                for _, release in artist['releases'].items():
+                    release_ids.append(release['id'])
+                artist['releases'] = release_ids
+                artist_documents[artist['id']] = artist
 
-        self.artist_store.put(artist_documents)
+            self.artist_store.put(artist_documents)
 
-        review_documents = {}
-        release_documents = {}
+            review_documents = {}
+            release_documents = {}
 
-        # release store. Release store could use review store to store reviews too.
+            # release store. Release store could use review store to store reviews too.
 
-        for artist in self.artists:
-            for release in artist['releases']:
-                review_ids = []
-                for review in release['reviews']:
-                    review_ids.append(review['id'])
-                release['reviews'] = review_ids
-                release_documents[release['id']] = release
+            for _, artist in self.artists.items():
+                for _, release in artist['releases'].items():
+                    review_ids = []
+                    for _, review in release['reviews'].items():
+                        review_ids.append(review['id'])
+                    release['reviews'] = review_ids
+                    release_documents[release['id']] = release
 
-        self.release_store.put(release_documents)
-        self.review_store.put(review_documents)
+            self.release_store.put(release_documents)
+            self.review_store.put(review_documents)
