@@ -12,5 +12,5 @@ class StorageAdapter(ABC):
         pass
 
     @abstractmethod
-    def post(self, data, dedupe_field=None):
+    def post(self, data):
         pass

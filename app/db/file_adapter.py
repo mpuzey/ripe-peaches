@@ -15,28 +15,19 @@ class FileAdapter(StorageAdapter):
             data = json.load(outfile)
             return data
 
-    def put(self, documents, dedupe_field=None):
+    def put(self, documents):
         """ This API needs to take a dict, read existing keys from the file, deduplicate documents if
         necessary, dump the result and return the deduplicated keys and their
         associated ids if there are any. """
-        duplicated_documents = []
 
         with open(self.file_path, 'wr+') as outfile:
 
             existing_dataset = json.load(outfile)
-            existing_documents = existing_dataset.values()
 
-            if dedupe_field:
-                for document in documents:
-                    for existing_document in existing_documents:
-                        if existing_document[dedupe_field] == document[dedupe_field]:
+            for document in documents:
 
-                            duplicated_documents.append({
-                                document[dedupe_field]: existing_document.get('id')
-                            })
-                            del documents[dedupe_field]
+                id = document('id')
+                if id in existing_dataset:
+                    del documents[id]
 
-            existing_documents.update(documents)
             json.dump(documents, outfile)
-
-        return duplicated_documents

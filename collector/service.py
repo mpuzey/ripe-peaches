@@ -6,6 +6,7 @@ from app.gateways.review_store import ReviewStore
 from app.gateways.release_store import ReleaseStore
 from app.gateways.artist_store import ArtistStore
 from app.db.file_adapter import FileAdapter
+from common.crypto import calculate_hash
 
 
 class CollectorService:
@@ -26,10 +27,10 @@ class CollectorService:
 
         for raw_review in reviews:
 
+            publication_name = raw_review.get('publication_name')
             review = {
-                'id': str(uuid.uuid4()),
                 'score': raw_review.get('score'),
-                'publication_name': raw_review.get('publication_name'),
+                'publication_name': publication_name,
                 'date': raw_review.get('date'),
                 'link': raw_review.get('link')
             }
@@ -38,47 +39,42 @@ class CollectorService:
             release_name = raw_review.get('release_name')
 
             if not self.artists.get(artist_name):
-                self.artists[artist_name] = {'id': str(uuid.uuid4())}
+                self.artists[artist_name] = {'id': calculate_hash(artist_name)}
 
             if not self.artists.get(artist_name).get(release_name):
                 self.artists[artist_name][release_name] = {
-                    'id': str(uuid.uuid4()),
+                    'id': calculate_hash(artist_name + release_name),
                     'reviews': []
                 }
+
+            review['id']: calculate_hash(artist_name + release_name + publication_name)
 
             self.artists[artist_name][release_name]['reviews'].append(review)
 
     def store_collection(self):
 
-        #TODO nest child ids under parent and not other way round
-        preexisting_artists = self.artist_store.put(self.artists)
-
-        if preexisting_artists:
-            for existing_artist in preexisting_artists:
-                for artist in self.artists:
-                    if existing_artist['name'] == artist['name']:
-                        artist['id'] = existing_artist['id']
-
-        release_bundle = []
+        artist_documents = {}
         for artist in self.artists:
-            releases = artist['releases']
-            for release in releases:
-                release['artist'] = artist['id']
-                release_bundle.append(release)
+            release_ids = []
+            for release in artist['releases']:
+                release_ids.append(release['id'])
+            artist['releases'] = release_ids
+            artist_documents[artist['id']] = artist
 
-        preexisting_releases = self.release_store.put(release_bundle)
+        self.artist_store.put(artist_documents)
 
-        if preexisting_releases:
-            for preexisting_release in preexisting_releases:
-                for release in release_bundle:
-                    if preexisting_release['title'] == release['title']:
-                        release['id'] = preexisting_release
+        review_documents = {}
+        release_documents = {}
 
-        review_bundle = []
-        for release in release_bundle:
-            reviews = release['reviews']
-            for review in reviews:
-                review['release'] = release['id']
-                review_bundle.append(review)
+        # release store. Release store could use review store to store reviews too.
 
-        self.review_store.put(review_bundle)
+        for artist in self.artists:
+            for release in artist['releases']:
+                review_ids = []
+                for review in release['reviews']:
+                    review_ids.append(review['id'])
+                release['reviews'] = review_ids
+                release_documents[release['id']] = release
+
+        self.release_store.put(release_documents)
+        self.review_store.put(review_documents)
