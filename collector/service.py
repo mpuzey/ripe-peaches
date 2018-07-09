@@ -64,8 +64,10 @@ class CollectorService:
                 release_ids = []
                 for _, release in artist['releases'].items():
                     release_ids.append(release['id'])
-                artist['releases'] = release_ids
-                artist_documents[artist['id']] = artist
+                artist_document = {}
+                artist_document.update(artist)
+                artist_document['releases'] = release_ids
+                artist_documents[artist_document['id']] = artist_document
 
             self.artist_store.put(artist_documents)
 
@@ -75,12 +77,13 @@ class CollectorService:
             # release store. Release store could use review store to store reviews too.
 
             for _, artist in self.artists.items():
-                for _, release in artist['releases'].items():
+                for release_id, release in artist['releases'].items():
                     review_ids = []
-                    for _, review in release['reviews'].items():
-                        review_ids.append(review['id'])
+                    for review_id, review in release['reviews'].items():
+                        review_ids.append(review_id)
+                        review_documents[review_id] = review
                     release['reviews'] = review_ids
-                    release_documents[release['id']] = release
+                    release_documents[release_id] = release
 
             self.release_store.put(release_documents)
             self.review_store.put(review_documents)

@@ -17,7 +17,7 @@ class FileAdapter(StorageAdapter):
 
     def put(self, documents):
         """ This API needs to take a dict, read existing keys from the file, updates existing documents
-         if necessary and dump the result"""
+         if necessary and dumps the result to file."""
 
         existing_dataset = self.get()
 
@@ -32,7 +32,5 @@ class FileAdapter(StorageAdapter):
                         if type(value) is list:
                             existing_dataset[id][key].append(document[key])
 
-                    del documents[id]
-
-            existing_dataset.update(documents)
+            documents.update(existing_dataset)
             json.dump(documents, outfile)
