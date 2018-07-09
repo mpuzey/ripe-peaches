@@ -11,6 +11,3 @@ class StorageAdapter(ABC):
     def put(self, data):
         pass
 
-    @abstractmethod
-    def post(self, data):
-        pass
