@@ -16,7 +16,6 @@ class ArtistStore(Store):
         their ids. When this module is adapted to use a more robust storage method it would be ideal
         if the """
 
-        # should it be this module that adds the ids?
-        existing_artists = self.storage_adapter.put(artists, 'name')
+        existing_artists = self.storage_adapter.put(artists)
 
         return existing_artists

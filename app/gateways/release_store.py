@@ -3,13 +3,12 @@ from app.use_cases.store import Store
 
 class ReleaseStore(Store):
 
-    def __init__(self, adapter):
-        self.adapter = adapter
+    def __init__(self, storage_adapter):
+        self.storage_adapter = storage_adapter
 
     def get(self):
-        releases = self.adapter.get('releases')
+        releases = self.storage_adapter.get('releases')
         return releases
 
     def put(self, releases):
-        json_blob = {'releases': releases}
-        self.adapter.put(json_blob)
+        self.storage_adapter.put(releases)

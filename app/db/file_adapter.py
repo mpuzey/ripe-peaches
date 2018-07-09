@@ -19,13 +19,13 @@ class FileAdapter(StorageAdapter):
         """ This API needs to take a dict, read existing keys from the file, updates existing documents
          if necessary and dump the result"""
 
-        with open(self.file_path, 'wr+') as outfile:
+        existing_dataset = self.get()
 
-            existing_dataset = json.load(outfile)
+        with open(self.file_path, 'w+') as outfile:
 
-            for document in documents:
+            for _, document in documents.items():
 
-                id = document('id')
+                id = document.get('id')
                 if id in existing_dataset:
 
                     for key, value in existing_dataset[id].items():
