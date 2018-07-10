@@ -16,6 +16,14 @@ class ArtistStore(Store):
         their ids. When this module is adapted to use a more robust storage method it would be ideal
         if the """
 
-        existing_artists = self.storage_adapter.put(artists)
+        artist_documents = {}
+        for _, artist in artists.items():
+            release_ids = []
+            for _, release in artist['releases'].items():
+                release_ids.append(release['id'])
+            artist_document = {}
+            artist_document.update(artist)
+            artist_document['releases'] = release_ids
+            artist_documents[artist_document['id']] = artist_document
 
-        return existing_artists
+        self.storage_adapter.put(artist_documents)
