@@ -1,13 +1,13 @@
 from mock import patch, MagicMock
 import unittest
-from collector.sources import metacritic
-from unit_tests.collector.sources.meta_critic_html import get_reviews_html, get_first_review_html, \
+from collector.web import metacritic
+from tests.unit_tests.collector.web.meta_critic_html import get_reviews_html, get_first_review_html, \
 get_review_without_full_review
 
 
 class TestMetacritic(unittest.TestCase):
 
-    @patch('collector.sources.metacritic.requests')
+    @patch('collector.web.metacritic.requests')
     def test__metacritic__get_reviews__WillReturnListOfReviews__WhenMetacriticRespondsWithPublicationScreenHTML(self, mock_requests):
 
         response = MagicMock()
@@ -28,7 +28,7 @@ class TestMetacritic(unittest.TestCase):
 
         self.assertEqual(actual_reviews, expected_reviews)
 
-    @patch('collector.sources.metacritic.requests')
+    @patch('collector.web.metacritic.requests')
     def test__metacritic__get_reviews__WillIncludeFirstReview_WhenMetacriticHTMLIncludesFirstReviewHTMLClass(self, mock_requests):
 
         response = MagicMock()
@@ -49,7 +49,7 @@ class TestMetacritic(unittest.TestCase):
 
         self.assertEqual(actual_reviews, expected_reviews)
 
-    @patch('collector.sources.metacritic.requests')
+    @patch('collector.web.metacritic.requests')
     def test__metacritic__get_reviews__WillIncludeFirstReview_WhenMetacriticHTMLIncludesFirstReviewHTMLClass(self, mock_requests):
 
         response = MagicMock()

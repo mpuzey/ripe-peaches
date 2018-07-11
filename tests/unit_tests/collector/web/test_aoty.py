@@ -1,6 +1,6 @@
 from mock import patch, MagicMock
 import unittest
-from collector.sources import aoty
+from collector.web import aoty
 
 
 def get_reviews_html():
@@ -56,7 +56,7 @@ def get_reviews_html():
 
 
 class TestAOTY(unittest.TestCase):
-    @patch('collector.sources.aoty.requests')
+    @patch('collector.web.aoty.requests')
     def test__aoty__get_reviews__WillReturnListOfReviews__WhenAOTYRespondsWithPublicationScreenHTML(self, mock_requests):
 
         response = MagicMock()
