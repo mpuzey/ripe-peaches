@@ -5,6 +5,7 @@ class ReviewScraper(Collector):
 
     def __init__(self):
         self.reviews = []
+        self.artists = {}
 
     def collect(self, publications, source):
 

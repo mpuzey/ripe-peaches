@@ -11,7 +11,6 @@ class CollectorService:
 
     def __init__(self, collector):
         self.collector = collector
-        self.collector.artists = {}
         self.review_store = ReviewStore(FileAdapter('reviews'))
         self.release_store = ReleaseStore(FileAdapter('releases'), self.review_store)
         self.artist_store = ArtistStore(FileAdapter('artists'))
