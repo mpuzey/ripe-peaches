@@ -19,10 +19,7 @@ class Aggregator(DataWorker):
                     release_name = release.get('name')
                     review_ids = release.get('reviews')
                     if review_ids:
-                        release_scores = []
-                        for review_id in review_ids:
-                            review = reviews.get(review_id)
-                            release_scores.append(int(review.get('score')))
+                        release_scores = [int(reviews.get(review_id).get('score')) for review_id in review_ids]
 
                         score_id = calculate_hash(artist_name + release_name)
                         aggregated_score = sum(release_scores) / len(release_scores)
@@ -36,5 +33,5 @@ class Aggregator(DataWorker):
                             'score': aggregated_score
 
                         }
-
+        '''[e**2 for e in a_list if type(e) == types.IntType]'''
         return scores
