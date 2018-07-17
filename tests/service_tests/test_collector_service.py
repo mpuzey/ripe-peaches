@@ -29,6 +29,7 @@ class TestService(unittest.TestCase):
 
         mock_collector = MagicMock()
         collector_instance = mock_collector.return_value
+        collector_instance.artists = {}
         collector_instance.deliver.return_value = get_review_list()
 
         expected_artists = get_artists_sample()
