@@ -1,4 +1,4 @@
-from collector.entities.data_worker import DataWorker
+from aggregator.entities.data_worker import DataWorker
 
 
 class Aggregator(DataWorker):
