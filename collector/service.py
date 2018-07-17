@@ -50,6 +50,7 @@ class CollectorService:
             if not existing_release:
                 self.collector.artists[artist_id]['releases'][release_id] = {
                  'id': calculate_hash(artist_name + release_name),
+                 'name': release_name,
                  'reviews': {}
                 }
 
