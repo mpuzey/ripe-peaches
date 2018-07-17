@@ -30,7 +30,9 @@ class FileAdapter(StorageAdapter):
 
                     for key, value in existing_dataset[id].items():
                         if type(value) is list:
-                            existing_dataset[id][key] = existing_dataset[id][key] + document[key]
+                            # existing_dataset[id][key].extend(x for x in value if x not in existing_dataset[id][key])
+                            existing_values = list(existing_dataset[id][key])
+                            existing_dataset[id][key] = list(set().union(existing_values, document[key]))
 
             documents.update(existing_dataset)
             json.dump(documents, outfile)
