@@ -1,6 +1,7 @@
 from app.gateways.artist_store import ArtistStore
 from app.gateways.release_store import ReleaseStore
 from app.gateways.review_store import ReviewStore
+from app.gateways.score_store import ScoreStore
 from app.db.file_adapter import FileAdapter
 
 
@@ -11,6 +12,7 @@ class AggregatorService:
         self.artist_store = ArtistStore(FileAdapter('artists'))
         self.release_store = ReleaseStore(FileAdapter('releases'), None)
         self.review_store = ReviewStore(FileAdapter('reviews'))
+        self.score_store = ScoreStore(FileAdapter('scores'))
 
     def start(self):
 
@@ -20,8 +22,9 @@ class AggregatorService:
             self.review_store.get()
         ]
 
-        self.aggregator.work(aggregation_data)
+        scores = self.aggregator.work(aggregation_data)
 
+        self.score_store.put(scores)
 
 
 if __name__ == "__main__":
