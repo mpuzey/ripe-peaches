@@ -8,5 +8,5 @@ class Collector(ABC):
         pass
 
     @abstractmethod
-    def deliver(self):
+    def parse(self):
         pass
