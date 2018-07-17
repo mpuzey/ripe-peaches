@@ -7,7 +7,7 @@ class ReviewStore(Store):
         self.storage_adapter = storage_adapter
 
     def get(self):
-        reviews = self.storage_adapter.get('reviews')
+        reviews = self.storage_adapter.get()
         return reviews
 
     def put(self, reviews):

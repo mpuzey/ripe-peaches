@@ -8,7 +8,7 @@ class ReleaseStore(Store):
         self.review_store = review_store
 
     def get(self):
-        releases = self.storage_adapter.get('releases')
+        releases = self.storage_adapter.get()
         return releases
 
     def put(self, artists):
