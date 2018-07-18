@@ -26,10 +26,22 @@ class TestMain(unittest.TestCase):
         mock_app.assert_called_with(expected_arg)
 
     @patch('main.CollectorService')
+    @patch('main.start_aggregator_service')
     @patch('main.ReviewStore')
     @patch('main.tornado.web.Application')
-    def test__main__make_app_WillStartCollector__WhenCalled(self, _, __, mock_collector):
+    def test__main__make_app__WillStartCollector__WhenCalled(self, _, __, ___, mock_collector):
 
         make_app()
         collector_instance = mock_collector.return_value
         assert collector_instance.start.called
+
+    @patch('main.AggregatorService')
+    @patch('main.start_collector_service')
+    @patch('main.ReviewStore')
+    @patch('main.tornado.web.Application')
+    def test__main__make_app__WillStartAggregatorService__WhenCalled(self, _, __, ___, mock_aggregator):
+
+        make_app()
+        aggregator_instance = mock_aggregator.return_value
+        assert aggregator_instance.start.called
+

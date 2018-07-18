@@ -9,6 +9,8 @@ from app.web.reviews_handler import ReviewsHandler
 from app.web.scores_handler import ScoresHandler
 from collector.controllers.review_scraper import ReviewScraper
 from collector.service import CollectorService
+from aggregator.use_cases.aggregator import Aggregator
+from aggregator.service import AggregatorService
 from constants import PUBLIC_ROOT
 
 
@@ -16,17 +18,29 @@ def make_app():
     """ This function returns an Application instance loaded with the necessary request handlers
     for the app.
     """
-    collector = ReviewScraper()
-    review_store = ReviewStore(FileAdapter('reviews'))
 
-    service = CollectorService(collector)
-    service.start()
+    start_collector_service()
+    start_aggregator_service()
+
+    review_store = ReviewStore(FileAdapter('reviews'))
 
     return tornado.web.Application([
         (r'/', ScoresHandler),
         (r'/public/(.*)', tornado.web.StaticFileHandler, {'path': PUBLIC_ROOT}),
         (r'/reviews', ReviewsHandler, {'store': review_store})
     ])
+
+
+def start_collector_service():
+    collector = ReviewScraper()
+    service = CollectorService(collector)
+    service.start()
+
+
+def start_aggregator_service():
+    aggregator = Aggregator()
+    service = AggregatorService(aggregator)
+    service.start()
 
 
 if __name__ == '__main__':

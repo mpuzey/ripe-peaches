@@ -22,7 +22,9 @@ class AggregatorService:
             self.review_store.get()
         ]
 
+        print('aggregating scores for artist releases...')
         scores = self.aggregator.work(aggregation_data)
+        print('finished aggregating scores!')
 
         self.score_store.put(scores)
 
