@@ -5,6 +5,7 @@ import tornado.web
 
 from app.db.file_adapter import FileAdapter
 from app.gateways.review_store import ReviewStore
+from app.gateways.score_store import ScoreStore
 from app.web.reviews_handler import ReviewsHandler
 from app.web.scores_handler import ScoresHandler
 from collector.controllers.review_scraper import ReviewScraper
@@ -23,9 +24,10 @@ def make_app():
     start_aggregator_service()
 
     review_store = ReviewStore(FileAdapter('reviews'))
+    score_store = ScoreStore(FileAdapter('scores'))
 
     return tornado.web.Application([
-        (r'/', ScoresHandler),
+        (r'/', ScoresHandler, {'store': score_store}),
         (r'/public/(.*)', tornado.web.StaticFileHandler, {'path': PUBLIC_ROOT}),
         (r'/reviews', ReviewsHandler, {'store': review_store})
     ])

@@ -10,5 +10,10 @@ from constants import PUBLIC_ROOT
 class ScoresHandler(BaseHandler):
     """ This homepage class is simply responsible for serving the static page the application runs
     on. """
+    def initialize(self, store):
+        self.store = store
+
     def get(self):
-        self.render(os.path.join(PUBLIC_ROOT, 'index.html'))
+        scores = self.store.get()
+        self.write({'scores': scores})
+        # self.render(os.path.join(PUBLIC_ROOT, 'index.html'))

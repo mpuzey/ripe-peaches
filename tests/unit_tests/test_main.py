@@ -11,15 +11,18 @@ from constants import PUBLIC_ROOT
 class TestMain(unittest.TestCase):
 
     @patch('main.CollectorService')
+    @patch('main.ScoreStore')
     @patch('main.ReviewStore')
     @patch('main.tornado.web.Application')
-    def test__main__make_app__WillInjectStoreIntoReviewsHandler__WhenCalled(self, mock_app, mock_store, _):
+    def test__main__make_app__WillInjectStoreIntoReviewsHandler__WhenCalled(self, mock_app, mock_review_store, mock_score_store, _):
 
-        store_instance = mock_store.return_value
+        review_store_instance = mock_review_store.return_value
+        score_store_instance = mock_score_store.return_value
+
         expected_arg = [
-            (r'/', ScoresHandler),
+            (r'/', ScoresHandler, {'store': score_store_instance}),
             (r'/public/(.*)', tornado.web.StaticFileHandler, {'path': PUBLIC_ROOT}),
-            ('/reviews', ReviewsHandler, {'store': store_instance})]
+            ('/reviews', ReviewsHandler, {'store': review_store_instance})]
 
         make_app()
 
