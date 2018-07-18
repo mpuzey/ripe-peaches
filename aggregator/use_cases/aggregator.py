@@ -11,7 +11,6 @@ class Aggregator(DataWorker):
         scores = {}
 
         for artist_id, artist in artists.items():
-
             score = self.__aggregate(artist, releases, reviews)
             scores.update(score)
 
