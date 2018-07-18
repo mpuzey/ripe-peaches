@@ -11,9 +11,13 @@ class FileAdapter(StorageAdapter):
 
     def get(self):
         """ This API should return a full dict of keys from the file. """
-        with open(self.file_path, 'r') as outfile:
-            data = json.load(outfile)
-            return data
+        try:
+            with open(self.file_path, 'r') as outfile:
+                data = json.load(outfile)
+                return data
+        except IOError:
+            print('file path %s does not exist' % self.file_path)
+            return {}
 
     def put(self, documents):
         """ This API needs to take a dict, read existing keys from the file, updates existing documents
