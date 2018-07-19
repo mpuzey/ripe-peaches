@@ -13,8 +13,7 @@ from src.collector.service import CollectorService
 
 def service_starts(collector_instance, collected_data):
 
-    with patch('src.collector.service.ArtistStore') as mock_artist_store, \
-         patch('src.collector.service.ReleaseStore') as mock_release_store, \
+    with patch('src.collector.service.FileAdapter') as mock_file_adapter, \
          patch('src.collector.service.aoty') as mock_aoty, \
          patch('src.collector.service.metacritic') as mock_metacritic:
 
@@ -22,3 +21,5 @@ def service_starts(collector_instance, collected_data):
 
         collector_service = CollectorService(collector_instance)
         collector_service.start()
+
+        return mock_file_adapter

@@ -1,5 +1,5 @@
 
-def get_review_list():
+def get_reviews():
     return [
         {
             'artist': 'Yob',
@@ -19,7 +19,7 @@ def get_review_list():
     ]
 
 
-def get_artists_sample():
+def get_artists():
     return {
         'e4a8ae5b53974e75ffc10d5634e4f7f66336e93bb54fcb32376e49dcaa86fb49': {
                 'id': 'e4a8ae5b53974e75ffc10d5634e4f7f66336e93bb54fcb32376e49dcaa86fb49',
