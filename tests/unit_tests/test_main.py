@@ -1,11 +1,12 @@
-from mock import patch
 import unittest
-import tornado.web
 
-from main import make_app
-from app.web.reviews_handler import ReviewsHandler
-from app.web.scores_handler import ScoresHandler
+import tornado.web
+from src.app.web.reviews_handler import ReviewsHandler
+from mock import patch
+
 from constants import PUBLIC_ROOT
+from main import make_app
+from src.app.web.scores_handler import ScoresHandler
 
 
 class TestMain(unittest.TestCase):

@@ -1,5 +1,6 @@
-from collector.entities.collector import Collector
-from common.crypto import calculate_hash
+from src.collector.entities.collector import Collector
+
+from src.common.crypto import calculate_hash
 
 
 class ReviewScraper(Collector):

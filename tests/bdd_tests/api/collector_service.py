@@ -8,15 +8,15 @@ functionality, a bug to fix or a missing scenario to cover.
 
 from mock import patch
 
-from collector.service import CollectorService
+from src.collector.service import CollectorService
 
 
 def service_starts(collector_instance, collected_data):
 
-    with patch('collector.service.ArtistStore') as mock_artist_store, \
-         patch('collector.service.ReleaseStore') as mock_release_store, \
-         patch('collector.service.aoty') as mock_aoty, \
-         patch('collector.service.metacritic') as mock_metacritic:
+    with patch('src.collector.service.ArtistStore') as mock_artist_store, \
+         patch('src.collector.service.ReleaseStore') as mock_release_store, \
+         patch('src.collector.service.aoty') as mock_aoty, \
+         patch('src.collector.service.metacritic') as mock_metacritic:
 
         collector_instance.reviews = collected_data
 

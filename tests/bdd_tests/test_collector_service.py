@@ -1,7 +1,8 @@
 import unittest
-from collector.controllers.review_scraper import ReviewScraper
-from tests.service_tests.test_data import get_artists_sample, get_review_list
-from tests.api.collector_service import service_starts
+
+from src.collector.controllers.review_scraper import ReviewScraper
+from tests.bdd_tests.api.collector_service import service_starts
+from tests.bdd_tests.test_data import get_artists_sample, get_review_list
 
 
 class TestService(unittest.TestCase):
@@ -16,4 +17,5 @@ class TestService(unittest.TestCase):
         self.assertEqual(collector_instance.artists, expected_artists)
 
     def test__service__CollectorService__store_collection__WillStoreArtists__WhenCalled(self):
+
         pass

@@ -2,9 +2,7 @@
  application. Upon visiting the homepage of the site the user will see a list of recent releases
  and their aggregated review scores.
 """
-import os
-from app.web.base_handler import BaseHandler
-from constants import PUBLIC_ROOT
+from src.app.web.base_handler import BaseHandler
 
 
 class ScoresHandler(BaseHandler):

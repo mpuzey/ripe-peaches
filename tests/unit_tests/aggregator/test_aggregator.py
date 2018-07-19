@@ -1,6 +1,6 @@
 import unittest
 
-from aggregator.use_cases.aggregator import Aggregator
+from src.aggregator.use_cases.aggregator import Aggregator
 from tests.unit_tests.aggregator import test_data
 
 

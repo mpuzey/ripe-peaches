@@ -1,8 +1,9 @@
-from app.gateways.artist_store import ArtistStore
-from app.gateways.release_store import ReleaseStore
-from app.gateways.review_store import ReviewStore
-from app.gateways.score_store import ScoreStore
-from app.db.file_adapter import FileAdapter
+from src.app.gateways.artist_store import ArtistStore
+from src.app.gateways.release_store import ReleaseStore
+from src.app.gateways.review_store import ReviewStore
+from src.app.gateways.score_store import ScoreStore
+
+from src.app.db.file_adapter import FileAdapter
 
 
 class AggregatorService:
@@ -30,7 +31,7 @@ class AggregatorService:
 
 
 if __name__ == "__main__":
-    from aggregator.use_cases.aggregator import Aggregator
+    from src.aggregator.use_cases.aggregator import Aggregator
     aggregator = Aggregator()
     service = AggregatorService(aggregator)
     service.start()

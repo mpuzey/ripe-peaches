@@ -1,9 +1,10 @@
-from collector.web import metacritic, aoty
+from src.app.gateways.artist_store import ArtistStore
+from src.app.gateways.release_store import ReleaseStore
+from src.app.gateways.review_store import ReviewStore
+from src.collector.web import metacritic, aoty
+
 from constants import METACRITIC_PUBLICATIONS_SAMPLE, AOTY_PUBLICATIONS_SAMPLE
-from app.gateways.review_store import ReviewStore
-from app.gateways.release_store import ReleaseStore
-from app.gateways.artist_store import ArtistStore
-from app.db.file_adapter import FileAdapter
+from src.app.db.file_adapter import FileAdapter
 
 
 class CollectorService:

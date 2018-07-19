@@ -1,4 +1,4 @@
-from app.web.base_handler import BaseHandler
+from src.app.web.base_handler import BaseHandler
 
 
 class ReviewsHandler(BaseHandler):

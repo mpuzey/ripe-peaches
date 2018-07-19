@@ -2,17 +2,17 @@
 tornado web server. """
 import tornado.ioloop
 import tornado.web
+from src.aggregator.service import AggregatorService
+from src.aggregator.use_cases.aggregator import Aggregator
+from src.app.gateways.review_store import ReviewStore
+from src.app.gateways.score_store import ScoreStore
+from src.app.web.reviews_handler import ReviewsHandler
+from src.app.web.scores_handler import ScoresHandler
+from src.collector.controllers.review_scraper import ReviewScraper
+from src.collector.service import CollectorService
 
-from app.db.file_adapter import FileAdapter
-from app.gateways.review_store import ReviewStore
-from app.gateways.score_store import ScoreStore
-from app.web.reviews_handler import ReviewsHandler
-from app.web.scores_handler import ScoresHandler
-from collector.controllers.review_scraper import ReviewScraper
-from collector.service import CollectorService
-from aggregator.use_cases.aggregator import Aggregator
-from aggregator.service import AggregatorService
 from constants import PUBLIC_ROOT
+from src.app.db.file_adapter import FileAdapter
 
 
 def make_app():

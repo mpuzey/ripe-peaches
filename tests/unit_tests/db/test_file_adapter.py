@@ -1,13 +1,15 @@
-import mock
 import unittest
-from app.db import file_adapter
+
+import mock
+
+from src.app.db import file_adapter
 
 
 class TestFileAdapter(unittest.TestCase):
 
-    @mock.patch('app.db.file_adapter.json.dump')
-    @mock.patch('app.db.file_adapter.FileAdapter.get')
-    @mock.patch('app.db.file_adapter.open', create=True)
+    @mock.patch('src.app.db.file_adapter.json.dump')
+    @mock.patch('src.app.db.file_adapter.FileAdapter.get')
+    @mock.patch('src.app.db.file_adapter.open', create=True)
     def test__file_adapter__FileAdapter__put__WillAppendNewListToExistingList__WhenADocumentKeyHasAValueOfTypeListAndAlreadyExistsInTheFile(self,
                                                                                                                                             mock_open,
                                                                                                                                             mock_get,
@@ -22,9 +24,9 @@ class TestFileAdapter(unittest.TestCase):
 
         mock_json_dump.assert_called_with(merged_dataset, mock_outfile)
 
-    @mock.patch('app.db.file_adapter.json.dump')
-    @mock.patch('app.db.file_adapter.FileAdapter.get')
-    @mock.patch('app.db.file_adapter.open', create=True)
+    @mock.patch('src.app.db.file_adapter.json.dump')
+    @mock.patch('src.app.db.file_adapter.FileAdapter.get')
+    @mock.patch('src.app.db.file_adapter.open', create=True)
     def test__file_adapter__FileAdapter__put__WillNotDuplicateListEntries__WhenADocumentKeyHasAListWhichIncludesAValuePresentInTheFile(
             self,
             mock_open,

@@ -1,4 +1,4 @@
-from app.use_cases.store import Store
+from src.app.use_cases.store import Store
 
 
 class ArtistStore(Store):

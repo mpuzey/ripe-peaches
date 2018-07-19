@@ -1,5 +1,6 @@
-from aggregator.entities.data_worker import DataWorker
-from common.crypto import calculate_hash
+from src.aggregator.entities.data_worker import DataWorker
+
+from src.common.crypto import calculate_hash
 
 
 class Aggregator(DataWorker):

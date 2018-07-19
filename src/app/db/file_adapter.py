@@ -1,13 +1,13 @@
 import json
 
-from app.gateways.storage_adapter import StorageAdapter
 from constants import ROOT_PATH
+from src.app.gateways.storage_adapter import StorageAdapter
 
 
 class FileAdapter(StorageAdapter):
 
     def __init__(self, file_name):
-        self.file_path = ROOT_PATH + '/app/db/%s.json' % file_name
+        self.file_path = ROOT_PATH + '/src/app/db/%s.json' % file_name
 
     def get(self):
         """ This API should return a full dict of keys from the file. """
