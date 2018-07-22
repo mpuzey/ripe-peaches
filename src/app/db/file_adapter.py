@@ -27,15 +27,13 @@ class FileAdapter(StorageAdapter):
 
         with open(self.file_path, 'w+') as outfile:
 
-            for _, document in documents.items():
+            for id, document in documents.items():
 
-                id = document.get('id')
                 if id in existing_dataset:
 
                     for key, value in existing_dataset[id].items():
                         if type(value) is list:
-                            # existing_dataset[id][key].extend(x for x in value if x not in existing_dataset[id][key])
-                            existing_values = list(existing_dataset[id][key])
+                            existing_values = existing_dataset[id][key]
                             existing_dataset[id][key] = list(set().union(existing_values, document[key]))
 
             documents.update(existing_dataset)
