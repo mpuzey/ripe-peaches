@@ -9,7 +9,7 @@ from tests.bdd_tests import store_time_test_data
 
 class TestService(unittest.TestCase):
 
-    def test__service__CollectorService__store_collection__WillStoreArtists__WhenCalled(self):
+    def test__service__CollectorService__store_collection__WillStoreArtistsReleasesAndReviews__WhenCalled(self):
 
         collector_instance = ReviewScraper()
         calls = [call(store_time_test_data.get_artists()),
