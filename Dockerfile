@@ -2,8 +2,7 @@ FROM python:3.6-alpine
 MAINTAINER Matthew Puzey "mpuzey1@outlook.com"
 
 RUN mkdir -p   /tmdb
-COPY app /ripe-peaches/app
-COPY collector /ripe-peaches/collector
+COPY src /ripe-peaches/src
 COPY main.py /ripe-peaches/main.py
 COPY static /ripe-peaches/static
 COPY constants.py /ripe-peaches/constants.py
