@@ -19,30 +19,36 @@ class FileAdapter(StorageAdapter):
             print('file path %s does not exist' % self.file_path)
             return {}
 
-    def put(self, documents):
+    def put(self, new_documents):
         """ This API needs to take a dict, read existing keys from the file, updates existing documents
          if necessary and dumps the result to file."""
 
         existing_documents = self.get()
 
+        documents = {}
+        documents.update(existing_documents)
+
         with open(self.file_path, 'w+') as outfile:
 
-            for id, document in documents.items():
+            for id, document in new_documents.items():
 
                 if id in existing_documents:
 
-                    update_lists(existing_documents, document)
+                    documents = merge_document(document, existing_documents)
 
-            documents.update(existing_documents)
-            json.dump(documents, outfile)
+            new_documents.update(documents)
+            json.dump(new_documents, outfile)
 
 
-def update_lists(existing_data, new_data):
+def merge_document(new_document, existing_documents):
 
-    id = new_data.get('id')
-    for key, value in existing_data[id].items():
+    documents = {}
+    documents.update(existing_documents)
+
+    id = new_document.get('id')
+    for key, value in existing_documents[id].items():
         if type(value) is list:
-            existing_values = existing_data[id][key]
-            existing_data[id][key] = list(set().union(existing_values, new_data[key]))
+            existing_values = existing_documents[id][key]
+            documents[id][key] = list(set().union(existing_values, new_document[key]))
 
-    return existing_data
+    return documents
