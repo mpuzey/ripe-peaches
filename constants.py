@@ -5,7 +5,7 @@ ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 PUBLIC_ROOT = os.path.join(ROOT_PATH, 'static')
 
 
-# Metacritic - scraping from metacritic is slow but we pull 60 releases at at time
+# Metacritic - scraping from metacritic is slow but we pull 100 releases at at time
 METACRITIC_CURATED_PUBLICATIONS = ['pitchfork', 'consequence-of-sound', 'rolling-stone',
                                    'the-guardian', 'downed-in-sound', 'the-quietus',
                                    'sputnikmusic', 'spin',
@@ -29,7 +29,7 @@ AOTY_PUBLICATIONS = ['57-the-needle-drop', '/32-exclaim', '18-the-four-oh-five',
                      '62-metal-sucks', '61-metal-injection', '52-gigsoup', '59-spectrum-culture',
                      '53-the-independent', '63-flood-magazine', '46-entertainment-weekly', '33-xxl',
                      '55-the-telegraph', '58-the-observer', '43-clash']
-AOTY_PUBLICATION_URL = 'https://www.albumoftheyear.org/publication/{publication_name}/reviews/' 
+AOTY_PUBLICATION_URL = 'https://www.albumoftheyear.org/publication/{publication_name}/reviews/'
 AOTY_REQUEST_HEADERS = METACRITIC_REQUEST_HEADERS
 
 # Regex
