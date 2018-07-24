@@ -22,7 +22,7 @@ class TestAggregator(unittest.TestCase):
                     'release_name': "I'll Tell You What!",
                     'artist_id': '6d36d7e180b92eacd41f75ec53c4c4681f965c36db1dc7770e64e0f4e3166ab4',
                     'artist_name': 'Rp Boo',
-                    'score': 70.0
+                    'score': 50
                 },
             '0c0f12aab588d760168fc6a42fd2ec424c531bc9fe3bb9516559bcb55599b304':
                 {
@@ -31,7 +31,7 @@ class TestAggregator(unittest.TestCase):
                     'release_name': 'Closer Apart',
                     'artist_id': '7fd24a70ad382f7019780298658cc417995ee63c2b1e0a73c09ce2864e81da16',
                     'artist_name': 'Okzharp',
-                    'score': 90.0
+                    'score': 100
                 }
         }
 
