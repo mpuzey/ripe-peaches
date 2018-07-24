@@ -34,13 +34,13 @@ class FileAdapter(StorageAdapter):
 
                 if id in existing_documents:
 
-                    documents = merge_document(document, existing_documents)
+                    documents = _merge_document(document, existing_documents)
 
             new_documents.update(documents)
             json.dump(new_documents, outfile)
 
 
-def merge_document(new_document, existing_documents):
+def _merge_document(new_document, existing_documents):
 
     documents = {}
     documents.update(existing_documents)

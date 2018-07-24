@@ -52,6 +52,6 @@ class Aggregator(DataWorker):
         review_ids = release.get('reviews')
         release_scores = [int(self.reviews.get(review_id).get('score')) for review_id in review_ids]
         thumbs_up = [True for score in release_scores if score >= THUMBS_UP_THRESHOLD]
-        aggregated_score = (sum(thumbs_up) / len(release_scores)) * 100
+        aggregated_float = (sum(thumbs_up) / len(release_scores)) * 100
 
-        return aggregated_score
+        return int(aggregated_float)
