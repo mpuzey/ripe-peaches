@@ -8,7 +8,7 @@ from src.app.gateways.review_store import ReviewStore
 from src.app.gateways.score_store import ScoreStore
 from src.app.web.reviews_handler import ReviewsHandler
 from src.app.web.scores_handler import ScoresHandler
-from src.collector.controllers.review_scraper import ReviewScraper
+from src.collector.controllers.music_review_scraper import MusicReviewScraper
 from src.collector.service import CollectorService
 
 from constants import PUBLIC_ROOT
@@ -34,7 +34,7 @@ def make_app():
 
 
 def start_collector_service():
-    collector = ReviewScraper()
+    collector = MusicReviewScraper()
     service = CollectorService(collector)
     service.start()
 

@@ -3,7 +3,7 @@ from src.collector.entities.collector import Collector
 from src.common.crypto import calculate_hash
 
 
-class ReviewScraper(Collector):
+class MusicReviewScraper(Collector):
 
     def __init__(self):
         self.reviews = []
@@ -23,44 +23,48 @@ class ReviewScraper(Collector):
 
             artist_id = self._build_artist(raw_review)
 
-            review = self._build_review(raw_review)
+            review, names = self._build_review(raw_review)
 
-            self._build_release(raw_review, review, artist_id)
+            self._build_release(review, artist_id, names)
 
         return self.artists
 
     def _build_artist(self, raw_review):
 
         artist_name = raw_review.get('artist')
-        artist_id = calculate_hash(artist_name)
-        if not self.artists.get(artist_id):
-            self.artists[artist_id] = {
-                'id': artist_id,
+        id = calculate_hash(artist_name)
+
+        if not self.artists.get(id):
+            self.artists[id] = {
+                'id': id,
                 'name': artist_name,
                 'releases': {}
             }
 
-        return artist_id
+        return id
 
     def _build_review(self, raw_review):
 
+        artist_name = raw_review.get('artist')
+        release_name = _format_release_name(raw_review.get('release_name'))
         publication_name = raw_review.get('publication_name')
 
-        return {
+        review =  {
             'score': raw_review.get('score'),
             'publication_name': publication_name,
             'date': raw_review.get('date'),
             'link': raw_review.get('link')
         }
 
-    def _build_release(self, raw_review, review, artist_id):
+        return review, (artist_name, release_name, publication_name)
 
-        artist_name = raw_review.get('artist')
-        publication_name = raw_review.get('publication_name')
-        release_name = _format_release_name(raw_review.get('release_name'))
+    def _build_release(self, review, artist_id, names):
+
+        (artist_name, release_name, publication_name) = names
 
         release_id = calculate_hash(artist_name + release_name)
         review_id = calculate_hash(artist_name + release_name + publication_name)
+
         review['id'] = review_id
 
         existing_release = self.artists.get(artist_id).get('releases').get(release_id)

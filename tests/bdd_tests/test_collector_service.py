@@ -1,7 +1,7 @@
 import unittest
 from mock import call, patch
 
-from src.collector.controllers.review_scraper import ReviewScraper
+from src.collector.controllers.music_review_scraper import MusicReviewScraper
 from tests.bdd_tests.api.collector_service import service_starts
 from tests.bdd_tests import in_memory_test_data
 from tests.bdd_tests import store_time_test_data
@@ -11,7 +11,7 @@ class TestService(unittest.TestCase):
 
     def test__service__CollectorService__store_collection__WillStoreArtistsReleasesAndReviews__WhenCalled(self):
 
-        collector_instance = ReviewScraper()
+        collector_instance = MusicReviewScraper()
         calls = [call(store_time_test_data.get_artists()),
                  call(store_time_test_data.get_releases()),
                  call(store_time_test_data.get_reviews())]
@@ -27,7 +27,7 @@ class TestService(unittest.TestCase):
                                                                                              mock_artist_store,
                                                                                              mock_release_store):
 
-        collector_instance = ReviewScraper()
+        collector_instance = MusicReviewScraper()
         expected_artists = in_memory_test_data.get_artists()
 
         service_starts(collector_instance, in_memory_test_data.get_reviews())
