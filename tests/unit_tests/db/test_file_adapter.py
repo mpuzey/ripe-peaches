@@ -30,6 +30,7 @@ class TestFileAdapter(unittest.TestCase):
                                                                                                           mock_open,
                                                                                                           mock_get,
                                                                                                           mock_json_dump):
+
         mock_get.return_value = {'document_hash': {'id': 'document_hash', 'date': '1234'}}
         mock_outfile = mock_open.return_value.__enter__.return_value
         document_pair = {
@@ -93,3 +94,38 @@ class TestFileAdapter(unittest.TestCase):
         adapter.put({'document_hash': {'id': 'document_hash', 'date': '5678'}})
 
         mock_json_dump.assert_called_with({'document_hash': {'id': 'document_hash', 'date': '1234'}}, mock_outfile)
+
+    @mock.patch('src.app.db.file_adapter.json.dump')
+    @mock.patch('src.app.db.file_adapter.FileAdapter.get')
+    @mock.patch('src.app.db.file_adapter.open', create=True)
+    def test__file_adapter__FileAdapter__put__WillNotReplaceValue__WhenADocumentKeyHasAStringValue(self,
+                                                                                                   mock_open,
+                                                                                                   mock_get,
+                                                                                                   mock_json_dump):
+
+        existing_file_data = {'document_hash': {'id': 'document_hash', 'date': '1234'}}
+        mock_get.return_value = existing_file_data
+        mock_outfile = mock_open.return_value.__enter__.return_value
+
+        adapter = file_adapter.FileAdapter('file_name')
+        adapter.put({'document_hash': {'id': 'document_hash', 'date': '5678'}})
+
+        mock_json_dump.assert_called_with(
+            {'document_hash': {'id': 'document_hash', 'date': '1234'}}, mock_outfile)
+
+    @mock.patch('src.app.db.file_adapter.json.dump')
+    @mock.patch('src.app.db.file_adapter.FileAdapter.get')
+    @mock.patch('src.app.db.file_adapter.open', create=True)
+    def test__file_adapter__FileAdapter__put__WillReplaceValue__WhenADocumentKeyHasAnIntegerValue(self,
+                                                                                                  mock_open,
+                                                                                                  mock_get,
+                                                                                                  mock_json_dump):
+
+        existing_file_data = {'document_hash': {'id': 'document_hash', 'score': 80}}
+        mock_get.return_value = existing_file_data
+        mock_outfile = mock_open.return_value.__enter__.return_value
+
+        adapter = file_adapter.FileAdapter('file_name')
+        adapter.put({'document_hash': {'id': 'document_hash', 'score': 70}})
+
+        mock_json_dump.assert_called_with({'document_hash': {'id': 'document_hash', 'score': 70}}, mock_outfile)

@@ -36,7 +36,7 @@ class FileAdapter(StorageAdapter):
 
                     documents = merge_document(document, existing_documents)
 
-            documents.update(new_documents)
+            new_documents.update(documents)
             json.dump(new_documents, outfile)
 
 
@@ -50,5 +50,8 @@ def merge_document(new_document, existing_documents):
         if type(value) is list:
             existing_values = existing_documents[id][key]
             documents[id][key] = list(set().union(existing_values, new_document[key]))
+
+        if type(value) is int:
+            documents[id][key] = new_document[key]
 
     return documents
