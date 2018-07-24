@@ -36,7 +36,7 @@ class FileAdapter(StorageAdapter):
 
                     documents = merge_document(document, existing_documents)
 
-            new_documents.update(documents)
+            documents.update(new_documents)
             json.dump(new_documents, outfile)
 
 
