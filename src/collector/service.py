@@ -3,7 +3,7 @@ from src.app.gateways.release_store import ReleaseStore
 from src.app.gateways.review_store import ReviewStore
 from src.collector.web import metacritic, aoty
 
-from constants import METACRITIC_CURATED_PUBLICATIONS, AOTY_CURATED_PUBLICATIONS
+from constants import METACRITIC_CURATED_PUBLICATIONS, AOTY_PUBLICATIONS
 from src.app.db.file_adapter import FileAdapter
 
 
@@ -18,7 +18,7 @@ class CollectorService:
     def start(self):
 
         self.collector.collect(METACRITIC_CURATED_PUBLICATIONS, metacritic)
-        self.collector.collect(AOTY_CURATED_PUBLICATIONS, aoty)
+        self.collector.collect(AOTY_PUBLICATIONS, aoty)
         artists = self.collector.parse()
 
         self.artist_store.put(artists)

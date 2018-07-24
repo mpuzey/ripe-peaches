@@ -5,7 +5,7 @@ ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 PUBLIC_ROOT = os.path.join(ROOT_PATH, 'static')
 
 
-# Metacritic
+# Metacritic - scraping from metacritic is slow but we pull 60 releases at at time
 METACRITIC_CURATED_PUBLICATIONS = ['pitchfork', 'consequence-of-sound', 'rolling-stone',
                                    'the-guardian', 'downed-in-sound', 'the-quietus',
                                    'sputnikmusic', 'spin',
@@ -19,11 +19,17 @@ METACRITIC_REQUEST_HEADERS = {
 }
 METACRITIC_SCRAPE_BATCH_SIZE = 100
 
-# AOTY
+# AOTY - scraping from AOTY is quicker but we pull only 30 releases at once
 AOTY_CURATED_PUBLICATIONS = ['57-the-needle-drop', '/32-exclaim', '18-the-four-oh-five',
                              '7-popmatters', '31-the-skinny', '8-all-music', '2-av-club']
-AOTY_PUBLICATIONS_SAMPLE = ['57-the-needle-drop','7-popmatters']
-AOTY_PUBLICATION_URL = 'https://www.albumoftheyear.org/publication/{publication_name}/reviews/'
+AOTY_PUBLICATIONS = ['57-the-needle-drop', '/32-exclaim', '18-the-four-oh-five', '7-popmatters',
+                     '31-the-skinny', '8-all-music', '2-av-club', '25-diy', '5-musicomh', '9-nme',
+                     '13-no-ripcord', '11-paste', '23-pretty-much-amazing','18-the-four-oh-five',
+                     '28-the-line-of-best-fit', '4-tiny-mix-tapes', '17-under-the-radar',
+                     '62-metal-sucks', '61-metal-injection', '52-gigsoup', '59-spectrum-culture',
+                     '53-the-independent', '63-flood-magazine', '46-entertainment-weekly', '33-xxl',
+                     '55-the-telegraph', '58-the-observer', '43-clash']
+AOTY_PUBLICATION_URL = 'https://www.albumoftheyear.org/publication/{publication_name}/reviews/' 
 AOTY_REQUEST_HEADERS = METACRITIC_REQUEST_HEADERS
 
 # Regex
