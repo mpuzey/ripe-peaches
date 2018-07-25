@@ -81,8 +81,6 @@ class MusicReviewScraper(Collector):
 
 def _format_release_name(name):
 
-    formatted_name = name \
-        .replace('and', '&') \
-        .replace('the', 'The')
+    formatted_name = name.replace('and', '&').title()
 
     return formatted_name
