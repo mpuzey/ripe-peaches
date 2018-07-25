@@ -1,5 +1,5 @@
 
-def get_reviews():
+def get_raw_reviews():
     return [
         {
             'artist': 'Yob',
