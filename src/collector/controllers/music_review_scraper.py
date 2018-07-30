@@ -34,9 +34,9 @@ class MusicReviewScraper(Collector):
         artist_name = raw_review.get('artist')
         artist_id = calculate_hash(artist_name)
 
-        if not self.artists.get(id):
-            self.artists[id] = {
-                'id': id,
+        if not self.artists.get(artist_id):
+            self.artists[artist_id] = {
+                'id': artist_id,
                 'name': artist_name,
                 'releases': {}
             }

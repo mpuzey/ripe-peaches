@@ -17,7 +17,7 @@ def service_starts(collector_instance, collected_data):
          patch('src.collector.service.aoty') as mock_aoty, \
          patch('src.collector.service.metacritic') as mock_metacritic:
 
-        collector_instance.reviews = collected_data
+        collector_instance.raw_reviews = collected_data
 
         collector_service = CollectorService(collector_instance)
         collector_service.start()
