@@ -11,11 +11,12 @@ from src.app.web.scores_handler import ScoresHandler
 
 class TestMain(unittest.TestCase):
 
+    @patch('main.AggregatorService')
     @patch('main.CollectorService')
     @patch('main.ScoreStore')
     @patch('main.ReviewStore')
     @patch('main.tornado.web.Application')
-    def test__main__make_app__WillInjectStoreIntoReviewsHandler__WhenCalled(self, mock_app, mock_review_store, mock_score_store, _):
+    def test__main__make_app__WillInjectStoreIntoReviewsHandler__WhenCalled(self, mock_app, mock_review_store, mock_score_store, _, __):
 
         review_store_instance = mock_review_store.return_value
         score_store_instance = mock_score_store.return_value
