@@ -6,7 +6,7 @@ from src.common.crypto import calculate_hash
 class MusicReviewScraper(Collector):
 
     def __init__(self):
-        self.reviews = []
+        self.raw_reviews = []
         self.artists = {}
 
     def collect(self, publications, source):
@@ -14,12 +14,12 @@ class MusicReviewScraper(Collector):
         for publication in publications:
             print('scraping ' + publication)
             publication_reviews = source.get_reviews(publication)
-            self.reviews.extend(publication_reviews)
+            self.raw_reviews.extend(publication_reviews)
 
         print('finished scraping!')
 
     def parse(self):
-        for raw_review in self.reviews:
+        for raw_review in self.raw_reviews:
 
             artist_id = self._build_artist(raw_review)
 
@@ -32,7 +32,7 @@ class MusicReviewScraper(Collector):
     def _build_artist(self, raw_review):
 
         artist_name = raw_review.get('artist')
-        id = calculate_hash(artist_name)
+        artist_id = calculate_hash(artist_name)
 
         if not self.artists.get(id):
             self.artists[id] = {
@@ -41,7 +41,7 @@ class MusicReviewScraper(Collector):
                 'releases': {}
             }
 
-        return id
+        return artist_id
 
     def _build_release(self, artist_id, raw_review):
 
