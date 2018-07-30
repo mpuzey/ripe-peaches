@@ -31,8 +31,9 @@ class Aggregator(DataWorker):
         for release_id in artist.get('releases'):
             release = self.releases.get(release_id)
             release_name = release.get('name')
+            review_ids = release.get('reviews')
 
-            aggregate_score = self.__aggregate_release_score(release)
+            aggregate_score = self.__aggregate_release_score(review_ids)
 
             score_id = calculate_hash(artist_name + release_name)
 
@@ -42,15 +43,15 @@ class Aggregator(DataWorker):
                 'release_name': release_name,
                 'artist_id': artist_id,
                 'artist_name': artist_name,
-                'score': aggregate_score
+                'score': aggregate_score,
+                'reviews_counted': len(review_ids)
             }
 
         return score
 
-    def __aggregate_release_score(self, release):
+    def __aggregate_release_score(self, review_ids):
 
-        review_ids = release.get('reviews')
-        release_scores = [int(self.reviews.get(review_id).get('score')) for review_id in review_ids]
+        release_scores = [self.reviews.get(review_id).get('score') for review_id in review_ids]
         thumbs_up = [True for score in release_scores if score >= THUMBS_UP_THRESHOLD]
         aggregated_float = (sum(thumbs_up) / len(release_scores)) * 100
 

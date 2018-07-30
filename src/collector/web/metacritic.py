@@ -34,8 +34,8 @@ def extract_reviews(html):
 def extract_data(review_html):
 
     release_name = review_html.find('div', attrs={'class': 'review_product'}).a.text
-    score = review_html.find('li',
-                             attrs={'class': 'review_product_score brief_critscore'}).span.text
+    score = int(review_html.find('li',
+                             attrs={'class': 'review_product_score brief_critscore'}).span.text)
     publication_name = review_html.find('li',
                                         attrs={'class': 'review_action publication_title'}).text
 

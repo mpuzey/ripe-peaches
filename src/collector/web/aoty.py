@@ -31,7 +31,7 @@ def extract_reviews(html):
 def extract_data(review_html):
 
     release_name = review_html.find('div', attrs={'class': 'albumTitle'}).text
-    score = review_html.find('div', attrs={'class': 'rating'}).text
+    score = int(review_html.find('div', attrs={'class': 'rating'}).text)
     link = review_html.find('div', attrs={'class': 'ratingText'}).a['href']
     artist = review_html.find('div', attrs={'class': 'artistTitle'}).text
 

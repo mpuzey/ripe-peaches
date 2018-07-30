@@ -16,20 +16,8 @@ class TestService(unittest.TestCase):
                  call(store_time_test_data.get_releases()),
                  call(store_time_test_data.get_reviews())]
 
-        mock_file_adapter = service_starts(collector_instance, in_memory_test_data.get_reviews())
+        mock_file_adapter = service_starts(collector_instance, in_memory_test_data.get_raw_reviews())
 
         mock_file_adapter_instance = mock_file_adapter.return_value
         mock_file_adapter_instance.put.assert_has_calls(calls)
 
-    @patch('src.collector.service.ReleaseStore')
-    @patch('src.collector.service.ArtistStore')
-    def test__service__CollectorService__start__WillAddArtistsCatalogToCollector__WhenCalled(self,
-                                                                                             mock_artist_store,
-                                                                                             mock_release_store):
-
-        collector_instance = MusicReviewScraper()
-        expected_artists = in_memory_test_data.get_artists()
-
-        service_starts(collector_instance, in_memory_test_data.get_reviews())
-
-        self.assertEqual(collector_instance.artists, expected_artists)

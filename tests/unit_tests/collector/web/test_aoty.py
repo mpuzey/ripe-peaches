@@ -69,14 +69,14 @@ class TestAOTY(unittest.TestCase):
                 'artist': 'Ghost',
                 'publication_name': '57-the-needle-drop',
                 'release_name': 'Prequelle',
-                'score': '80',
+                'score': 80,
                 'link': 'https://www.youtube.com/watch?v=-L2Xv5-EmUo'
             },
             {
                 'artist': 'Sleep',
                 'publication_name': '57-the-needle-drop',
                 'release_name': 'The Sciences',
-                'score': '80',
+                'score': 80,
                 'link': 'https://www.youtube.com/watch?v=d5jWckdWqpM'
             }
         ]

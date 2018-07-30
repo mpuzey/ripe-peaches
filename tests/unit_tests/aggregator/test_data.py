@@ -41,28 +41,28 @@ def get_release_sample():
 def get_review_sample():
     return {
         'b2daf7b6cd3733dd28bca48311d68a7bcc476bc0a628a128b4aa25be6095e3f1': {
-            'score': '80',
+            'score': 80,
             'publication_name': 'The Quietus',
             'date': 'Posted Jul 16, 2018',
             'link': 'http://thequietus.com/articles/24982-rp-boo-i-ll-tell-you-what-album-review',
             'id': 'b2daf7b6cd3733dd28bca48311d68a7bcc476bc0a628a128b4aa25be6095e3f1'
         },
         'c2daf7b6cd3733dd28bca48311d68a7bcc476bc0a628a128b4aa25be6095e3f1': {
-            'score': '60',
+            'score': 60,
             'publication_name': 'Pitchfork',
             'date': 'Posted Jul 17, 2018',
             'link': 'http://some-pitchwork-review-link',
             'id': 'c2daf7b6cd3733dd28bca48311d68a7bcc476bc0a628a128b4aa25be6095e3f1'
         },
         'c0f9f586742633de7ada3b7766e512c67e322f6579c02d42045a79a42028f2be': {
-            'score': '80',
+            'score': 80,
             'publication_name': 'The Quietus',
             'date': 'Posted Jul 16, 2018',
             'link': 'http://thequietus.com/articles/24925-okzharp-manthe-ribane-closer-apart-lead-album-review',
             'id': 'c0f9f586742633de7ada3b7766e512c67e322f6579c02d42045a79a42028f2be'
         },
         'd0f9f586742633de7ada3b7766e512c67e322f6579c02d42045a79a42028f2be': {
-            'score': '100',
+            'score': 100,
             'publication_name': 'Pitchfork',
             'date': 'Posted Jul 17, 2018',
             'link': 'http://some-pitchwork-review-link',

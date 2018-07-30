@@ -31,14 +31,14 @@ def get_releases():
 def get_reviews():
     return {
         'df00a8c7810b10e3f4631b87e98be36a0e0d27dc2f2abd7e4a71222c97616e1b': {
-            'score': '80',
+            'score': 80,
             'publication_name': 'The Quietus',
             'date': 'Posted Jun 20, 2018',
             'link': 'http://thequietus.com/articles/24811-yob-our-raw-heart-album-review',
             'id': 'df00a8c7810b10e3f4631b87e98be36a0e0d27dc2f2abd7e4a71222c97616e1b'
         },
         '7f5079ae824c21a92a82b85e6d212f3004f26ee1bd5556b6f76f213d884ff877': {
-            'score': '80',
+            'score': 80,
             'publication_name': '57-the-needle-drop',
             'date': None, 'link': 'https://www.youtube.com/watch?v=d5jWckdWqpM',
             'id': '7f5079ae824c21a92a82b85e6d212f3004f26ee1bd5556b6f76f213d884ff877'

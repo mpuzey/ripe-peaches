@@ -21,7 +21,7 @@ class TestMetacritic(unittest.TestCase):
                 'date': 'Posted Jun 20, 2018',
                 'publication_name': 'The Quietus',
                 'release_name': 'Our Raw Heart',
-                'score': '80',
+                'score': 80,
                 'link': 'http://thequietus.com/articles/24811-yob-our-raw-heart-album-review'
             }
         ]
@@ -42,7 +42,7 @@ class TestMetacritic(unittest.TestCase):
                 'date': 'Posted Jun 21, 2018',
                 'publication_name': 'The Quietus',
                 'release_name': 'DAYTONA',
-                'score': '80',
+                'score': 80,
                 'link': 'http://thequietus.com/articles/24834-pusha-t-daytona-album-review'
             }
         ]
@@ -63,7 +63,7 @@ class TestMetacritic(unittest.TestCase):
                 'date': 'Posted Jun 20, 2018',
                 'publication_name': 'The Quietus',
                 'release_name': 'Our Raw Heart',
-                'score': '80',
+                'score': 80,
                 'link': None
             }
         ]
