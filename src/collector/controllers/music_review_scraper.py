@@ -49,7 +49,7 @@ class MusicReviewScraper(Collector):
         release_name = _format_release_name(raw_review.get('release_name'))
         publication_name = raw_review.get('publication_name')
 
-        review =  {
+        review = {
             'score': raw_review.get('score'),
             'publication_name': publication_name,
             'date': raw_review.get('date'),
