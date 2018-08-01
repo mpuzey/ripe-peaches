@@ -41,17 +41,6 @@ class FileAdapter(StorageAdapter):
 
 
 def _merge_document(new_document, existing_documents):
-    # first_list = [1, 2, 2, 5]
-    # second_list = [2, 5, 7, 9]
-    #
-    # in_first = set(first_list)
-    # in_second = set(second_list)
-    #
-    # in_second_but_not_in_first = in_second - in_first
-    #
-    # result = first_list + list(in_second_but_not_in_first)
-
-    # first_list + list(set(second_list) - set(first_list))
 
     documents = {}
     documents.update(existing_documents)
