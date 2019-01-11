@@ -17,7 +17,7 @@ class CollectorService:
 
     def start(self):
 
-        self.collector.collect(METACRITIC_CURATED_PUBLICATIONS, metacritic)
+        # self.collector.collect(METACRITIC_CURATED_PUBLICATIONS, metacritic)
         self.collector.collect(AOTY_PUBLICATIONS, aoty)
         artists = self.collector.parse()
 

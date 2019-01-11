@@ -33,7 +33,7 @@ up the basic Dev tools are as follows:
  such as [Installing python 3.6 on OSX](http://docs.python-guide.org/en/latest/starting/install3/osx/).
 * Install the project dependencies:
 ```
-pip3 install requirements.txt
+pip3 install -r requirements.txt
 ``` 
 * Run the server:
 ```
