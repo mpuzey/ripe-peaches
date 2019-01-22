@@ -7,11 +7,11 @@ PUBLIC_ROOT = os.path.join(ROOT_PATH, 'static')
 
 # Metacritic - scraping from metacritic is slow but we pull 100 releases at at time
 METACRITIC_CURATED_PUBLICATIONS = ['pitchfork', 'consequence-of-sound', 'rolling-stone',
-                                   'the-guardian', 'downed-in-sound', 'the-quietus',
+                                   'the-guardian', 'drowned-in-sound', 'the-quietus',
                                    'sputnikmusic', 'spin',
                                    'beats-per-minute-formerly-one-thirty-bpm']
 METACRITIC_PUBLICATIONS_SAMPLE = ['the-quietus', 'sputnikmusic', 'consequence-of-sound']
-METACRITIC_PUBLICATION_URL = 'http://www.metacritic.com/publication/{publication_name}?' \
+METACRITIC_PUBLICATION_URL = 'https://www.metacritic.com/publication/{publication_name}?' \
       'filter=music&num_items={release_count}'
 METACRITIC_REQUEST_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 '

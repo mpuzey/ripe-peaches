@@ -14,6 +14,10 @@ class MusicReviewScraper(Collector):
         for publication in publications:
             print('scraping ' + publication)
             publication_reviews = source.get_reviews(publication)
+
+            if not publication_reviews:
+                print('No reviews available for the following publication: %s' % repr(source))
+
             self.raw_reviews.extend(publication_reviews)
 
         print('finished scraping!')
