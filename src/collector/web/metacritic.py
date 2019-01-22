@@ -24,9 +24,13 @@ def extract_reviews(html):
     reviews_html = soup.findAll('li', attrs={'class': 'review critic_review first_review'})
     reviews_html.extend(soup.findAll('li', attrs={'class': 'review critic_review'}))
 
+    if not reviews_html:
+        return None
+
     for review_html in reviews_html:
         review = extract_data(review_html)
-        reviews.append(review)
+        if review:
+            reviews.append(review)
 
     return reviews
 
@@ -42,9 +46,15 @@ def extract_data(review_html):
     date, link = extract_full_review(review_html)
 
     review_product_href = review_html.find('div', attrs={'class': 'review_product'}).a['href']
-    artist_parts = re.search(ARTIST_PARTS_REGEX, review_product_href).group(1).split('-')
-    artist = ' '.join([part.capitalize() for part in artist_parts])
+    groups = re.search(ARTIST_PARTS_REGEX, review_product_href)
 
+    if not groups:
+        print('failed to parse metacritic html for release: %s got artist: %s' % (release_name, review_product_href))
+        return None
+
+    artist_parts = groups.group(1).split('-')
+
+    artist = ' '.join([part.capitalize() for part in artist_parts])
     return {
         'artist': artist,
         'release_name': release_name,
