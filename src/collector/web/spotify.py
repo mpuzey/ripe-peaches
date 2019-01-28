@@ -1,4 +1,5 @@
 import os
+from urllib import parse
 import json
 import base64
 import requests
@@ -17,9 +18,11 @@ def get_releases():
     raw_releases = []
 
     while next_page:
+        offset = dict(parse.parse_qsl(parse.urlsplit(next_page).query)).get('offset', 0)
+        if int(offset) >= 10000:
+            break
         response = requests.get(next_page, headers={'Authorization': 'Bearer %s' % access_token}).json()
         new_items, next_page = parse_response(response)
-
         raw_releases.extend(new_items)
 
     return parse_releases(raw_releases)
@@ -41,7 +44,7 @@ def parse_response(response):
     albums = response.get('albums')
 
     if not albums:
-        return None
+        return None, None
 
     return albums.get('items'), albums.get('next')
 
@@ -58,6 +61,9 @@ def parse_releases(raw_releases):
             'spotify_url': release.get('external_urls').get('spotify'),
             'total_tracks': release.get('total_tracks')
         })
+
+    # with open('dump.txt', 'w+') as outfile:
+    #     json.dump({'releases': releases}, outfile)
 
     return releases
 
