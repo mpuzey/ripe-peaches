@@ -33,7 +33,8 @@ AOTY_PUBLICATION_URL = 'https://www.albumoftheyear.org/publication/{publication_
 AOTY_REQUEST_HEADERS = METACRITIC_REQUEST_HEADERS
 
 # Spotify
-SPOTIFY_YEAR_SEARCH='https://api.spotify.com/v1/search?type=album&q=year:1970&offset=%s&limit=50'
+SPOTIFY_YEAR_SEARCH = 'https://api.spotify.com/v1/search?type=album&q=year:1970&offset=%s&limit=50'
+SPOTIFY_NEW_RELEASE_SEARCH = 'https://api.spotify.com/v1/browse/new-releases?limit=50'
 
 # Regex
 ARTIST_PARTS_REGEX = '(?:.*?\/){3}([^\/?#]+)'
