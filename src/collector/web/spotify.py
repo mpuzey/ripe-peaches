@@ -4,13 +4,18 @@ import base64
 import requests
 
 
-def get_releases(access_token, url='https://api.spotify.com/v1/browse/new-releases?limit=50'):
+def get_releases(access_token, url='https://api.spotify.com/v1/browse/new-releases?limit=10'):
 
-    response = requests.get(url, headers={'Authorization': 'Bearer %s' % access_token})
+    response = requests.get(url, headers={'Authorization': 'Bearer %s' % access_token}).json()
 
-    body = json.loads(response.text)
+    albums = response.get('albums')
+    items = albums.get('items')
+    next_url = albums.get('next')
 
-    return body.get('albums').get('items'), body.get('albums').get('next')
+    if not next_url:
+        return items, None
+
+    return items, next_url
 
 
 def get_recent_releases():
@@ -29,13 +34,14 @@ def get_recent_releases():
     # //2910 1970
     # 9950 returns 50 releases for 2018
 
-    url = 'https://api.spotify.com/v1/browse/new-releases?limit=50'
+    url = 'https://api.spotify.com/v1/browse/new-releases?limit=10'
     raw_releases = []
     while True:
-        if url == 'None':
+        items, url = get_releases(access_token, url)
+        raw_releases.extend(items)
+
+        if not url:
             break
-        buffer, url = get_releases(access_token, url)
-        raw_releases.extend(buffer)
 
     releases = []
     for release in raw_releases:
