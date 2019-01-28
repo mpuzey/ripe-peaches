@@ -16,14 +16,11 @@ def get_releases():
     next_page = constants.SPOTIFY_NEW_RELEASE_SEARCH
     raw_releases = []
 
-    while True:
+    while next_page:
         response = requests.get(next_page, headers={'Authorization': 'Bearer %s' % access_token}).json()
         new_items, next_page = parse_response(response)
 
         raw_releases.extend(new_items)
-
-        if not next_page:
-            break
 
     return parse_releases(raw_releases)
 
