@@ -32,6 +32,9 @@ AOTY_PUBLICATIONS = ['57-the-needle-drop', '/32-exclaim', '18-the-four-oh-five',
 AOTY_PUBLICATION_URL = 'https://www.albumoftheyear.org/publication/{publication_name}/reviews/'
 AOTY_REQUEST_HEADERS = METACRITIC_REQUEST_HEADERS
 
+# Spotify
+SPOTIFY_YEAR_SEARCH='https://api.spotify.com/v1/search?type=album&q=year:1970&offset=%s&limit=50'
+
 # Regex
 ARTIST_PARTS_REGEX = '(?:.*?\/){3}([^\/?#]+)'
 

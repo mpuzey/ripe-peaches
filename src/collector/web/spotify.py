@@ -4,18 +4,19 @@ import base64
 import requests
 
 
-def get_releases(access_token, offset):
+def get_releases(access_token, url='https://api.spotify.com/v1/browse/new-releases?limit=50'):
 
-    response = requests.get('https://api.spotify.com/v1/search?type=album&q=year:1970&offset=%s&limit=50' % str(offset),
-                        headers={'Authorization': 'Bearer %s' % access_token})
+    response = requests.get(url, headers={'Authorization': 'Bearer %s' % access_token})
 
-    return json.loads(response.text).get('albums').get('items')
+    body = json.loads(response.text)
+
+    return body.get('albums').get('items'), body.get('albums').get('next')
 
 
 def get_recent_releases():
 
-    client_id = os.environ.get('CLIENT_ID')
-    client_secret = os.environ.get('CLIENT_SECRET')
+    client_id = os.environ.get('SPOTIFY_CLIENT_ID')
+    client_secret = os.environ.get('SPOTIFY_CLIENT_SECRET')
     client_details = '%s:%s' % (client_id, client_secret)
     encoded_client_details = base64.b64encode(client_details.encode('utf-8')).decode('utf-8')
     deets = 'Basic %s' % encoded_client_details
@@ -28,15 +29,13 @@ def get_recent_releases():
     # //2910 1970
     # 9950 returns 50 releases for 2018
 
+    url = 'https://api.spotify.com/v1/browse/new-releases?limit=50'
     raw_releases = []
-    offset = 0
     while True:
-        buffer = get_releases(access_token, offset)
-        raw_releases.extend(buffer)
-        offset += 50
-
-        if len(buffer) < 50:
+        if url == 'None':
             break
+        buffer, url = get_releases(access_token, url)
+        raw_releases.extend(buffer)
 
     releases = []
     for release in raw_releases:
