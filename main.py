@@ -9,6 +9,7 @@ from src.app.gateways.score_store import ScoreStore
 from src.app.web.reviews_handler import ReviewsHandler
 from src.app.web.scores_handler import ScoresHandler
 from src.collector.controllers.music_review_scraper import MusicReviewScraper
+from src.collector.controllers.music_release_scraper import MusicReleaseScraper
 from src.collector.service import CollectorService
 
 from constants import PUBLIC_ROOT
@@ -34,9 +35,11 @@ def make_app():
 
 
 def start_collector_service():
-    collector = MusicReviewScraper()
-    service = CollectorService(collector)
-    service.start()
+    # review_collector = MusicReviewScraper()
+    release_collector = MusicReleaseScraper()
+    service = CollectorService(None, release_collector)
+    # service.collect_reviews()
+    service.collect_releases()
 
 
 def start_aggregator_service():

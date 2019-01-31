@@ -9,8 +9,9 @@ class MusicReviewScraper(Collector):
         self.raw_reviews = []
         self.artists = {}
 
-    def collect(self, publications, source):
+    def collect(self, source, **kwargs):
 
+        publications = kwargs.get('publications')
         for publication in publications:
             print('scraping ' + publication)
             publication_reviews = source.get_reviews(publication)

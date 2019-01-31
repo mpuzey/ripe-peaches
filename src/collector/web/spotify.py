@@ -54,19 +54,12 @@ def parse_releases(raw_releases):
     releases = []
     for release in raw_releases:
         releases.append({
-            'release_name': release.get('name'),
-            'release_artist': release.get('artists')[0].get('name'),
-            'release_date': release.get('release_date'),
-            'release_type': release.get('type'),
+            'name': release.get('name'),
+            'artist': release.get('artists')[0].get('name'),
+            'date': release.get('release_date'),
+            'type': release.get('type'),
             'spotify_url': release.get('external_urls').get('spotify'),
             'total_tracks': release.get('total_tracks')
         })
 
-    # with open('dump.txt', 'w+') as outfile:
-    #     json.dump({'releases': releases}, outfile)
-
     return releases
-
-
-if __name__ == "__main__":
-    get_releases()
