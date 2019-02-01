@@ -13,7 +13,7 @@ class AggregatorService:
         self.artist_store = ArtistStore(FileAdapter('artists'))
         self.release_store = ReleaseStore(FileAdapter('releases'), None)
         self.review_store = ReviewStore(FileAdapter('reviews'))
-        self.score_store = ScoreStore(FileAdapter('scores'))
+        self.score_store = ScoreStore(FileAdapter('scores'), None)
 
     def start(self):
 

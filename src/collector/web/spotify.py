@@ -8,6 +8,7 @@ import constants
 
 def get_releases():
 
+    print('Fetching recent releases from Spotify...')
     details = load_credentials()
     authorization_response = requests.post('https://accounts.spotify.com/api/token',
                                            data={'grant_type': 'client_credentials'},
@@ -62,4 +63,5 @@ def parse_releases(raw_releases):
             'total_tracks': release.get('total_tracks')
         })
 
+    print('Finished fetching recent releases from Spotify')
     return releases
