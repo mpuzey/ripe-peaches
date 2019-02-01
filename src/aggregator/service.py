@@ -28,12 +28,3 @@ class AggregatorService:
         print('finished aggregating scores!')
 
         self.score_store.put(scores)
-
-
-if __name__ == "__main__":
-    from src.aggregator.use_cases.aggregator import Aggregator
-    aggregator = Aggregator()
-    service = AggregatorService(aggregator)
-    service.start()
-
-

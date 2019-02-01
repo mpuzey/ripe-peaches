@@ -52,7 +52,7 @@ def _merge_document(new_document, existing_documents):
             new_values = new_document[key]
             documents[id][key] = existing_values + list(set(new_values) - set(existing_values))
 
-        if type(value) is int:
+        if key == 'reviews_counted' or key == 'score':
             documents[id][key] = new_document[key]
 
     return documents

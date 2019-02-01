@@ -35,10 +35,10 @@ def make_app():
 
 
 def start_collector_service():
-    # review_collector = MusicReviewScraper()
+    review_collector = MusicReviewScraper()
     release_collector = MusicReleaseScraper()
-    service = CollectorService(None, release_collector)
-    # service.collect_reviews()
+    service = CollectorService(review_collector, release_collector)
+    service.collect_reviews()
     service.collect_releases()
 
 
