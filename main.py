@@ -6,6 +6,7 @@ from src.aggregator.service import AggregatorService
 from src.aggregator.use_cases.aggregator import Aggregator
 from src.app.gateways.review_store import ReviewStore
 from src.app.gateways.score_store import ScoreStore
+from src.app.gateways.release_store import ReleaseStore
 from src.app.web.reviews_handler import ReviewsHandler
 from src.app.web.scores_handler import ScoresHandler
 from src.collector.controllers.music_review_scraper import MusicReviewScraper
@@ -25,7 +26,7 @@ def make_app():
     start_aggregator_service()
 
     review_store = ReviewStore(FileAdapter('reviews'))
-    score_store = ScoreStore(FileAdapter('scores'))
+    score_store = ScoreStore(FileAdapter('scores'), FileAdapter('releases'))
 
     return tornado.web.Application([
         (r'/', ScoresHandler, {'store': score_store}),
