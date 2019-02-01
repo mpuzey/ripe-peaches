@@ -41,3 +41,6 @@ ARTIST_PARTS_REGEX = '(?:.*?\/){3}([^\/?#]+)'
 
 # Aggregation
 THUMBS_UP_THRESHOLD = 80
+
+# Scores
+MINIMUM_REVIEWS_COUNTED = 10
