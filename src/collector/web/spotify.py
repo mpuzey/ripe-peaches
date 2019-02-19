@@ -47,7 +47,10 @@ def parse_response(response):
     if not albums:
         return None, None
 
-    return albums.get('items'), albums.get('next')
+    items = albums.get('items')
+    valid_items = [item for item in items if item]
+
+    return valid_items, albums.get('next')
 
 
 def parse_releases(raw_releases):
