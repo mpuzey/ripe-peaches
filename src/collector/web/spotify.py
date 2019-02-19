@@ -4,32 +4,35 @@ import json
 import base64
 import requests
 import constants
+import string
 
 
 def get_releases():
 
     print('Fetching recent releases from Spotify...')
-    details = load_credentials()
+    details = _load_credentials()
     authorization_response = requests.post('https://accounts.spotify.com/api/token',
                                            data={'grant_type': 'client_credentials'},
                                            headers={'Authorization': details})
 
     access_token = json.loads(authorization_response.text).get('access_token')
-    next_page = constants.SPOTIFY_NEW_RELEASE_SEARCH
+
     raw_releases = []
+    wildcard_chars = list(string.ascii_lowercase)
+    for char in wildcard_chars:
+        next_page = constants.SPOTIFY_NEW_RELEASE_SEARCH.format(char=char)
+        while next_page:
+            offset = dict(parse.parse_qsl(parse.urlsplit(next_page).query)).get('offset', 0)
+            if int(offset) >= 10000:
+                break
+            response = requests.get(next_page, headers={'Authorization': 'Bearer %s' % access_token}).json()
+            new_items, next_page = _parse_response(response)
+            raw_releases.extend(new_items)
 
-    while next_page:
-        offset = dict(parse.parse_qsl(parse.urlsplit(next_page).query)).get('offset', 0)
-        if int(offset) >= 10000:
-            break
-        response = requests.get(next_page, headers={'Authorization': 'Bearer %s' % access_token}).json()
-        new_items, next_page = parse_response(response)
-        raw_releases.extend(new_items)
-
-    return parse_releases(raw_releases)
+    return _parse_releases(raw_releases)
 
 
-def load_credentials():
+def _load_credentials():
 
     client_id = os.environ.get('SPOTIFY_CLIENT_ID')
     client_secret = os.environ.get('SPOTIFY_CLIENT_SECRET')
@@ -40,7 +43,7 @@ def load_credentials():
     return details
 
 
-def parse_response(response):
+def _parse_response(response):
 
     albums = response.get('albums')
 
@@ -53,7 +56,7 @@ def parse_response(response):
     return valid_items, albums.get('next')
 
 
-def parse_releases(raw_releases):
+def _parse_releases(raw_releases):
 
     releases = []
     for release in raw_releases:
