@@ -2,19 +2,18 @@
 tornado web server. """
 import tornado.ioloop
 import tornado.web
-from src.aggregator.service import AggregatorService
-from src.aggregator.use_cases.aggregator import Aggregator
-from src.app.gateways.review_store import ReviewStore
-from src.app.gateways.score_store import ScoreStore
-from src.app.gateways.release_store import ReleaseStore
-from src.app.web.reviews_handler import ReviewsHandler
-from src.app.web.scores_handler import ScoresHandler
-from src.collector.controllers.music_review_scraper import MusicReviewScraper
-from src.collector.controllers.music_release_scraper import MusicReleaseScraper
-from src.collector.service import CollectorService
 
 from constants import PUBLIC_ROOT
+from src.aggregator.service import AggregatorService
+from src.aggregator.use_cases.aggregator import Aggregator
 from src.app.db.file_adapter import FileAdapter
+from src.app.gateways.review_store import ReviewStore
+from src.app.gateways.score_store import ScoreStore
+from src.app.web.reviews_handler import ReviewsHandler
+from src.app.web.scores_handler import ScoresHandler
+from src.collector.controllers.music_release_scraper import MusicReleaseScraper
+from src.collector.controllers.music_review_scraper import MusicReviewScraper
+from src.collector.service import CollectorService
 
 
 def make_app():
