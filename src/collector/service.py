@@ -30,4 +30,5 @@ class CollectorService:
         self.release_collector.collect(spotify)
         artists = self.release_collector.parse()
 
+        self.artist_store.put(artists)
         self.release_store.put(artists)

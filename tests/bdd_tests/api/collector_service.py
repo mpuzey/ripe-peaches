@@ -11,15 +11,29 @@ from mock import patch
 from src.collector.service import CollectorService
 
 
-def service_starts(collector_instance, collected_data):
+def collect_reviews(review_collector, collected_data):
 
     with patch('src.collector.service.FileAdapter') as mock_file_adapter, \
          patch('src.collector.service.aoty') as mock_aoty, \
          patch('src.collector.service.metacritic') as mock_metacritic:
 
-        collector_instance.raw_reviews = collected_data
+        review_collector.raw_reviews = collected_data
 
-        collector_service = CollectorService(collector_instance)
-        collector_service.start()
+        collector_service = CollectorService(review_collector, None)
+        collector_service.collect_reviews()
+
+        return mock_file_adapter
+
+
+def collect_release(release_collector, collected_data):
+
+    with patch('src.collector.service.FileAdapter') as mock_file_adapter, \
+            patch('src.collector.service.aoty') as mock_aoty, \
+            patch('src.collector.service.metacritic') as mock_metacritic:
+
+        release_collector.raw_releases = collected_data
+
+        collector_service = CollectorService(None, release_collector)
+        collector_service.collect_reviews()
 
         return mock_file_adapter

@@ -11,10 +11,11 @@ class ScoreStore(Store):
     def get(self):
         scores = self.storage_adapter.get()
         releases = self.release_adapter.get()
-        for release_id, release in releases.items():
-            score = scores.get(release_id)
-            if not score or score.get('date'):
-                continue
+
+        for _, score in scores.items():
+
+            release_id = score.get('release_id')
+            release = releases.get(release_id)
             release_date = release.get('date')
             if release_date:
                 scores[release_id]['date'] = release_date
