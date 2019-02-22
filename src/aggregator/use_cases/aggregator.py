@@ -18,7 +18,8 @@ class Aggregator(DataWorker):
 
         for artist_id, artist in artists.items():
             score = self.__aggregate(artist)
-            scores.update(score)
+            if score:
+                scores.update(score)
 
         return scores
 
@@ -28,10 +29,16 @@ class Aggregator(DataWorker):
         artist_name = artist.get('name')
 
         score = {}
-        for release_id in artist.get('releases'):
+        releases = artist.get('releases')
+        if not releases:
+            return {}
+
+        for release_id in releases:
             release = self.releases.get(release_id)
             release_name = release.get('name')
             review_ids = release.get('reviews')
+            if not review_ids:
+                continue
 
             aggregate_score = self.__aggregate_release_score(review_ids)
 

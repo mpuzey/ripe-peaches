@@ -17,7 +17,7 @@ class MusicReviewScraper(Collector):
             publication_reviews = source.get_reviews(publication)
 
             if not publication_reviews:
-                print('No reviews available for the following publication: %s' % repr(source))
+                print('No reviews available for the following publication: %s' % repr(publication))
 
             self.raw_reviews.extend(publication_reviews)
 
