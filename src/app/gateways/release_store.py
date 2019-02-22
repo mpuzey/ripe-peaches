@@ -26,4 +26,5 @@ class ReleaseStore(Store):
                 release_documents[release_id] = release
 
         self.storage_adapter.put(release_documents)
-        self.review_store.put(review_documents)
+        if review_documents:
+            self.review_store.put(review_documents)

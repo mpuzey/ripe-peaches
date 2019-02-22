@@ -46,7 +46,13 @@ def _merge_document(new_document, existing_documents):
     documents.update(existing_documents)
 
     id = new_document.get('id')
-    for key, value in existing_documents[id].items():
+    existing_document = existing_documents.get(id)
+
+    for key, value in new_document.items():
+        if not existing_document.get(key):
+            documents[id][key] = value
+
+    for key, value in existing_document.items():
         if type(value) is list:
             existing_values = existing_documents[id][key]
             new_values = new_document[key]
