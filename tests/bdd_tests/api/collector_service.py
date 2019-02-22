@@ -14,8 +14,8 @@ from src.collector.service import CollectorService
 def collect_reviews(review_collector, collected_data):
 
     with patch('src.collector.service.FileAdapter') as mock_file_adapter, \
-         patch('src.collector.service.aoty') as mock_aoty, \
-         patch('src.collector.service.metacritic') as mock_metacritic:
+         patch('src.collector.service.aoty') as _, \
+         patch('src.collector.service.metacritic') as __:
 
         review_collector.raw_reviews = collected_data
 
@@ -25,15 +25,14 @@ def collect_reviews(review_collector, collected_data):
         return mock_file_adapter
 
 
-def collect_release(release_collector, collected_data):
+def collect_releases(release_collector, collected_data):
 
     with patch('src.collector.service.FileAdapter') as mock_file_adapter, \
-            patch('src.collector.service.aoty') as mock_aoty, \
-            patch('src.collector.service.metacritic') as mock_metacritic:
+         patch('src.collector.service.spotify') as _:
 
         release_collector.raw_releases = collected_data
 
         collector_service = CollectorService(None, release_collector)
-        collector_service.collect_reviews()
+        collector_service.collect_releases()
 
         return mock_file_adapter

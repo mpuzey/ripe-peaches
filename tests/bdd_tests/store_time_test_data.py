@@ -44,3 +44,44 @@ def get_reviews():
             'id': '7f5079ae824c21a92a82b85e6d212f3004f26ee1bd5556b6f76f213d884ff877'
         }
     }
+
+
+def get_spotify_artists():
+    return {
+        '295f66f6ded4ca9e83f7785b21e4925987b5043e2c864f4df720688a8d6cd3a6':
+            {
+                'id': '295f66f6ded4ca9e83f7785b21e4925987b5043e2c864f4df720688a8d6cd3a6',
+                'name': 'Ladytron',
+                'releases': ['89e29b8440e9ad364f200b6830fe27fb87a744450e8b43b6acbdf09bc1db5019']
+            },
+        '0a218dc3f84d0816899ff8fc2f22e17501444398d2ca5c4b4d3a11d21f53f0c5':
+            {
+                'id': '0a218dc3f84d0816899ff8fc2f22e17501444398d2ca5c4b4d3a11d21f53f0c5',
+                'name': 'Always Ascending',
+                'releases': ['3a2fbceb5e63dab764532cb463047c7150f6f814492a20efc924c92c5fa66797']
+            }
+        }
+
+def get_spotify_releases():
+    return {
+        '89e29b8440e9ad364f200b6830fe27fb87a744450e8b43b6acbdf09bc1db5019':
+            {
+                'id': '89e29b8440e9ad364f200b6830fe27fb87a744450e8b43b6acbdf09bc1db5019',
+                'name': 'Ladytron',
+                'date': '2019-02-15',
+                'type': 'album',
+                'spotify_url': 'https://spotify.com',
+                'total_tracks': 12,
+                'reviews': []
+            },
+        '3a2fbceb5e63dab764532cb463047c7150f6f814492a20efc924c92c5fa66797':
+            {
+                'id': '3a2fbceb5e63dab764532cb463047c7150f6f814492a20efc924c92c5fa66797',
+                'name': 'Franz Ferdin&',
+                'date': '2019-01-15',
+                'type': 'album',
+                'spotify_url': 'https://spotify.com',
+                'total_tracks': 10,
+                'reviews': []
+            }
+    }

@@ -22,13 +22,19 @@ def get_raw_reviews():
 def get_raw_releases():
     return [
         {
-
+            'name': 'Ladytron',
+            'artist': 'Ladytron',
+            'date': '2019-02-15',
+            'type': 'album',
+            'spotify_url': 'https://spotify.com',
+            'total_tracks': 12
+        },
+        {
+            'name': 'Franz Ferdinand',
+            'artist': 'Always Ascending',
+            'date': '2019-01-15',
+            'type': 'album',
+            'spotify_url': 'https://spotify.com',
+            'total_tracks': 10
         }
     ]
-
-    'name': release.get('name'),
-    'artist': release.get('artists')[0].get('name'),
-    'date': release.get('release_date'),
-    'type': release.get('type'),
-    'spotify_url': release.get('external_urls').get('spotify'),
-    'total_tracks': release.get('total_tracks')
