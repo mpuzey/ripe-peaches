@@ -16,6 +16,7 @@ class MusicReviewScraper(Collector):
         publications = kwargs.get('publications')
         for publication in publications:
             print('scraping ' + publication)
+            # TODO: Publication reviews should be an entity
             publication_reviews = source.get_reviews(publication)
 
             if not publication_reviews:
