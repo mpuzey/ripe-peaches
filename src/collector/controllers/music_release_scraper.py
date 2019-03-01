@@ -1,4 +1,4 @@
-from src.collector.entities.collector import Collector
+from src.collector.use_cases.collector import Collector
 
 from src.common.crypto import calculate_hash
 
