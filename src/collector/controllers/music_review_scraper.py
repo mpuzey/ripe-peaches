@@ -8,7 +8,7 @@ from src.common.crypto import calculate_hash
 class MusicReviewScraper(Collector):
 
     def __init__(self):
-        self.raw_reviews = []
+        self.publication_reviews = []
         self.artists = {}
 
     def collect(self, source, **kwargs):
@@ -22,16 +22,16 @@ class MusicReviewScraper(Collector):
             if not publication_reviews:
                 print('No reviews available for the following publication: %s' % repr(publication))
 
-            self.raw_reviews.extend(publication_reviews)
+            self.publication_reviews.extend(publication_reviews)
 
         print('finished scraping!')
 
     def parse(self):
 
-        for raw_review in self.raw_reviews:
-            artist = self._build_artist(raw_review)
-            release = self._build_release(artist, raw_review)
-            self._build_review(raw_review, artist, release)
+        for publication_review in self.publication_reviews:
+            artist = self._build_artist(publication_review)
+            release = self._build_release(artist, publication_review)
+            self._build_review(publication_review, artist, release)
 
         return self.artists
 
@@ -50,7 +50,7 @@ class MusicReviewScraper(Collector):
 
         return artist
 
-    def _build_release(self, artist, raw_review) -> Release:
+    def _build_release(self, artist: Artist, raw_review) -> Release:
 
         artist_name = artist.name
         release_name = _format_release_name(raw_review.get('release_name'))
@@ -69,7 +69,7 @@ class MusicReviewScraper(Collector):
 
         return release
 
-    def _build_review(self, raw_review, artist, release) -> Review:
+    def _build_review(self, raw_review, artist: Artist, release: Release) -> Review:
 
         # TODO: Check for pre-existing review?
         artist_name = artist.name

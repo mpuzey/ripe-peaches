@@ -1,4 +1,6 @@
 from src.app.use_cases.store import Store
+from typing import Dict
+from src.collector.entities.artist import Artist
 
 
 class ReleaseStore(Store):
@@ -11,7 +13,7 @@ class ReleaseStore(Store):
         releases = self.storage_adapter.get()
         return releases
 
-    def put(self, artists):
+    def put(self, artists: Dict[str, Artist]):
 
         review_documents = {}
         release_documents = {}

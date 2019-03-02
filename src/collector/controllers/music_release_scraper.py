@@ -1,6 +1,5 @@
 from src.collector.entities.artist import Artist
 from src.collector.entities.release import Release
-from src.collector.entities.review import Review
 from src.collector.entities.collector import Collector
 
 from src.common.crypto import calculate_hash
@@ -45,7 +44,7 @@ class MusicReleaseScraper(Collector):
 
         return artist
 
-    def _build_release(self, artist, raw_release) -> Release:
+    def _build_release(self, artist: Artist, raw_release) -> Release:
 
         artist_name = artist.name
         release_name = _format_release_name(raw_release.get('name'))

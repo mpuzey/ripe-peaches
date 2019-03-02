@@ -1,4 +1,6 @@
 from src.app.use_cases.store import Store
+from typing import Dict
+from src.collector.entities.artist import Artist
 
 
 class ArtistStore(Store):
@@ -10,7 +12,7 @@ class ArtistStore(Store):
         artists = self.storage_adapter.get()
         return artists
 
-    def put(self, artists):
+    def put(self, artists: Dict[str, Artist]):
         """ This method should retrieve keys using the storage method, build up a list of dupes,
         store any artists which are new and return a dict containing duplicate artist names against
         their ids. When this module is adapted to use a more robust storage method it would be ideal
