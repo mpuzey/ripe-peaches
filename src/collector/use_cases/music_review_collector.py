@@ -10,5 +10,5 @@ class MusicReviewCollector(Collector):
         pass
 
     @abstractmethod
-    def parse(self):
+    def catalog(self):
         pass

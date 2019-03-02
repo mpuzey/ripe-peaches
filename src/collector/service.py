@@ -20,7 +20,7 @@ class CollectorService:
 
         self.review_collector.collect(metacritic, publications=METACRITIC_PUBLICATIONS_SAMPLE)
         self.review_collector.collect(aoty, publications=AOTY_PUBLICATIONS_SAMPLE)
-        artists = self.review_collector.parse()
+        artists = self.review_collector.catalog()
 
         self.artist_store.put(artists)
         self.release_store.put(artists)
@@ -28,7 +28,7 @@ class CollectorService:
     def collect_releases(self):
 
         self.release_collector.collect(spotify)
-        artists = self.release_collector.parse()
+        artists = self.release_collector.catalog()
 
         self.artist_store.put(artists)
         self.release_store.put(artists)

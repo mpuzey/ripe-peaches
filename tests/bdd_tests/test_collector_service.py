@@ -3,7 +3,7 @@ import unittest
 from mock import call
 
 from src.collector.controllers.music_review_scraper import MusicReviewScraper
-from src.collector.use_cases.music_review_parser import MusicReviewParser
+from src.collector.use_cases.music_review_cataloger import MusicReviewCataloger
 from src.collector.controllers.music_release_scraper import MusicReleaseScraper
 from tests.bdd_tests import in_memory_test_data
 from tests.bdd_tests import store_time_test_data
@@ -14,7 +14,7 @@ class TestService(unittest.TestCase):
 
     def test__service__CollectorService__store_reviews__WillStoreArtistsReleasesAndReviews__WhenCalled(self):
 
-        review_collector = MusicReviewScraper(MusicReviewParser())
+        review_collector = MusicReviewScraper(MusicReviewCataloger())
 
         mock_file_adapter = collect_reviews(review_collector, in_memory_test_data.get_raw_reviews())
 

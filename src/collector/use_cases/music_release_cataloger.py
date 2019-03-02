@@ -1,35 +1,27 @@
 from src.collector.entities.artist import Artist
 from src.collector.entities.release import Release
-from src.collector.use_cases.collector import Collector
+from src.collector.use_cases.music_cataloger import MusicCataloger
 
 from src.common.crypto import calculate_hash
 
 
-class MusicReleaseScraper(Collector):
+class MusicReleaseCataloger(MusicCataloger):
 
     def __init__(self):
-        self.raw_releases = []
+
+        super().__init__()
         self.artists = {}
 
-    def collect(self, source, **kwargs):
+    def add(self, raw_releases):
+        for raw_release in raw_releases:
 
-        releases = source.get_releases()
+            artist = self.create_artist(raw_release)
 
-        if not releases:
-            print('No releases available for the following publication: %s' % repr(source))
-
-        self.raw_releases.extend(releases)
-
-    def catalog(self):
-        for raw_release in self.raw_releases:
-
-            artist = self._build_artist(raw_release)
-
-            self._build_release(artist, raw_release)
+            self.create_release(artist, raw_release)
 
         return self.artists
 
-    def _build_artist(self, raw_release) -> Artist:
+    def create_artist(self, raw_release) -> Artist:
 
         artist_name = raw_release.get('artist')
         artist_id = calculate_hash(artist_name)
@@ -44,10 +36,10 @@ class MusicReleaseScraper(Collector):
 
         return artist
 
-    def _build_release(self, artist: Artist, raw_release) -> Release:
+    def create_release(self, artist: Artist, raw_release) -> Release:
 
         artist_name = artist.name
-        release_name = _format_release_name(raw_release.get('name'))
+        release_name = super().format_release_name(raw_release.get('name'))
         release_id = calculate_hash(artist_name + release_name)
 
         existing_release = next((x for x in artist.releases if x.id == release_id), None)
@@ -66,9 +58,3 @@ class MusicReleaseScraper(Collector):
             self.artists[artist.id] = artist
 
         return release
-
-
-def _format_release_name(name: str) -> str:
-    formatted_name = name.replace('and', '&').title()
-
-    return formatted_name
