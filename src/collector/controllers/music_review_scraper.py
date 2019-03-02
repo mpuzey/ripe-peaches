@@ -1,14 +1,15 @@
 from src.collector.entities.artist import Artist
 from src.collector.entities.release import Release
 from src.collector.entities.review import Review
-from src.collector.entities.collector import Collector
+from src.collector.use_cases.collector import Collector
 from src.common.crypto import calculate_hash
 
 
 class MusicReviewScraper(Collector):
 
-    def __init__(self):
+    def __init__(self, parser):
         self.publication_reviews = []
+        self.parser = parser
         self.artists = {}
 
     def collect(self, source, **kwargs):

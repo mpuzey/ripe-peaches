@@ -17,7 +17,7 @@ def collect_reviews(review_collector, collected_data):
          patch('src.collector.service.aoty') as _, \
          patch('src.collector.service.metacritic') as __:
 
-        review_collector.raw_reviews = collected_data
+        review_collector.publication_reviews = collected_data
 
         collector_service = CollectorService(review_collector, None)
         collector_service.collect_reviews()

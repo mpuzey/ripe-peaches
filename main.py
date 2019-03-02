@@ -11,6 +11,7 @@ from src.app.gateways.review_store import ReviewStore
 from src.app.gateways.score_store import ScoreStore
 from src.app.web.reviews_handler import ReviewsHandler
 from src.app.web.scores_handler import ScoresHandler
+from src.collector.use_cases.music_review_parser import MusicReviewParser
 from src.collector.controllers.music_release_scraper import MusicReleaseScraper
 from src.collector.controllers.music_review_scraper import MusicReviewScraper
 from src.collector.service import CollectorService
@@ -35,7 +36,8 @@ def make_app():
 
 
 def start_collector_service():
-    review_collector = MusicReviewScraper()
+    review_parser = MusicReviewParser()
+    review_collector = MusicReviewScraper(review_parser)
     release_collector = MusicReleaseScraper()
     service = CollectorService(review_collector, release_collector)
     service.collect_reviews()
