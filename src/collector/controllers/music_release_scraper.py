@@ -1,3 +1,6 @@
+from src.collector.entities.artist import Artist
+from src.collector.entities.release import Release
+from src.collector.entities.review import Review
 from src.collector.entities.collector import Collector
 
 from src.common.crypto import calculate_hash
@@ -21,43 +24,49 @@ class MusicReleaseScraper(Collector):
     def parse(self):
         for raw_release in self.raw_releases:
 
-            artist_id = self._build_artist(raw_release)
+            artist = self._build_artist(raw_release)
 
-            self._build_release(artist_id, raw_release)
+            self._build_release(artist, raw_release)
 
         return self.artists
 
-    def _build_artist(self, raw_release):
+    def _build_artist(self, raw_release) -> Artist:
 
         artist_name = raw_release.get('artist')
         artist_id = calculate_hash(artist_name)
+        artist = self.artists[artist_id] = Artist(
+            id=artist_id,
+            name=artist_name,
+            releases=[]
+        )
 
-        self.artists[artist_id] = {
-            'id': artist_id,
-            'name': artist_name,
-            'releases': {}
-        }
+        if not self.artists.get(artist_id):
+            self.artists[artist_id] = artist
 
-        return artist_id
+        return artist
 
-    def _build_release(self, artist_id, raw_release):
+    def _build_release(self, artist, raw_release) -> Release:
 
-        artist_name = raw_release.get('artist')
+        artist_name = artist.name
         release_name = _format_release_name(raw_release.get('name'))
-
         release_id = calculate_hash(artist_name + release_name)
 
-        self.artists[artist_id]['releases'][release_id] = {
-            'id': calculate_hash(artist_name + release_name),
-            'name': release_name,
-            'date': raw_release.get('date'),
-            'type': raw_release.get('type'),
-            'spotify_url': raw_release.get('spotify_url'),
-            'total_tracks': raw_release.get('total_tracks'),
-            'reviews': {}
-        }
+        existing_release = next((x for x in artist.releases if x.id == release_id), None)
+        release = Release(
+                id=calculate_hash(artist_name + release_name),
+                name=release_name,
+                reviews=[],
+                date=raw_release.get('date'),
+                type=raw_release.get('type'),
+                spotify_url=raw_release.get('spotify_url'),
+                total_tracks=raw_release.get('total_tracks'),
+            )
 
-        return release_id
+        if not existing_release:
+            artist.releases.append(release)
+            self.artists[artist.id] = artist
+
+        return release
 
 
 def _format_release_name(name):
