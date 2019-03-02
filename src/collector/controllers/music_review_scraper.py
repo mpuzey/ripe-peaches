@@ -28,51 +28,51 @@ class MusicReviewScraper(Collector):
     def parse(self):
 
         for raw_review in self.raw_reviews:
-            artist_id = self._build_artist(raw_review)
-            release_id = self._build_release(artist_id, raw_review)
-            self._build_review(raw_review, artist_id, release_id)
+            artist = self._build_artist(raw_review)
+            release = self._build_release(artist, raw_review)
+            self._build_review(raw_review, artist, release)
 
         return self.artists
 
-    def _build_artist(self, raw_review):
+    def _build_artist(self, raw_review) -> Artist:
 
         artist_name = raw_review.get('artist')
         artist_id = calculate_hash(artist_name)
+        artist = self.artists[artist_id] = Artist(
+            id=artist_id,
+            name=artist_name,
+            releases=[]
+        )
 
         if not self.artists.get(artist_id):
-            self.artists[artist_id] = Artist(
-                id=artist_id,
-                name=artist_name,
-                releases={}
-            )
+            self.artists[artist_id] = artist
 
-        return artist_id
+        return artist
 
-    def _build_release(self, artist_id, raw_review):
+    def _build_release(self, artist, raw_review) -> Release:
 
-        existing_artist = self.artists.get(artist_id)
-        artist_name = existing_artist.name
-
+        artist_name = artist.name
         release_name = _format_release_name(raw_review.get('release_name'))
-
         release_id = calculate_hash(artist_name + release_name)
 
-        existing_release = existing_artist.releases.get(release_id)
-        if not existing_release:
-            existing_artist.releases[release_id] = Release(
+        existing_release = next((x for x in artist.releases if x.id == release_id), None)
+        release = Release(
                 id=calculate_hash(artist_name + release_name),
                 name=release_name,
-                reviews={}
+                reviews=[]
             )
-            self.artists[artist_id] = existing_artist
 
-        return release_id
+        if not existing_release:
+            artist.releases.append(release)
+            self.artists[artist.id] = artist
 
-    def _build_review(self, raw_review, artist_id, release_id):
+        return release
+
+    def _build_review(self, raw_review, artist, release) -> Review:
 
         # TODO: Check for pre-existing review?
-        existing_artist = self.artists.get(artist_id)
-        artist_name = existing_artist.name
+        artist_name = artist.name
+        release_id = release.id
 
         release_name = _format_release_name(raw_review.get('release_name'))
         publication_name = raw_review.get('publication_name')
@@ -85,11 +85,18 @@ class MusicReviewScraper(Collector):
             date=raw_review.get('date'),
             link=raw_review.get('link')
         )
-        existing_artist.releases.get(release_id).reviews[review_id] = review
-        self.artists[artist_id] = existing_artist
+
+        for i, release in enumerate(self.artists[artist.id].releases):
+            if release.id == release_id:
+                release.reviews.append(review)
+                self.artists[artist.id].releases[i] = release
+                break
+
+        return review
 
 
 def _format_release_name(name):
     formatted_name = name.replace('and', '&').title()
 
     return formatted_name
+

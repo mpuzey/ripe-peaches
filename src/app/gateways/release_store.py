@@ -17,13 +17,13 @@ class ReleaseStore(Store):
         release_documents = {}
 
         for _, artist in artists.items():
-            for release_id, release in artist['releases'].items():
+            for release in artist.releases:
                 review_ids = []
-                for review_id, review in release['reviews'].items():
-                    review_ids.append(review_id)
-                    review_documents[review_id] = review
-                release['reviews'] = review_ids
-                release_documents[release_id] = release
+                for review in release.reviews:
+                    review_ids.append(review.id)
+                    review_documents[review.id] = review.__dict__
+                release.reviews = review_ids
+                release_documents[release.id] = release.__dict__
 
         self.storage_adapter.put(release_documents)
         if review_documents:

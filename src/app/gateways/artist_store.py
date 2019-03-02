@@ -19,10 +19,10 @@ class ArtistStore(Store):
         artist_documents = {}
         for _, artist in artists.items():
             release_ids = []
-            for _, release in artist['releases'].items():
-                release_ids.append(release['id'])
+            for release in artist.releases:
+                release_ids.append(release.id)
             artist_document = {}
-            artist_document.update(artist)
+            artist_document.update(artist.__dict__)
             artist_document['releases'] = release_ids
             artist_documents[artist_document['id']] = artist_document
 

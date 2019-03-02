@@ -18,12 +18,20 @@ def get_releases():
         '4dc37c6ac420e706a784b2c2ea7aca9f7d3be7d904add34114c9576868c375c0': {
             'id': '4dc37c6ac420e706a784b2c2ea7aca9f7d3be7d904add34114c9576868c375c0',
             'name': 'Our Raw Heart',
-            'reviews': ['df00a8c7810b10e3f4631b87e98be36a0e0d27dc2f2abd7e4a71222c97616e1b']
+            'reviews': ['df00a8c7810b10e3f4631b87e98be36a0e0d27dc2f2abd7e4a71222c97616e1b'],
+            'date': None,
+            'type': None,
+            'total_tracks': None,
+            'spotify_url': None
         },
         '9c50562e8ffce69c6d66b50ba509c4ce622a2154f45372a24646457e793db75d': {
             'id': '9c50562e8ffce69c6d66b50ba509c4ce622a2154f45372a24646457e793db75d',
             'name': 'The Sciences',
-            'reviews': ['7f5079ae824c21a92a82b85e6d212f3004f26ee1bd5556b6f76f213d884ff877']
+            'reviews': ['7f5079ae824c21a92a82b85e6d212f3004f26ee1bd5556b6f76f213d884ff877'],
+            'date': None,
+            'type': None,
+            'total_tracks': None,
+            'spotify_url': None
         }
     }
 
