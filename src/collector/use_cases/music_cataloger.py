@@ -12,10 +12,20 @@ class MusicCataloger(Cataloger):
 
     def __init__(self):
         self.artists = {}
+        self.releases = []
+        self.reviews = []
 
     @abstractmethod
     def add(self, data) -> Dict[str, Artist]:
         pass
+
+    def get_artists(self) -> Dict[str, Artist]:
+
+        return self.artists
+
+    def get_release(self) -> Dict[str, Artist]:
+
+        return self.artists
 
     def get_artists(self) -> Dict[str, Artist]:
 
@@ -34,14 +44,6 @@ class MusicCataloger(Cataloger):
             self.artists[artist_id] = artist
 
         return artist
-
-    @abstractmethod
-    def create_release(self, artist: Artist, pulication_review: Dict) -> Release:
-        pass
-
-    @abstractmethod
-    def create_review(self, publication_review: Dict, artist: Artist, release: Release) -> Review:
-        pass
 
     def format_release_name(self, name: str) -> str:
         formatted_name = name.replace('and', '&').title()

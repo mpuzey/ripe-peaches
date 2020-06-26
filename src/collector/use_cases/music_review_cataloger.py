@@ -18,9 +18,9 @@ class MusicReviewCataloger(MusicCataloger):
 
             artist = self.create_artist(publication_review)
 
-            release_id = self.create_release(artist, publication_review)
+            release_id = self._create_release(artist, publication_review)
 
-            self.create_review(publication_review, artist, release_id)
+            self._create_review(publication_review, artist, release_id)
 
         return self.artists
 
@@ -30,11 +30,11 @@ class MusicReviewCataloger(MusicCataloger):
     def get_reviews(self):
         raise NotImplemented
 
-    def create_artist(self, publication_review: Dict) -> Artist:
+    def _create_artist(self, publication_review: Dict) -> Artist:
 
         return super().create_artist(publication_review)
 
-    def create_release(self, artist: Artist, raw_review) -> Release:
+    def _create_release(self, artist: Artist, raw_review) -> Release:
 
         artist_name = artist.name
         release_name = super().format_release_name(raw_review.get('release_name'))
@@ -53,7 +53,7 @@ class MusicReviewCataloger(MusicCataloger):
 
         return release
 
-    def create_review(self, publication_review, artist: Artist, release: Release) -> Review:
+    def _create_review(self, publication_review, artist: Artist, release: Release) -> Review:
 
         # TODO: Check for pre-existing review?
         artist_name = artist.name

@@ -11,19 +11,11 @@ class Cataloger(ABC):
         pass
 
     @abstractmethod
-    def get_reviews(self):
+    def get_releases(self) -> List[Release]:
         pass
 
     @abstractmethod
-    def get_releases(self):
-        pass
-
-    @abstractmethod
-    def create_release(self, publication_review: Dict) -> Release:
-        pass
-
-    @abstractmethod
-    def create_review(self, publication_review: Dict) -> Review:
+    def get_reviews(self) -> List[Review]:
         pass
 
     @abstractmethod
