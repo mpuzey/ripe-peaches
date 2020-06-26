@@ -2,7 +2,7 @@ from src.collector.use_cases.collector import Collector
 from src.collector.use_cases.music_cataloger import Cataloger
 
 
-class MusicReviewScraper(Collector):
+class MusicReviewCollector(Collector):
 
     def __init__(self, cataloger: Cataloger):
         self.publication_reviews = []

@@ -5,7 +5,7 @@ from src.collector.use_cases.collector import Collector
 from src.common.crypto import calculate_hash
 
 
-class MusicReleaseScraper(Collector):
+class MusicReleaseCollector(Collector):
 
     def __init__(self):
         self.raw_releases = []

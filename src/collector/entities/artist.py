@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from src.collector.entities.release import Release
 
-# TODO: artist is specific to music, do we want some author or other generic parent?
+# TODO: artist is specific to music, do we prefer a Creator/ Author rename or generic parent?
 
 @dataclass_json
 @dataclass
