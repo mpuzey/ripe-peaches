@@ -1,4 +1,5 @@
-from typing import Dict
+from typing import Dict, List
+
 from src.collector.entities.artist import Artist
 from src.collector.entities.release import Release
 from src.collector.entities.review import Review
@@ -16,7 +17,7 @@ class MusicReviewCataloger(MusicCataloger):
     def add(self, data: Dict) -> Dict[str, Artist]:
         for publication_review in data:
 
-            artist = self.create_artist(publication_review)
+            artist = self._create_artist(publication_review)
 
             release_id = self._create_release(artist, publication_review)
 
@@ -24,15 +25,30 @@ class MusicReviewCataloger(MusicCataloger):
 
         return self.artists
 
-    def get_releases(self):
+    def get_artists(self) -> Dict[str, Artist]:
+        return self.artists
+
+    def get_releases(self) -> List[Release]:
         raise NotImplemented
 
-    def get_reviews(self):
+    def get_reviews(self) -> List[Release]:
         raise NotImplemented
 
     def _create_artist(self, publication_review: Dict) -> Artist:
+        # return super().create_artist(publication_review)
 
-        return super().create_artist(publication_review)
+        artist_name = publication_review.get('artist')
+        artist_id = calculate_hash(artist_name)
+        artist = Artist(
+            id=artist_id,
+            name=artist_name,
+            releases=[]
+        )
+
+        if not self.artists.get(artist_id):
+            self.artists[artist_id] = artist
+
+        return self.artists[artist_id]
 
     def _create_release(self, artist: Artist, raw_review) -> Release:
 

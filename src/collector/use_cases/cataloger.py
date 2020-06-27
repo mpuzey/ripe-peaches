@@ -12,6 +12,10 @@ class Cataloger(ABC):
         pass
 
     @abstractmethod
+    def get_artists(self) -> Dict[str, Artist]:
+        pass
+
+    @abstractmethod
     def get_releases(self) -> List[Release]:
         pass
 

@@ -32,8 +32,8 @@ class TestScraper(unittest.TestCase):
 
         cataloger = MusicReviewCataloger()
         scraper = MusicReviewCollector(cataloger)
-        scraper.collect(mock_metacritic, publications=['publication1'])
-        scraper.collect(mock_aoty, publications=['publication2'])
+        scraper.collect(mock_metacritic, publications=['pitchfork'])
+        scraper.collect(mock_aoty, publications=['melon'])
 
         publication_reviews = scraper.catalog()
         expected_reviews = {
@@ -42,17 +42,17 @@ class TestScraper(unittest.TestCase):
                 name='YOB',
                 releases=[
                     Release(
-                        id='21560cc14bc7a778ae798a07e973b1164dc3717f2e863f3d9468a803bcb36abb',
+                        id='137801a1514b811c49b2d27183e4b6fd8b7371d76cc4ff177c0a70d9700e196c',
                         name='Clearing The Path',
                         reviews=[
                             Review(
-                                id='5d53f2cda49001c1663d8b0cae7a7836a841cbfd2f77d2030439ccd5331e3ba8',
+                                id='af9896e8834f324e2ad0aa281985cc9b13534ec3b2b81414f05df508ef0f2f0b',
                                 publication_name='pitchfork',
                                 score=None,
                                 date=None,
                                 link=None),
                             Review(
-                                id='',
+                                id='f36c160e4def4615f4ab216fa3a3f68bb98b29e649be9804a41e6199e9985f48',
                                 publication_name='melon',
                                 score=None,
                                 date=None,
@@ -66,4 +66,4 @@ class TestScraper(unittest.TestCase):
             )
         }
 
-        self.assertEqual(publication_reviews, expected_reviews)
+        self.assertEqual(expected_reviews, publication_reviews)

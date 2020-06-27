@@ -3,7 +3,7 @@ from src.collector.entities.release import Release
 from src.collector.entities.review import Review
 from src.collector.use_cases.cataloger import Cataloger
 from abc import abstractmethod
-from typing import Dict
+from typing import Dict, List
 
 from src.common.crypto import calculate_hash
 
@@ -23,16 +23,16 @@ class MusicCataloger(Cataloger):
 
         return self.artists
 
-    def get_release(self) -> Dict[str, Artist]:
+    def get_releases(self) -> List[Release]:
 
-        return self.artists
+        return self.releases
 
-    def get_artists(self) -> Dict[str, Artist]:
+    def get_reviews(self) -> List[Review]:
 
-        return self.artists
+        return self.reviews
 
-    def create_artist(self, raw_release: Dict) -> Artist:
-        artist_name = raw_release.get('artist')
+    def create_artist(self, publication_review: Dict) -> Artist:
+        artist_name = publication_review.get('artist')
         artist_id = calculate_hash(artist_name)
         artist = self.artists[artist_id] = Artist(
             id=artist_id,
