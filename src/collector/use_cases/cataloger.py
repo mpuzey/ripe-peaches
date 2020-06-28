@@ -8,7 +8,11 @@ from abc import ABC, abstractmethod
 class Cataloger(ABC):
 
     @abstractmethod
-    def add(self, data: List) -> Dict[str, Artist]:
+    def add_review(self, data: []) -> Dict[str, Artist]:
+        pass
+
+    @abstractmethod
+    def add_release(self, data: Dict) -> Dict[str, Artist]:
         pass
 
     @abstractmethod

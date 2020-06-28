@@ -1,11 +1,12 @@
 from src.collector.use_cases.collector import Collector
 from src.collector.use_cases.music_cataloger import Cataloger
+from src.collector.entities.publication_review import PublicationReview
 
 
 class MusicReviewCollector(Collector):
 
     def __init__(self, cataloger: Cataloger):
-        self.publication_reviews = []
+        self.publication_reviews = [PublicationReview]
         self.cataloger = cataloger
 
     def collect(self, source, **kwargs):
@@ -13,7 +14,6 @@ class MusicReviewCollector(Collector):
         publications = kwargs.get('publications')
         for publication in publications:
             print('scraping ' + publication)
-            # TODO: Publication reviews should be an entity
             publication_reviews = source.get_reviews(publication)
 
             if not publication_reviews:
@@ -25,4 +25,4 @@ class MusicReviewCollector(Collector):
 
     def catalog(self):
 
-        return self.cataloger.add(self.publication_reviews)
+        return self.cataloger.add_review(self.publication_reviews)

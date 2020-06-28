@@ -12,7 +12,7 @@ class MusicReleaseCataloger(MusicCataloger):
         super().__init__()
         self.artists = {}
 
-    def add(self, raw_releases):
+    def add_release(self, raw_releases):
         for raw_release in raw_releases:
 
             artist = self.create_artist(raw_release)

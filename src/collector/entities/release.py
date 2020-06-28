@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from dataclasses_json import dataclass_json
 from src.collector.entities.review import Review
 
+
 @dataclass_json
 @dataclass
 class Release:
