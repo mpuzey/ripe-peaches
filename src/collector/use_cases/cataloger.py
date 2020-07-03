@@ -2,13 +2,14 @@ from typing import List, Dict
 from src.collector.entities.release import Release
 from src.collector.entities.review import Review
 from src.collector.entities.artist import Artist
+from src.collector.entities.publication_review import PublicationReview
 from abc import ABC, abstractmethod
 
 
 class Cataloger(ABC):
 
     @abstractmethod
-    def add_review(self, data: []) -> Dict[str, Artist]:
+    def add_review(self, publication_reviews: [PublicationReview]) -> Dict[str, Artist]:
         pass
 
     @abstractmethod

@@ -5,7 +5,8 @@ from constants import AOTY_PUBLICATION_URL, AOTY_REQUEST_HEADERS
 from src.collector.entities.publication_review import PublicationReview
 
 
-def get_reviews(publication_name) -> [PublicationReview]:
+def \
+        get_reviews(publication_name) -> [PublicationReview]:
 
     formatted_uri = AOTY_PUBLICATION_URL.format(publication_name=publication_name)
     response = requests.get(formatted_uri, headers=AOTY_REQUEST_HEADERS)

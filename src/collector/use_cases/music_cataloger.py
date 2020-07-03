@@ -16,8 +16,9 @@ class MusicCataloger(Cataloger):
         self.releases = []
         self.reviews = []
 
-    def add_review(self, data: [PublicationReview]) -> Dict[str, Artist]:
-        for publication_review in data:
+    def add_review(self, publication_reviews: List[PublicationReview]) -> Dict[str, Artist]:
+        print(publication_reviews)
+        for publication_review in publication_reviews:
             artist = self._create_artist(publication_review)
 
             release_id = self._create_release(artist, publication_review)
@@ -46,9 +47,9 @@ class MusicCataloger(Cataloger):
 
         return formatted_name
 
-    def _create_artist(self, publication_review: Dict) -> Artist:
+    def _create_artist(self, publication_review: PublicationReview) -> Artist:
 
-        artist_name = publication_review.get('artist')
+        artist_name = publication_review.artist
         artist_id = calculate_hash(artist_name)
         artist = Artist(
             id=artist_id,
@@ -61,10 +62,10 @@ class MusicCataloger(Cataloger):
 
         return self.artists[artist_id]
 
-    def _create_release(self, artist: Artist, raw_review) -> Release:
+    def _create_release(self, artist: Artist, publication_review: PublicationReview) -> Release:
 
         artist_name = artist.name
-        release_name = self.format_release_name(raw_review.get('release_name'))
+        release_name = self.format_release_name(publication_review.release_name)
         release_id = calculate_hash(artist_name + release_name)
 
         existing_release = next((x for x in artist.releases if x.id == release_id), None)
@@ -80,13 +81,13 @@ class MusicCataloger(Cataloger):
 
         return release
 
-    def _create_review(self, publication_review, artist: Artist, release: Release) -> Review:
+    def _create_review(self, publication_review: PublicationReview, artist: Artist, release: Release) -> Review:
 
         # TODO: Check for pre-existing review?
         artist_name = artist.name
         release_id = release.id
 
-        release_name = self.format_release_name(publication_review.get('release_name'))
+        release_name = self.format_release_name(publication_review.release_name)
         publication_name = publication_review.get('publication_name')
 
         review_id = calculate_hash(artist_name + release_name + publication_name)

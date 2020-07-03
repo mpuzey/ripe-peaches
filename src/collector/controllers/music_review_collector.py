@@ -1,12 +1,13 @@
 from src.collector.use_cases.collector import Collector
 from src.collector.use_cases.music_cataloger import Cataloger
 from src.collector.entities.publication_review import PublicationReview
+from typing import List
 
 
 class MusicReviewCollector(Collector):
 
     def __init__(self, cataloger: Cataloger):
-        self.publication_reviews = [PublicationReview]
+        self.publication_reviews = List[PublicationReview]
         self.cataloger = cataloger
 
     def collect(self, source, **kwargs):

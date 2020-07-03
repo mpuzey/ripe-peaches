@@ -1,9 +1,11 @@
 import unittest
 
 from mock import MagicMock
+from typing import List
 from src.collector.entities.artist import Artist
 from src.collector.entities.review import Review
 from src.collector.entities.release import Release
+from src.collector.entities.publication_review import PublicationReview
 
 from src.collector.controllers.music_review_collector import MusicReviewCollector
 from src.collector.use_cases.music_review_cataloger import MusicReviewCataloger
@@ -13,21 +15,24 @@ class TestScraper(unittest.TestCase):
 
     def test__scraper__MusicReviewScraper__collect__WillBuildUpAListOfCuratedReviewsOnInstance__WhenCalledTwice(self):
         mock_metacritic = MagicMock()
-        mock_metacritic.get_reviews.return_value = [
-            {
-                'release_name': 'Clearing The Path',
-                'artist': 'YOB',
-                'publication_name': 'pitchfork'
-            }
+        mock_metacritic.get_reviews.return_value = List[
+            PublicationReview(
+                release_name='Clearing The Path',
+                artist='YOB',
+                publication_name='pitchfork',
+                score=80,
+                date='',
+                link='')
         ]
-
         mock_aoty = MagicMock()
-        mock_aoty.get_reviews.return_value = [
-            {
-                'release_name': 'Clearing The Path',
-                'artist': 'YOB',
-                'publication_name': 'melon'
-            }
+        mock_aoty.get_reviews.return_value = List[
+            PublicationReview(
+                release_name='Clearing The Path',
+                artist='YOB',
+                publication_name='melon',
+                score=70,
+                date='',
+                link='')
         ]
 
         cataloger = MusicReviewCataloger()

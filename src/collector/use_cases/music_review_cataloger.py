@@ -16,7 +16,7 @@ class MusicReviewCataloger(MusicCataloger):
         self.releases = []
         self.reviews = []
 
-    def add_review(self, data: [PublicationReview]) -> Dict[str, Artist]:
+    def add_review(self, data: List[PublicationReview]) -> Dict[str, Artist]:
         super().add_review(data)
 
         return self.artists
