@@ -11,11 +11,11 @@ from src.collector.controllers.music_review_collector import MusicReviewCollecto
 from src.collector.use_cases.music_review_cataloger import MusicReviewCataloger
 
 
-class TestScraper(unittest.TestCase):
+class TestCataloger(unittest.TestCase):
 
-    def test__scraper__MusicReviewScraper__collect__WillBuildUpAListOfCuratedReviewsOnInstance__WhenCalledTwice(self):
+    def test__cataloger__MusicReviewCataloger__collect__WillBuildUpAListOfCuratedReviewsOnInstance__WhenCalledTwice(self):
         mock_metacritic = MagicMock()
-        mock_metacritic.get_reviews.return_value = List[
+        mock_metacritic.get_reviews.return_value = [
             PublicationReview(
                 release_name='Clearing The Path',
                 artist='YOB',
@@ -25,7 +25,7 @@ class TestScraper(unittest.TestCase):
                 link='')
         ]
         mock_aoty = MagicMock()
-        mock_aoty.get_reviews.return_value = List[
+        mock_aoty.get_reviews.return_value = [
             PublicationReview(
                 release_name='Clearing The Path',
                 artist='YOB',
@@ -53,15 +53,15 @@ class TestScraper(unittest.TestCase):
                             Review(
                                 id='af9896e8834f324e2ad0aa281985cc9b13534ec3b2b81414f05df508ef0f2f0b',
                                 publication_name='pitchfork',
-                                score=None,
-                                date=None,
-                                link=None),
+                                score=80,
+                                date='',
+                                link=''),
                             Review(
                                 id='f36c160e4def4615f4ab216fa3a3f68bb98b29e649be9804a41e6199e9985f48',
                                 publication_name='melon',
-                                score=None,
-                                date=None,
-                                link=None)
+                                score=70,
+                                date='',
+                                link='')
                         ],
                         date=None,
                         type=None,
