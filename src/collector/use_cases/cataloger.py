@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 class Cataloger(ABC):
 
     @abstractmethod
-    def add_review(self, publication_reviews: [PublicationReview]) -> Dict[str, Artist]:
+    def add_review(self, publication_reviews: List[PublicationReview]) -> Dict[str, Artist]:
         pass
 
     @abstractmethod

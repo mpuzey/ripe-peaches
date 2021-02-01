@@ -1,6 +1,6 @@
 from src.collector.entities.artist import Artist
 from src.collector.entities.release import Release
-from src.collector.use_cases.collector import Collector
+from src.collector.controllers.collector import Collector
 
 from src.common.crypto import calculate_hash
 

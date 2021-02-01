@@ -88,15 +88,15 @@ class MusicCataloger(Cataloger):
         release_id = release.id
 
         release_name = self.format_release_name(publication_review.release_name)
-        publication_name = publication_review.get('publication_name')
+        publication_name = publication_review.publication_name
 
         review_id = calculate_hash(artist_name + release_name + publication_name)
         review = Review(
             id=review_id,
             publication_name=publication_name,
-            score=publication_review.get('score'),
-            date=publication_review.get('date'),
-            link=publication_review.get('link')
+            score=publication_review.score,
+            date=publication_review.date,
+            link=publication_review.link
         )
 
         for i, release in enumerate(self.artists[artist.id].releases):
