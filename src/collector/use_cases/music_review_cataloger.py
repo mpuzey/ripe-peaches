@@ -3,12 +3,12 @@ from typing import Dict, List
 from src.collector.entities.artist import Artist
 from src.collector.entities.release import Release
 from src.collector.entities.review import Review
-from src.collector.use_cases.music_catalogue import MusicCatalogue
+from src.collector.use_cases.music_catalog import MusicCatalog
 from src.collector.entities.publication_review import PublicationReview
 from src.common.crypto import calculate_hash
 
 
-class MusicReviewCataloger(MusicCatalogue):
+class MusicReviewCataloger(MusicCatalog):
 
     def __init__(self):
         super().__init__()

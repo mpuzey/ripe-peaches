@@ -1,11 +1,11 @@
 from src.collector.entities.artist import Artist
 from src.collector.entities.release import Release
-from src.collector.use_cases.music_catalogue import MusicCatalogue
+from src.collector.use_cases.music_catalog import MusicCatalog
 
 from src.common.crypto import calculate_hash
 
 
-class MusicReleaseCataloger(MusicCatalogue):
+class MusicReleaseCataloger(MusicCatalog):
 
     def __init__(self):
 
