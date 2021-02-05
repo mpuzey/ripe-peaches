@@ -1,19 +1,20 @@
 import unittest
 
 from mock import MagicMock
-from typing import List
+
+from src.collector.controllers.music_review_collector import MusicReviewCollector
 from src.collector.entities.artist import Artist
 from src.collector.entities.review import Review
 from src.collector.entities.release import Release
 from src.collector.entities.publication_review import PublicationReview
 
-from src.collector.controllers.music_review_collector import MusicReviewCollector
-from src.collector.use_cases.music_review_cataloger import MusicReviewCataloger
+from src.collector.use_cases.music_catalog import MusicCatalog
+from src.collector.use_cases.music_cataloger import MusicCataloger
 
 
-class TestCataloger(unittest.TestCase):
+class TestMusicReviewCollector(unittest.TestCase):
 
-    def test__cataloger__MusicReviewCataloger__collect__WillBuildUpAListOfCuratedReviewsOnInstance__WhenCalledTwice(self):
+    def test__MusicReviewCollector__collect__WillBuildUpAListOfCuratedReviewsOnInstance__WhenCalledTwice(self):
         mock_metacritic = MagicMock()
         mock_metacritic.get_reviews.return_value = [
             PublicationReview(
@@ -35,12 +36,13 @@ class TestCataloger(unittest.TestCase):
                 link='')
         ]
 
-        cataloger = MusicReviewCataloger()
-        scraper = MusicReviewCollector(cataloger)
-        scraper.collect(mock_metacritic, publications=['pitchfork'])
-        scraper.collect(mock_aoty, publications=['melon'])
+        catalog = MusicCatalog()
+        cataloger = MusicCataloger(catalog)
+        collector = MusicReviewCollector(cataloger)
+        collector.collect(mock_metacritic, publications=['pitchfork'])
+        collector.collect(mock_aoty, publications=['melon'])
 
-        publication_reviews = scraper.catalog()
+        publication_reviews = collector.catalog()
         expected_reviews = {
             'd92a4901abc2f02dfd347e0793ca3f1c223cbff321d30cdef2679ed13b1c58ae': Artist(
                 id='d92a4901abc2f02dfd347e0793ca3f1c223cbff321d30cdef2679ed13b1c58ae',

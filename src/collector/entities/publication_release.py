@@ -10,4 +10,4 @@ from src.common.crypto import calculate_hash
 @dataclass
 class PublicationRelease:
     artist: str
-    name: str
+

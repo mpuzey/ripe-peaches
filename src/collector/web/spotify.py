@@ -6,8 +6,10 @@ import requests
 import constants
 import string
 
+from src.collector.entities.release import Release
 
-def get_releases():
+
+def get_releases() -> [Release]:
 
     print('Fetching recent releases from Spotify...')
     details = _load_credentials()
@@ -56,18 +58,19 @@ def _parse_response(response):
     return valid_items, albums.get('next')
 
 
-def _parse_releases(raw_releases):
+def _parse_releases(raw_releases) -> [Release]:
 
     releases = []
-    for release in raw_releases:
-        releases.append({
-            'name': release.get('name'),
-            'artist': release.get('artists')[0].get('name'),
-            'date': release.get('release_date'),
-            'type': release.get('type'),
-            'spotify_url': release.get('external_urls').get('spotify'),
-            'total_tracks': release.get('total_tracks')
-        })
+    for raw_release in raw_releases:
+         release = Release(
+            name=raw_release.get('name'),
+            artist=raw_release.get('artists')[0].get('name'),
+            date=raw_release.get('release_date'),
+            type=raw_release.get('type'),
+            spotify_url=raw_release.get('external_urls').get('spotify'),
+            total_tracks=raw_release.get('total_tracks')
+        )
+        releases.append(release)
 
     print('Finished fetching recent releases from Spotify')
     return releases

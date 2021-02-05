@@ -1,10 +1,10 @@
 from src.collector.controllers.collector import Collector
-from src.collector.use_cases.music_catalog import Catalog
+from src.collector.use_cases.music_cataloger import MusicCataloger
 
 
 class MusicReviewCollector(Collector):
 
-    def __init__(self, cataloger: Catalog):
+    def __init__(self, cataloger: MusicCataloger):
         self.publication_reviews = []
         self.cataloger = cataloger
 
@@ -24,4 +24,4 @@ class MusicReviewCollector(Collector):
 
     def catalog(self):
 
-        return self.cataloger.add_review(self.publication_reviews)
+        return self.cataloger.add_reviews(self.publication_reviews)
