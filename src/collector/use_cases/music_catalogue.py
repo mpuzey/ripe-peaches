@@ -1,7 +1,7 @@
 from src.collector.entities.artist import Artist
 from src.collector.entities.release import Release
 from src.collector.entities.review import Review
-from src.collector.use_cases.cataloger import Cataloger
+from src.collector.use_cases.catalogue import Catalogue
 from abc import abstractmethod
 from typing import Dict, List
 from src.collector.entities.publication_review import PublicationReview
@@ -9,7 +9,7 @@ from src.collector.entities.publication_review import PublicationReview
 from src.common.crypto import calculate_hash
 
 
-class MusicCataloger(Cataloger):
+class MusicCatalogue(Catalogue):
 
     def __init__(self):
         self.artists = {}
@@ -17,7 +17,7 @@ class MusicCataloger(Cataloger):
         self.reviews = []
 
     def add_review(self, publication_reviews: List[PublicationReview]) -> Dict[str, Artist]:
-        print(publication_reviews)
+
         for publication_review in publication_reviews:
             artist = self._create_artist(publication_review)
 

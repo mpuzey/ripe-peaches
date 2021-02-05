@@ -6,7 +6,7 @@ from src.collector.entities.publication_review import PublicationReview
 from abc import ABC, abstractmethod
 
 
-class Cataloger(ABC):
+class Catalogue(ABC):
 
     @abstractmethod
     def add_review(self, publication_reviews: List[PublicationReview]) -> Dict[str, Artist]:
