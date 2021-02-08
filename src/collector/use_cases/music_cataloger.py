@@ -6,6 +6,7 @@ from src.collector.use_cases.librarian import Librarian
 from typing import Dict, List
 from src.collector.entities.publication_review import PublicationReview
 from src.collector.entities.external_release import ExternalRelease
+from src.collector.use_cases.music_catalog import MusicCatalog
 
 
 from src.common.crypto import calculate_hash
@@ -13,13 +14,14 @@ from src.common.crypto import calculate_hash
 
 class MusicCataloger(Librarian):
 
-    def __init__(self, catalog):
+    def __init__(self, catalog: MusicCatalog):
         self.catalog = catalog
         self.new_artists = {}
 
     def add_reviews(self, publication_reviews: List[PublicationReview]) -> Dict[str, Artist]:
 
         for publication_review in publication_reviews:
+
             artist_name = publication_review.artist
             artist = self._create_artist(artist_name)
 
