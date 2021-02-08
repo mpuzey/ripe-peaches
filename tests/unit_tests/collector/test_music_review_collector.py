@@ -14,7 +14,7 @@ from src.collector.use_cases.music_cataloger import MusicCataloger
 
 class TestMusicReviewCollector(unittest.TestCase):
 
-    def test__MusicReviewCollector__collect__WillBuildUpAListOfCuratedReviewsOnInstance__WhenCalledTwice(self):
+    def test__MusicReviewCollector__collect__WillCatalogAListOfArtistsWithReviews__WhenCalledTwice(self):
         mock_metacritic = MagicMock()
         mock_metacritic.get_reviews.return_value = [
             PublicationReview(
@@ -42,8 +42,8 @@ class TestMusicReviewCollector(unittest.TestCase):
         collector.collect(mock_metacritic, publications=['pitchfork'])
         collector.collect(mock_aoty, publications=['melon'])
 
-        publication_reviews = collector.catalog()
-        expected_reviews = {
+        actual_artists = collector.catalog()
+        expected_artists = {
             'd92a4901abc2f02dfd347e0793ca3f1c223cbff321d30cdef2679ed13b1c58ae': Artist(
                 id='d92a4901abc2f02dfd347e0793ca3f1c223cbff321d30cdef2679ed13b1c58ae',
                 name='YOB',
@@ -73,4 +73,4 @@ class TestMusicReviewCollector(unittest.TestCase):
             )
         }
 
-        self.assertEqual(expected_reviews, publication_reviews)
+        self.assertEqual(expected_artists, actual_artists)

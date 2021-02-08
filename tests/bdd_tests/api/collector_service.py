@@ -30,7 +30,7 @@ def collect_releases(release_collector, collected_data):
     with patch('src.collector.service.FileAdapter') as mock_file_adapter, \
          patch('src.collector.service.spotify') as _:
 
-        release_collector.raw_releases = collected_data
+        release_collector.external_releases = collected_data
 
         collector_service = CollectorService(None, release_collector)
         collector_service.collect_releases()

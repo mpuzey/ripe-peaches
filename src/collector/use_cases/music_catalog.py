@@ -21,7 +21,6 @@ class MusicCatalog(Catalog):
         return self.artists
 
     def get_releases(self) -> List[Release]:
-
         raise NotImplemented
 
     def get_reviews(self) -> List[Review]:

@@ -3,7 +3,7 @@ from src.collector.entities.release import Release
 from src.collector.entities.review import Review
 from src.collector.entities.artist import Artist
 from src.collector.entities.publication_review import PublicationReview
-from src.collector.entities.publication_release import PublicationRelease
+from src.collector.entities.external_release import ExternalRelease
 from abc import ABC, abstractmethod
 
 
@@ -14,7 +14,7 @@ class Librarian(ABC):
         pass
 
     @abstractmethod
-    def add_releases(self, publication_releases: List[PublicationRelease]) -> Dict[str, Artist]:
+    def add_releases(self, publication_releases: List[ExternalRelease]) -> Dict[str, Artist]:
         pass
 
     @abstractmethod

@@ -3,6 +3,7 @@ import unittest
 from mock import patch, MagicMock
 
 from src.collector.web import aoty
+from src.collector.entities.publication_review import PublicationReview
 
 
 def get_reviews_html():
@@ -65,20 +66,22 @@ class TestAOTY(unittest.TestCase):
         response.text = get_reviews_html()
         mock_requests.get.return_value = response
         expected_reviews = [
-            {
-                'artist': 'Ghost',
-                'publication_name': '57-the-needle-drop',
-                'release_name': 'Prequelle',
-                'score': 80,
-                'link': 'https://www.youtube.com/watch?v=-L2Xv5-EmUo'
-            },
-            {
-                'artist': 'Sleep',
-                'publication_name': '57-the-needle-drop',
-                'release_name': 'The Sciences',
-                'score': 80,
-                'link': 'https://www.youtube.com/watch?v=d5jWckdWqpM'
-            }
+            PublicationReview(
+                artist='Ghost',
+                release_name='Prequelle',
+                score=80,
+                link='https://www.youtube.com/watch?v=-L2Xv5-EmUo',
+                publication_name='57-the-needle-drop',
+                date=None
+            ),
+            PublicationReview(
+                artist='Sleep',
+                release_name='The Sciences',
+                score=80,
+                link='https://www.youtube.com/watch?v=d5jWckdWqpM',
+                publication_name='57-the-needle-drop',
+                date=None
+            )
         ]
 
         actual_reviews = aoty.get_reviews('57-the-needle-drop')

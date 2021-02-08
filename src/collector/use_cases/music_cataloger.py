@@ -3,10 +3,9 @@ from src.collector.entities.release import Release
 from src.collector.entities.review import Review
 from src.collector.use_cases.librarian import Librarian
 
-from abc import abstractmethod
 from typing import Dict, List
 from src.collector.entities.publication_review import PublicationReview
-from src.collector.entities.publication_release import PublicationRelease
+from src.collector.entities.external_release import ExternalRelease
 
 
 from src.common.crypto import calculate_hash
@@ -21,32 +20,38 @@ class MusicCataloger(Librarian):
     def add_reviews(self, publication_reviews: List[PublicationReview]) -> Dict[str, Artist]:
 
         for publication_review in publication_reviews:
-            artist = self._create_artist(publication_review)
+            artist_name = publication_review.artist
+            artist = self._create_artist(artist_name)
 
-            release_id = self._create_release(artist, publication_review)
+            external_release = ExternalRelease(
+                name=publication_review.release_name,
+                artist=artist_name
+            )
+            release_id = self._create_release(artist, external_release)
 
             self._create_review(publication_review, artist, release_id)
 
         self.catalog.add_artists(self.new_artists)
         return self.catalog.get_artists()
 
-    def add_releases(self, publication_releases) -> Dict[str, Artist]:  #: List[PublicationRelease]) -> Dict[str, Artist]:
-        for raw_release in publication_releases:
+    def add_releases(self, external_releases: List[ExternalRelease]) -> Dict[str, Artist]:
+        for external_release in external_releases:
 
-            artist = self._create_artist(raw_release)
+            artist_name = external_release.artist
+            artist = self._create_artist(artist_name)
 
-            self._create_release(artist, raw_release)
+            self._create_release(artist, external_release)
 
-        return self.artists
+        self.catalog.add_artists(self.new_artists)
+        return self.catalog.get_artists()
 
     def format_release_name(self, name: str) -> str:
         formatted_name = name.replace('and', '&').title()
 
         return formatted_name
 
-    def _create_artist(self, publication_review: PublicationReview) -> Artist:
+    def _create_artist(self, artist_name: str) -> Artist:
 
-        artist_name = publication_review.artist
         artist_id = calculate_hash(artist_name)
         artist = Artist(
             id=artist_id,
@@ -59,16 +64,20 @@ class MusicCataloger(Librarian):
 
         return self.new_artists[artist_id]
 
-    def _create_release(self, artist: Artist, publication_review: PublicationReview) -> Release:
+    def _create_release(self, artist: Artist, external_release: ExternalRelease) -> Release:
 
         artist_name = artist.name
-        release_name = self.format_release_name(publication_review.release_name)
+        release_name = self.format_release_name(external_release.name)
         release_id = calculate_hash(artist_name + release_name)
 
         existing_release = next((x for x in artist.releases if x.id == release_id), None)
         release = Release(
             id=calculate_hash(artist_name + release_name),
             name=release_name,
+            date=external_release.date,
+            spotify_url=external_release.spotify_url,
+            total_tracks=external_release.total_tracks,
+            type=external_release.type,
             reviews=[]
         )
 

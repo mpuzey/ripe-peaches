@@ -13,8 +13,8 @@ class PublicationReview:
     release_name: str
     score: int
     publication_name: str
-    date: str
     link: str
+    date: str = None
 
     # def artist(self) -> Artist:
     #     id = calculate_hash(self.artist)
