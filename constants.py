@@ -22,12 +22,12 @@ METACRITIC_REQUEST_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 '
                   '(KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
 }
-METACRITIC_SCRAPE_BATCH_SIZE = 100
+METACRITIC_SCRAPE_BATCH_SIZE = 1000
 
 # AOTY - scraping from AOTY is quicker but we pull only 30 releases at once
 AOTY_PUBLICATIONS_SAMPLE = ['57-the-needle-drop', '7-popmatters', '8-all-music', '2-av-club']
 AOTY_CURATED_PUBLICATIONS = ['57-the-needle-drop', '7-popmatters', '8-all-music', '23-pretty-much-amazing',
-                             '28-the-line-of-best-fit', '17-under-the-radar', '62-metal-sucks', '61-metal-injection',
+                             '28-the-line-of-best-fit', '17-under-the-radar', '62-metal-sucks', #'61-metal-injection',
                              '52-gigsoup', '59-spectrum-culture', '63-flood-magazine', '46-entertainment-weekly',
                              '33-xxl', '55-the-telegraph']
 AOTY_PUBLICATION_URL = 'https://www.albumoftheyear.org/publication/{publication_name}/reviews/'
@@ -44,4 +44,5 @@ ARTIST_PARTS_REGEX = '(?:.*?\/){3}([^\/?#]+)'
 THUMBS_UP_THRESHOLD = 80
 
 # Scores
-MINIMUM_REVIEWS_COUNTED = 10
+MINIMUM_REVIEWS_COUNTED = 5
+
