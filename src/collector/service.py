@@ -22,7 +22,6 @@ class CollectorService:
         self.review_collector.collect(aoty, publications=AOTY_PUBLICATIONS_SAMPLE)
         artists = self.review_collector.catalog()
 
-        # TODO: update store to take List[Artist]
         self.artist_store.put(artists)
         self.release_store.put(artists)
 
@@ -31,6 +30,5 @@ class CollectorService:
     #     self.release_collector.collect(spotify)
     #     artists = self.release_collector.catalog()
     #
-    #     # TODO: update store to take List[Artist]
     #     self.artist_store.put(artists)
     #     self.release_store.put(artists)
