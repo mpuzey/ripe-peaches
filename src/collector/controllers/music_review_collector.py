@@ -23,6 +23,7 @@ class MusicReviewCollector(Collector):
         print('finished scraping!')
 
     def catalog(self):
+
         # TODO: using the cataloging use case at the controller is a code smell we should keep these
         #  pieces of functionality separate, the cataloger should maybe hold a collector instead
         return self.cataloger.add_reviews(self.publication_reviews)

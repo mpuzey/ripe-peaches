@@ -5,7 +5,7 @@ import tornado.web
 
 from constants import PUBLIC_ROOT
 from src.aggregator.service import AggregatorService
-from src.aggregator.use_cases.aggregator import Aggregator
+from src.aggregator.aggregator import Aggregator
 from src.app.db.file_adapter import FileAdapter
 from src.app.gateways.review_store import ReviewStore
 from src.app.gateways.score_store import ScoreStore
