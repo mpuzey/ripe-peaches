@@ -2,3 +2,4 @@ beautifulsoup4
 requests==2.21.0
 tornado
 dataclasses-json
+mock

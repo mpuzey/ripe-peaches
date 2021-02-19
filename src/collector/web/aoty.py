@@ -17,7 +17,7 @@ def get_reviews(publication_name) -> [PublicationReview]:
 
 def extract_reviews(html, publication_name) -> [PublicationReview]:
 
-    publication_reviews = [PublicationReview]
+    publication_reviews = []
     reviews_html = BeautifulSoup(html, 'html.parser')\
         .findAll('div', attrs={'class': 'albumBlock'})
     for review_html in reviews_html:

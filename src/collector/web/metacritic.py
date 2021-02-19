@@ -20,7 +20,7 @@ def get_reviews(publication_name) -> [PublicationReview]:
 def extract_reviews(html) -> [PublicationReview]:
     """ This function """
 
-    reviews = [PublicationReview]
+    reviews = []
     soup = BeautifulSoup(html, 'html.parser')
     reviews_html = soup.findAll('li', attrs={'class': 'review critic_review first_review'})
     reviews_html.extend(soup.findAll('li', attrs={'class': 'review critic_review'}))
