@@ -43,7 +43,7 @@ def start_collector_service():
     release_collector = MusicReleaseCollector(music_cataloger)
     service = CollectorService(review_collector, release_collector)
     service.collect_reviews()
-    service.collect_releases()
+    # service.collect_releases()
 
 
 def start_aggregator_service():

@@ -19,7 +19,7 @@ def get_releases() -> [ExternalRelease]:
 
     access_token = json.loads(authorization_response.text).get('access_token')
 
-    raw_releases = []
+    external_releases = []
     wildcard_chars = list(string.ascii_lowercase)
     for char in wildcard_chars:
         next_page = constants.SPOTIFY_NEW_RELEASE_SEARCH.format(char=char)
@@ -29,9 +29,10 @@ def get_releases() -> [ExternalRelease]:
                 break
             response = requests.get(next_page, headers={'Authorization': 'Bearer %s' % access_token}).json()
             new_items, next_page = _parse_response(response)
-            raw_releases.extend(new_items)
+            if new_items:
+                external_releases.extend(new_items)
 
-    return _parse_releases(raw_releases)
+    return _parse_releases(external_releases)
 
 
 def _load_credentials():

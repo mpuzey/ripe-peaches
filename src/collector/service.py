@@ -26,11 +26,11 @@ class CollectorService:
         self.artist_store.put(artists)
         self.release_store.put(artists)
 
-    def collect_releases(self):
-
-        self.release_collector.collect(spotify)
-        artists = self.release_collector.catalog()
-
-        # TODO: update store to take List[Artist]
-        self.artist_store.put(artists)
-        self.release_store.put(artists)
+    # def collect_releases(self):
+    #
+    #     self.release_collector.collect(spotify)
+    #     artists = self.release_collector.catalog()
+    #
+    #     # TODO: update store to take List[Artist]
+    #     self.artist_store.put(artists)
+    #     self.release_store.put(artists)
