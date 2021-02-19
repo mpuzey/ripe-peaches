@@ -1,14 +1,15 @@
 import re
 import requests
 from bs4 import BeautifulSoup
+from src.collector.entities.publication_review import PublicationReview
 
 from constants import ARTIST_PARTS_REGEX, METACRITIC_PUBLICATION_URL, METACRITIC_REQUEST_HEADERS, \
     METACRITIC_SCRAPE_BATCH_SIZE
 
 
-def get_reviews(name):
+def get_reviews(publication_name) -> [PublicationReview]:
 
-    formatted_uri = METACRITIC_PUBLICATION_URL.format(publication_name=name,
+    formatted_uri = METACRITIC_PUBLICATION_URL.format(publication_name=publication_name,
                                                       release_count=METACRITIC_SCRAPE_BATCH_SIZE)
 
     response = requests.get(formatted_uri, headers=METACRITIC_REQUEST_HEADERS)
@@ -16,7 +17,7 @@ def get_reviews(name):
     return extract_reviews(html)
 
 
-def extract_reviews(html):
+def extract_reviews(html) -> [PublicationReview]:
     """ This function """
 
     reviews = []
@@ -35,7 +36,7 @@ def extract_reviews(html):
     return reviews
 
 
-def extract_data(review_html):
+def extract_data(review_html) -> PublicationReview:
 
     release_name = review_html.find('div', attrs={'class': 'review_product'}).a.text
     score = int(review_html.find('li',
@@ -55,14 +56,14 @@ def extract_data(review_html):
     artist_parts = groups.group(1).split('-')
 
     artist = ' '.join([part.capitalize() for part in artist_parts])
-    return {
-        'artist': artist,
-        'release_name': release_name,
-        'score': score,
-        'publication_name': publication_name,
-        'date': date,
-        'link': link
-    }
+    return PublicationReview(
+        artist=artist,
+        release_name=release_name,
+        score=score,
+        publication_name=publication_name,
+        date=date,
+        link=link
+    )
 
 
 def extract_full_review(review_html):

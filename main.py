@@ -5,15 +5,16 @@ import tornado.web
 
 from constants import PUBLIC_ROOT
 from src.aggregator.service import AggregatorService
-from src.aggregator.use_cases.aggregator import Aggregator
+from src.aggregator.aggregator import Aggregator
 from src.app.db.file_adapter import FileAdapter
 from src.app.gateways.review_store import ReviewStore
 from src.app.gateways.score_store import ScoreStore
 from src.app.web.reviews_handler import ReviewsHandler
 from src.app.web.scores_handler import ScoresHandler
-from src.collector.use_cases.music_review_parser import MusicReviewParser
-from src.collector.controllers.music_release_scraper import MusicReleaseScraper
-from src.collector.controllers.music_review_scraper import MusicReviewScraper
+from src.collector.use_cases.music_catalog import MusicCatalog
+from src.collector.use_cases.music_cataloger import MusicCataloger
+from src.collector.controllers.music_release_collector import MusicReleaseCollector
+from src.collector.controllers.music_review_collector import MusicReviewCollector
 from src.collector.service import CollectorService
 
 
@@ -36,12 +37,13 @@ def make_app():
 
 
 def start_collector_service():
-    review_parser = MusicReviewParser()
-    review_collector = MusicReviewScraper(review_parser)
-    release_collector = MusicReleaseScraper()
+    music_catalog = MusicCatalog()
+    music_cataloger = MusicCataloger(music_catalog)
+    review_collector = MusicReviewCollector(music_cataloger)
+    release_collector = MusicReleaseCollector(music_cataloger)
     service = CollectorService(review_collector, release_collector)
     service.collect_reviews()
-    service.collect_releases()
+    # service.collect_releases()
 
 
 def start_aggregator_service():

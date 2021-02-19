@@ -17,7 +17,7 @@ def collect_reviews(review_collector, collected_data):
          patch('src.collector.service.aoty') as _, \
          patch('src.collector.service.metacritic') as __:
 
-        review_collector.raw_reviews = collected_data
+        review_collector.publication_reviews = collected_data
 
         collector_service = CollectorService(review_collector, None)
         collector_service.collect_reviews()
@@ -30,7 +30,7 @@ def collect_releases(release_collector, collected_data):
     with patch('src.collector.service.FileAdapter') as mock_file_adapter, \
          patch('src.collector.service.spotify') as _:
 
-        release_collector.raw_releases = collected_data
+        release_collector.external_releases = collected_data
 
         collector_service = CollectorService(None, release_collector)
         collector_service.collect_releases()

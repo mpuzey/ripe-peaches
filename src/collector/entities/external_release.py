@@ -1,15 +1,13 @@
-from typing import List
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
-from src.collector.entities.review import Review
 
 
 @dataclass_json
 @dataclass
-class Release:
-    id: str
+class ExternalRelease:
     name: str
-    reviews: List[Review]
+    artist: str
+    # TODO: stop date from being nullable
     date: str = None
     type: str = None
     total_tracks: int = None

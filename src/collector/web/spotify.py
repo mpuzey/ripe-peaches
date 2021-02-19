@@ -6,8 +6,10 @@ import requests
 import constants
 import string
 
+from src.collector.entities.external_release import ExternalRelease
 
-def get_releases():
+
+def get_releases() -> [ExternalRelease]:
 
     print('Fetching recent releases from Spotify...')
     details = _load_credentials()
@@ -17,7 +19,7 @@ def get_releases():
 
     access_token = json.loads(authorization_response.text).get('access_token')
 
-    raw_releases = []
+    external_releases = []
     wildcard_chars = list(string.ascii_lowercase)
     for char in wildcard_chars:
         next_page = constants.SPOTIFY_NEW_RELEASE_SEARCH.format(char=char)
@@ -27,9 +29,10 @@ def get_releases():
                 break
             response = requests.get(next_page, headers={'Authorization': 'Bearer %s' % access_token}).json()
             new_items, next_page = _parse_response(response)
-            raw_releases.extend(new_items)
+            if new_items:
+                external_releases.extend(new_items)
 
-    return _parse_releases(raw_releases)
+    return _parse_releases(external_releases)
 
 
 def _load_credentials():
@@ -56,18 +59,19 @@ def _parse_response(response):
     return valid_items, albums.get('next')
 
 
-def _parse_releases(raw_releases):
+def _parse_releases(external_releases) -> [ExternalRelease]:
 
     releases = []
-    for release in raw_releases:
-        releases.append({
-            'name': release.get('name'),
-            'artist': release.get('artists')[0].get('name'),
-            'date': release.get('release_date'),
-            'type': release.get('type'),
-            'spotify_url': release.get('external_urls').get('spotify'),
-            'total_tracks': release.get('total_tracks')
-        })
+    for external_release in external_releases:
+        release = ExternalRelease(
+            name=external_release.get('name'),
+            artist=external_release.get('artists')[0].get('name'),
+            date=external_release.get('release_date'),
+            type=external_release.get('type'),
+            spotify_url=external_release.get('external_urls').get('spotify'),
+            total_tracks=external_release.get('total_tracks')
+        )
+        releases.append(release)
 
     print('Finished fetching recent releases from Spotify')
     return releases
