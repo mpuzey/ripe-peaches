@@ -30,11 +30,12 @@ class TestMain(unittest.TestCase):
 
         mock_app.assert_called_with(expected_arg)
 
-    @patch('main.CollectorService')
+    @patch('main.MusicCataloger')
     @patch('main.start_aggregator_service')
     @patch('main.ReviewStore')
     @patch('main.tornado.web.Application')
-    def test__main__make_app__WillStartCollector__WhenCalled(self, _, __, ___, mock_collector):
+    def \
+            test__main__make_app__WillStartCataloger__WhenCalled(self, _, __, ___, mock_collector):
 
         make_app()
         collector_instance = mock_collector.return_value

@@ -38,10 +38,10 @@ def make_app():
 
 def start_collector_service():
     music_catalog = MusicCatalog()
-    music_cataloger = MusicCataloger(music_catalog)
-    review_collector = MusicReviewCollector(music_cataloger)
-    release_collector = MusicReleaseCollector(music_cataloger)
-    service = CollectorService(review_collector, release_collector)
+    review_collector = MusicReviewCollector()
+    release_collector = MusicReleaseCollector()
+    music_cataloger = MusicCataloger(music_catalog, review_collector, release_collector)
+    service = CollectorService(music_cataloger)
     service.collect_reviews()
     # service.collect_releases()
 
