@@ -1,7 +1,8 @@
 from src.app.gateways.artist_store import ArtistStore
 from src.app.gateways.release_store import ReleaseStore
 from src.app.gateways.review_store import ReviewStore
-from src.collector.web import metacritic, aoty, spotify
+from src.collector.use_cases import enricher
+from src.collector.web import metacritic, aoty
 
 from constants import METACRITIC_CURATED_PUBLICATIONS, AOTY_CURATED_PUBLICATIONS
 from src.app.db.file_adapter import FileAdapter
@@ -27,10 +28,10 @@ class CollectorService:
         self.artist_store.put(artists)
         self.release_store.put(artists)
 
-    # def collect_releases(self):
-    #
-    #     self.music_cataloger.collect(spotify)
-    #     artists = self.music_cataloger.catalog_releases()
-    #
-    #     self.artist_store.put(artists)
-    #     self.release_store.put(artists)
+    def collect_releases(self):
+
+        # We somehow need to get artist name and album name to pass in
+        # We also need an instance of the spotify class
+        releases = self.release_store.get()
+        enriched_releases = enricher.add_release_dates(releases)
+        self.release_store.put(releases)  # We can't pass releases yet! It takes artists
