@@ -18,9 +18,9 @@ class AggregatorService:
     def start(self):
 
         aggregation_data = [
-            self.artist_store.get(),
-            self.release_store.get(),
-            self.review_store.get()
+            self.artist_store.get_all(),
+            self.release_store.get_all(),
+            self.review_store.get_all()
         ]
 
         print('aggregating scores for artist releases...')

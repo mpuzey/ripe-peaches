@@ -1,4 +1,4 @@
-from src.app.use_cases.store import Store
+from src.app.gateways.store import Store
 from constants import MINIMUM_REVIEWS_COUNTED
 
 
@@ -8,7 +8,10 @@ class ScoreStore(Store):
         self.storage_adapter = storage_adapter
         self.release_adapter = release_adapter
 
-    def get(self):
+    def get(self, id):
+        raise NotImplemented
+
+    def get_all(self):
         scores = self.storage_adapter.get()
         releases = self.release_adapter.get()
 

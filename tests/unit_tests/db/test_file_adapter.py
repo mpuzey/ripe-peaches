@@ -8,7 +8,7 @@ from src.app.db import file_adapter
 class TestFileAdapter(unittest.TestCase):
 
     @mock.patch('src.app.db.file_adapter.json.dump')
-    @mock.patch('src.app.db.file_adapter.FileAdapter.get')
+    @mock.patch('src.app.db.file_adapter.FileAdapter.get_all')
     @mock.patch('src.app.db.file_adapter.open', create=True)
     def test__file_adapter__FileAdapter__put__WillAddDocument__WhenTheDocumentIsNotPresentInTheFile(self,
                                                                                                     mock_open,
@@ -24,7 +24,7 @@ class TestFileAdapter(unittest.TestCase):
         mock_json_dump.assert_called_with({'document_hash': {'id': 'document_hash', 'date': '1234'}}, mock_outfile)
 
     @mock.patch('src.app.db.file_adapter.json.dump')
-    @mock.patch('src.app.db.file_adapter.FileAdapter.get')
+    @mock.patch('src.app.db.file_adapter.FileAdapter.get_all')
     @mock.patch('src.app.db.file_adapter.open', create=True)
     def test__file_adapter__FileAdapter__put__WillNotDuplicateDocument__WhenTheDocumentIsPresentInTheFile(self,
                                                                                                           mock_open,
@@ -44,7 +44,7 @@ class TestFileAdapter(unittest.TestCase):
         mock_json_dump.assert_called_with(document_pair, mock_outfile)
 
     @mock.patch('src.app.db.file_adapter.json.dump')
-    @mock.patch('src.app.db.file_adapter.FileAdapter.get')
+    @mock.patch('src.app.db.file_adapter.FileAdapter.get_all')
     @mock.patch('src.app.db.file_adapter.open', create=True)
     def test__file_adapter__FileAdapter__put__WillAppendNewListToExistingList__WhenADocumentKeyHasAValueOfTypeListAndAlreadyExistsInTheFile(self,
                                                                                                                                             mock_open,
@@ -61,7 +61,7 @@ class TestFileAdapter(unittest.TestCase):
         mock_json_dump.assert_called_with(merged_dataset, mock_outfile)
 
     @mock.patch('src.app.db.file_adapter.json.dump')
-    @mock.patch('src.app.db.file_adapter.FileAdapter.get')
+    @mock.patch('src.app.db.file_adapter.FileAdapter.get_all')
     @mock.patch('src.app.db.file_adapter.open', create=True)
     def test__file_adapter__FileAdapter__put__WillNotDuplicateListEntries__WhenADocumentKeyHasAListWhichIncludesAValuePresentInTheFile(self,
                                                                                                                                        mock_open,
@@ -79,7 +79,7 @@ class TestFileAdapter(unittest.TestCase):
             {'document_hash': {'id': 'document_hash', 'releases': ['12345']}}, mock_outfile)
 
     @mock.patch('src.app.db.file_adapter.json.dump')
-    @mock.patch('src.app.db.file_adapter.FileAdapter.get')
+    @mock.patch('src.app.db.file_adapter.FileAdapter.get_all')
     @mock.patch('src.app.db.file_adapter.open', create=True)
     def test__file_adapter__FileAdapter__put__WillNotReplaceValue__WhenADocumentKeyHasAStringValue(self,
                                                                                                    mock_open,
@@ -96,7 +96,7 @@ class TestFileAdapter(unittest.TestCase):
         mock_json_dump.assert_called_with({'document_hash': {'id': 'document_hash', 'date': '1234'}}, mock_outfile)
 
     @mock.patch('src.app.db.file_adapter.json.dump')
-    @mock.patch('src.app.db.file_adapter.FileAdapter.get')
+    @mock.patch('src.app.db.file_adapter.FileAdapter.get_all')
     @mock.patch('src.app.db.file_adapter.open', create=True)
     def test__file_adapter__FileAdapter__put__WillNotReplaceValue__WhenADocumentKeyHasAStringValue(self,
                                                                                                    mock_open,
@@ -114,9 +114,10 @@ class TestFileAdapter(unittest.TestCase):
             {'document_hash': {'id': 'document_hash', 'date': '1234'}}, mock_outfile)
 
     @mock.patch('src.app.db.file_adapter.json.dump')
-    @mock.patch('src.app.db.file_adapter.FileAdapter.get')
+    @mock.patch('src.app.db.file_adapter.FileAdapter.get_all')
     @mock.patch('src.app.db.file_adapter.open', create=True)
-    def test__file_adapter__FileAdapter__put__WillReplaceValue__WhenADocumentKeyHasAnIntegerValue(self,
+    def \
+            test__file_adapter__FileAdapter__put__WillReplaceValue__WhenADocumentKeyHasAnIntegerValue(self,
                                                                                                   mock_open,
                                                                                                   mock_get,
                                                                                                   mock_json_dump):

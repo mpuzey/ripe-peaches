@@ -4,7 +4,11 @@ from abc import ABC, abstractmethod
 class Store(ABC):
 
     @abstractmethod
-    def get(self):
+    def get(self, id):
+        pass
+
+    @abstractmethod
+    def get_all(self):
         pass
 
     @abstractmethod
