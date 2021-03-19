@@ -19,13 +19,18 @@ class CollectorService:
     def collect_reviews(self):
 
         # TODO: the term "collect" is perhaps a bit overloaded. We describe the overall job of the service of going off
-        #  to the internet and storing new reviews collecting and we call the controllers that physicaly fetch the data
+        #  to the internet and storing new reviews collecting and we call the controllers that physically fetch the data
         #  collectors as well
         self.music_cataloger.collect_reviews(metacritic, publications=METACRITIC_CURATED_PUBLICATIONS)
         self.music_cataloger.collect_reviews(aoty, publications=AOTY_CURATED_PUBLICATIONS)
-        artists = self.music_cataloger.catalog_reviews()
+        recently_reviewed_artists = self.music_cataloger.catalog_reviews()
 
-        enriched_artists = self.enricher.add_release_dates(artists)
+        #  TODO: update the store to return a proper artist tree with releases and reviews
+        # artists_archive = self.artist_store.get()
+        # known_artists = artists_archive.update(recent_reviewed_artists)
+        # print('enriching release data')
+
+        enriched_artists = self.enricher.add_release_dates(recently_reviewed_artists)
 
         self.artist_store.put(enriched_artists)
         self.release_store.put(enriched_artists)

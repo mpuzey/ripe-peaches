@@ -16,6 +16,7 @@ class MusicReviewCollector(ReviewCollector):
 
             if not publication_reviews:
                 print('No reviews available for the following publication: %s' % repr(publication))
+                continue
 
             self.publication_reviews.extend(publication_reviews)
 

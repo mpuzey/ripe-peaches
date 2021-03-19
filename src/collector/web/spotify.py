@@ -32,7 +32,6 @@ class Spotify:
         return access_token
 
     def get_release_details(self, artist_name, album_name) -> ExternalRelease:
-        print('Fetching release details from Spotify...')
 
         spotify_search = f'https://api.spotify.com/v1/search?type=album&q=album:"{album_name}"+artist:"{artist_name}"'
         response = requests.get(spotify_search, headers={'Authorization': 'Bearer %s' % self._get_access_token()}).json()
@@ -43,10 +42,16 @@ class Spotify:
                 spotify_album = album
                 break
 
-        release_date = spotify_album['release_date']
-        album_type = spotify_album['album_type']
-        total_tracks = spotify_album['total_tracks']
-        spotify_url = spotify_album['external_urls']['spotify']
+        if not spotify_album:
+            return ExternalRelease(name=artist_name, artist=artist_name)
+
+        release_date = spotify_album.get('release_date')
+        album_type = spotify_album.get('album_type')
+        total_tracks = spotify_album.get('total_tracks')
+        external_urls = spotify_album.get('external_urls')
+        spotify_url = None
+        if external_urls:
+            spotify_url = external_urls.get('spotify')
 
         return ExternalRelease(
             name=artist_name,

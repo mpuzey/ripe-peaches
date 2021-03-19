@@ -1,3 +1,4 @@
+from typing import Dict
 from src.collector.entities.artist import Artist
 
 
@@ -6,9 +7,9 @@ class Enricher:
     def __init__(self, source):
         self.source = source
 
-    def add_release_dates(self, artists: [Artist]) -> [Artist]:
+    def add_release_dates(self, artists: Dict[str, Artist]) -> Dict[str, Artist]:
         enriched_artists = artists
-        for artist in enriched_artists:
+        for artist_id, artist in enriched_artists.items():
             enriched_releases = []
             for release in artist.releases:
                 if not release.date:
@@ -20,6 +21,7 @@ class Enricher:
 
                 enriched_releases.append(release)
 
-            enriched_artists.releases = enriched_releases
+            artist.releases = enriched_releases
+            enriched_artists[artist_id] = artist
 
         return enriched_artists
