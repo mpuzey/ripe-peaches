@@ -13,6 +13,8 @@ from src.app.web.reviews_handler import ReviewsHandler
 from src.app.web.scores_handler import ScoresHandler
 from src.collector.use_cases.music_catalog import MusicCatalog
 from src.collector.use_cases.music_cataloger import MusicCataloger
+from src.collector.use_cases.enricher import Enricher
+from src.collector.web.spotify import Spotify
 from src.collector.controllers.music_release_collector import MusicReleaseCollector
 from src.collector.controllers.music_review_collector import MusicReviewCollector
 from src.collector.service import CollectorService
@@ -41,9 +43,10 @@ def start_collector_service():
     review_collector = MusicReviewCollector()
     release_collector = MusicReleaseCollector()
     music_cataloger = MusicCataloger(music_catalog, review_collector, release_collector)
-    service = CollectorService(music_cataloger)
+    spotify = Spotify()
+    enricher = Enricher(spotify)
+    service = CollectorService(music_cataloger, enricher)
     service.collect_reviews()
-    # service.collect_releases()
 
 
 def start_aggregator_service():
