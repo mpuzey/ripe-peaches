@@ -5,7 +5,7 @@ ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 PUBLIC_ROOT = os.path.join(ROOT_PATH, 'static')
 
 
-# Metacritic - scraping from metacritic is slow but we pull 100 releases at at time
+# Metacritic - scraping from metacritic is slow but we pull 1000 releases at at time
 METACRITIC_CURATED_PUBLICATIONS = ['pitchfork', 'consequence-of-sound', 'rolling-stone',
                                    'the-guardian', 'drowned-in-sound', 'the-quietus',
                                    'sputnikmusic', 'spin', 'beats-per-minute-formerly-one-thirty-bpm',

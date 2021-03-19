@@ -3,3 +3,4 @@
 *.DS_Store
 **/src/app/db/*.json
 **/src/app/db/backups/*
+local.env
