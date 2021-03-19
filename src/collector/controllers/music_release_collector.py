@@ -1,24 +1,19 @@
-from src.collector.controllers.collector import Collector
-from src.collector.use_cases.music_cataloger import MusicCataloger
+from src.collector.controllers.release_collector import ReleaseCollector
+from src.collector.entities.external_release import ExternalRelease
 
 
-class MusicReleaseCollector(Collector):
+class MusicReleaseCollector(ReleaseCollector):
 
-    def __init__(self, cataloger: MusicCataloger):
+    def __init__(self):
         self.external_releases = []
-        self.cataloger = cataloger
 
-    def collect(self, source, **kwargs):
+    def collect_releases(self, source) -> [ExternalRelease]:
 
-        releases = source.get_releases()
+        external_releases = source.get_releases()
 
-        if not releases:
+        if not external_releases:
             print('No releases available for the following publication: %s' % repr(source))
 
-        self.external_releases.extend(releases)
+        self.external_releases.extend(external_releases)
 
-    def catalog(self):
-
-        # TODO: using the cataloging use case at the controller is a code smell we should keep these
-        #  pieces of functionality separate, the cataloger should maybe hold a collector instead
-        return self.cataloger.add_releases(self.external_releases)
+        return external_releases

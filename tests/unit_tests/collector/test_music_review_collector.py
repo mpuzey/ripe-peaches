@@ -37,12 +37,12 @@ class TestMusicReviewCollector(unittest.TestCase):
         ]
 
         catalog = MusicCatalog()
-        cataloger = MusicCataloger(catalog)
-        collector = MusicReviewCollector(cataloger)
-        collector.collect(mock_metacritic, publications=['pitchfork'])
-        collector.collect(mock_aoty, publications=['melon'])
+        collector = MusicReviewCollector()
+        cataloger = MusicCataloger(catalog, collector, None)
+        cataloger.collect_reviews(mock_metacritic, publications=['pitchfork'])
+        cataloger.collect_reviews(mock_aoty, publications=['melon'])
 
-        actual_artists = collector.catalog()
+        actual_artists = cataloger.catalog_reviews()
         expected_artists = {
             'd92a4901abc2f02dfd347e0793ca3f1c223cbff321d30cdef2679ed13b1c58ae': Artist(
                 id='d92a4901abc2f02dfd347e0793ca3f1c223cbff321d30cdef2679ed13b1c58ae',

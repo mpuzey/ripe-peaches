@@ -1,14 +1,13 @@
-from src.collector.controllers.collector import Collector
-from src.collector.use_cases.music_cataloger import MusicCataloger
+from src.collector.controllers.review_collector import ReviewCollector
+from src.collector.entities.publication_review import PublicationReview
 
 
-class MusicReviewCollector(Collector):
+class MusicReviewCollector(ReviewCollector):
 
-    def __init__(self, cataloger: MusicCataloger):
+    def __init__(self):
         self.publication_reviews = []
-        self.cataloger = cataloger
 
-    def collect(self, source, **kwargs):
+    def collect_reviews(self, source, **kwargs) -> [PublicationReview]:
 
         publications = kwargs.get('publications')
         for publication in publications:
@@ -22,8 +21,4 @@ class MusicReviewCollector(Collector):
 
         print('finished scraping!')
 
-    def catalog(self):
-
-        # TODO: using the cataloging use case at the controller is a code smell we should keep these
-        #  pieces of functionality separate, the cataloger should maybe hold a collector instead
-        return self.cataloger.add_reviews(self.publication_reviews)
+        return self.publication_reviews

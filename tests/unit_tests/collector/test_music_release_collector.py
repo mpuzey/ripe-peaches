@@ -29,11 +29,12 @@ class TestMusicReleaseCollector(unittest.TestCase):
         ]
 
         catalog = MusicCatalog()
-        cataloger = MusicCataloger(catalog)
-        collector = MusicReleaseCollector(cataloger)
-        collector.collect(mock_spotify)
+        collector = MusicReleaseCollector()
+        cataloger = MusicCataloger(catalog, None, collector)
 
-        actual_artists = collector.catalog()
+        cataloger.collect_releases(mock_spotify)
+
+        actual_artists = cataloger.catalog_releases()
         expected_artists = {
             'd92a4901abc2f02dfd347e0793ca3f1c223cbff321d30cdef2679ed13b1c58ae': Artist(
                 id='d92a4901abc2f02dfd347e0793ca3f1c223cbff321d30cdef2679ed13b1c58ae',

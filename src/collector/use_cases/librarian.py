@@ -10,11 +10,19 @@ from abc import ABC, abstractmethod
 class Librarian(ABC):
 
     @abstractmethod
-    def add_reviews(self, publication_reviews: List[PublicationReview]) -> Dict[str, Artist]:
+    def collect_reviews(self,  source, **kwargs) -> [PublicationReview]:
         pass
 
     @abstractmethod
-    def add_releases(self, publication_releases: List[ExternalRelease]) -> Dict[str, Artist]:
+    def collect_releases(self,  source) -> [ExternalRelease]:
+        pass
+
+    @abstractmethod
+    def catalog_reviews(self) -> Dict[str, Artist]:
+        pass
+
+    @abstractmethod
+    def catalog_releases(self) -> Dict[str, Artist]:
         pass
 
     @abstractmethod
