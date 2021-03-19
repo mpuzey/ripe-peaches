@@ -18,7 +18,7 @@ class FileAdapter(StorageAdapter):
             with open(self.file_path, 'r') as outfile:
                 data = json.load(outfile)
                 return data
-        except IOError:
+        except Exception as e:
             print('file path %s does not exist' % self.file_path)
             return {}
 

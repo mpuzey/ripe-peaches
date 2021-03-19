@@ -1,4 +1,5 @@
 from src.app.gateways.store import Store
+from src.collector.entities.review import Review
 
 
 class ReviewStore(Store):
@@ -10,7 +11,18 @@ class ReviewStore(Store):
         raise NotImplemented
 
     def get_all(self):
-        reviews = self.storage_adapter.get()
+        stored_reviews = self.storage_adapter.get_all()
+        reviews = {}
+        for review_id, stored_review in stored_reviews.items():
+            review = Review(
+                id=review_id,
+                publication_name=stored_review.get('publication_name'),
+                score=stored_review.get('score'),
+                date=stored_review.get('date'),
+                link=stored_review.get('link')
+            )
+            reviews[review_id] = review
+
         return reviews
 
     def put(self, reviews):

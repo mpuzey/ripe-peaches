@@ -1,6 +1,7 @@
 from src.app.gateways.store import Store
 from typing import Dict
 from src.collector.entities.artist import Artist
+from src.collector.entities.release import Release
 
 
 class ReleaseStore(Store):
@@ -13,7 +14,27 @@ class ReleaseStore(Store):
         raise NotImplemented
 
     def get_all(self):
-        releases = self.storage_adapter.get()
+        stored_releases = self.storage_adapter.get_all()
+        stored_reviews = self.review_store.get_all()
+        releases = {}
+        for release_id, stored_release in stored_releases.items():
+            reviews = []
+
+            for review_id in stored_release.get('reviews'):
+                review = stored_reviews.get(review_id)
+                reviews.append(review)
+
+            release = Release(
+                id=release_id,
+                name=stored_release.get('name'),
+                spotify_url=stored_release.get('spotify_url'),
+                total_tracks=stored_release.get('total_tracks'),
+                date=stored_release.get('date'),
+                type=stored_release.get('type'),
+                reviews=reviews
+            )
+            releases[release_id] = release
+
         return releases
 
     def put(self, artists: Dict[str, Artist]):

@@ -12,8 +12,8 @@ class ScoreStore(Store):
         raise NotImplemented
 
     def get_all(self):
-        scores = self.storage_adapter.get()
-        releases = self.release_adapter.get()
+        scores = self.storage_adapter.get_all()
+        releases = self.release_adapter.get_all()
 
         for _, score in scores.items():
 
