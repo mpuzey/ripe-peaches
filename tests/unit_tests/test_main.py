@@ -39,7 +39,6 @@ class TestMain(unittest.TestCase):
         make_app()
         collector_instance = mock_collector.return_value
         assert collector_instance.collect_reviews.called
-        assert collector_instance.collect_releases.called
 
     @patch('main.AggregatorService')
     @patch('main.start_collector_service')
