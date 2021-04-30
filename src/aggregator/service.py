@@ -10,10 +10,11 @@ class AggregatorService:
 
     def __init__(self, aggregator):
         self.aggregator = aggregator
-        self.artist_store = ArtistStore(FileAdapter('artists'))
-        self.release_store = ReleaseStore(FileAdapter('releases'), None)
+
         self.review_store = ReviewStore(FileAdapter('reviews'))
-        self.score_store = ScoreStore(FileAdapter('scores'), None)
+        self.release_store = ReleaseStore(FileAdapter('releases'), self.review_store)
+        self.artist_store = ArtistStore(FileAdapter('artists'), self.release_store)
+        self.score_store = ScoreStore(FileAdapter('scores'), self.release_store)
 
     def start(self):
 

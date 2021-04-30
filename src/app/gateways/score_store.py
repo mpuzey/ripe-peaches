@@ -19,6 +19,9 @@ class ScoreStore(Store):
 
             release_id = score.get('release_id')
             release = releases.get(release_id)
+            if not release:
+                print(f'A release with ID {release_id} could not be located')
+                continue
             release_date = release.get('date')
             if release_date:
                 scores[release_id]['date'] = release_date

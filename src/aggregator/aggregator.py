@@ -1,4 +1,5 @@
 from src.aggregator.data_worker import DataWorker
+from src.collector.entities.artist import Artist
 
 from src.common.crypto import calculate_hash
 from constants import THUMBS_UP_THRESHOLD
@@ -23,20 +24,23 @@ class Aggregator(DataWorker):
 
         return scores
 
-    def __aggregate(self, artist):
+    def __aggregate(self, artist: Artist):
 
-        artist_id = artist.get('id')
-        artist_name = artist.get('name')
+        artist_id = artist.id
+        artist_name = artist.name
 
         score = {}
-        releases = artist.get('releases')
+        releases = artist.releases
         if not releases:
             return {}
 
-        for release_id in releases:
-            release = self.releases.get(release_id)
-            release_name = release.get('name')
-            review_ids = release.get('reviews')
+        for release in releases:
+            if not release:
+                print(f'A release for {artist.name} could not be located')
+                continue
+            release = self.releases.get(release.id)
+            release_name = release.name
+            review_ids = [review.id for review in release.reviews]
             if not review_ids:
                 continue
 
@@ -46,7 +50,7 @@ class Aggregator(DataWorker):
 
             score[score_id] = {
                 'id': score_id,
-                'release_id': release_id,
+                'release_id': release.id,
                 'release_name': release_name,
                 'artist_id': artist_id,
                 'artist_name': artist_name,
@@ -57,8 +61,13 @@ class Aggregator(DataWorker):
         return score
 
     def __aggregate_release_score(self, review_ids):
+        for review_id in review_ids:
+            review = self.reviews.get(review_id)
+            if review is None:
+                print(f'Review ID of {review_id} has no corresponding review')
+                review_ids.remove(review_id)
 
-        release_scores = [self.reviews.get(review_id).get('score') for review_id in review_ids]
+        release_scores = [self.reviews.get(review_id).score for review_id in review_ids]
         thumbs_up = [True for score in release_scores if score >= THUMBS_UP_THRESHOLD]
         aggregated_float = (sum(thumbs_up) / len(release_scores)) * 100
 
