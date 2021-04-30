@@ -33,11 +33,16 @@ class Spotify:
 
     def get_release_details(self, artist_name, album_name) -> ExternalRelease:
 
-        spotify_search = f'https://api.spotify.com/v1/search?type=album&q=album:"{album_name}"+artist:"{artist_name}"'
-        response = requests.get(spotify_search, headers={'Authorization': 'Bearer %s' % self._get_access_token()}).json()
+        search = 'https://api.spotify.com/v1/search'
+        query = f'album:"{album_name}"+artist:"{artist_name}"'
 
+        response = requests.get(search,
+                                headers={'Authorization': 'Bearer %s' % self.access_token},
+                                params=[('type', 'album'), ('q', query)])
+
+        response_json = response.json()
         spotify_album = None
-        for album in response['albums']['items']:
+        for album in response_json['albums']['items']:
             if album['name'].lower() == album_name.lower():
                 spotify_album = album
                 break
@@ -73,7 +78,7 @@ class Spotify:
                 offset = dict(parse.parse_qsl(parse.urlsplit(next_page).query)).get('offset', 0)
                 if int(offset) >= 10000:
                     break
-                response = requests.get(next_page, headers={'Authorization': 'Bearer %s' % self._get_access_token()}).json()
+                response = requests.get(next_page, headers={'Authorization': 'Bearer %s' % self.access_token}).json()
                 new_items, next_page = self._parse_response(response)
                 if new_items:
                     external_releases.extend(new_items)
