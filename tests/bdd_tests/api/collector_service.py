@@ -8,31 +8,34 @@ functionality, a bug to fix or a missing scenario to cover.
 
 from mock import patch
 
+from src.collector.use_cases.enricher import Enricher
+from src.collector.web.spotify import Spotify
+from src.collector.use_cases.music_catalog import MusicCatalog
+from src.collector.use_cases.music_cataloger import MusicCataloger
+from src.collector.controllers.music_release_collector import MusicReleaseCollector
 from src.collector.service import CollectorService
+from mock import MagicMock
 
 
-def collect_reviews(review_collector, collected_data):
+def collect_reviews(collected_data):
+
+    music_catalog = MusicCatalog()
+    review_collector = MagicMock()
+    review_collector.collect_reviews.return_value = collected_data
+
+    release_collector = MusicReleaseCollector()
+    music_cataloger = MusicCataloger(music_catalog, review_collector, release_collector)
+
+    spotify = Spotify()
+    enricher = Enricher(spotify)
 
     with patch('src.collector.service.FileAdapter') as mock_file_adapter, \
          patch('src.collector.service.aoty') as _, \
-         patch('src.collector.service.metacritic') as __:
+         patch('src.collector.service.metacritic') as _:
 
-        review_collector.publication_reviews = collected_data
+        print(music_cataloger.publication_reviews)
 
-        collector_service = CollectorService(review_collector, None)
-        collector_service.collect_reviews()
-
-        return mock_file_adapter
-
-
-def collect_releases(release_collector, collected_data):
-
-    with patch('src.collector.service.FileAdapter') as mock_file_adapter, \
-         patch('src.collector.service.spotify') as _:
-
-        release_collector.external_releases = collected_data
-
-        collector_service = CollectorService(None, release_collector)
-        collector_service.collect_releases()
+        service = CollectorService(music_cataloger, enricher)
+        service.collect_reviews()
 
         return mock_file_adapter

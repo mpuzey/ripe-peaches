@@ -25,6 +25,8 @@ class CollectorService:
         #  collectors as well
         self.music_cataloger.collect_reviews(metacritic, publications=METACRITIC_PUBLICATIONS_SAMPLE)
         self.music_cataloger.collect_reviews(aoty, publications=AOTY_PUBLICATIONS_SAMPLE)
+
+        # TODO: why is music_cataloger.publication_reviews blank when we step in here ????
         recently_reviewed_artists = self.music_cataloger.catalog_reviews()
         for artist_id, artist in recently_reviewed_artists.items():
             if artist.name == "Taylor Swift":
@@ -44,7 +46,7 @@ class CollectorService:
         # archive_copy = archived_artists.copy()
         # known_artists = archive_copy.update(recently_reviewed_artists)
         # known_artists = {**archived_artists, **recently_reviewed_artists}
-        known_artists = deep_dict_merge(recently_reviewed_artists, archived_artists)
+        known_artists = deep_dict_merge(archived_artists, recently_reviewed_artists, False)
         for artist_id, artist in known_artists.items():
             if artist.name == "Taylor Swift":
                 for release in artist.releases:

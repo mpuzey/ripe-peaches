@@ -70,6 +70,7 @@ def get_spotify_artists():
             }
         }
 
+
 def get_spotify_releases():
     return {
         '89e29b8440e9ad364f200b6830fe27fb87a744450e8b43b6acbdf09bc1db5019':
