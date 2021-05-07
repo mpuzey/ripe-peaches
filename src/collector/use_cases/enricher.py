@@ -11,6 +11,10 @@ class Enricher:
         enriched_artists = artists
         for artist_id, artist in enriched_artists.items():
             enriched_releases = []
+            if artist.name == "Taylor Swift":
+                print('hi')
+                print('LENGTH IS %s' % str(len(artist.releases)))
+                print('hi')
             for release in artist.releases:
                 if not release:
                     # TODO: This needs looking into - how have we got a data integrity issue?
