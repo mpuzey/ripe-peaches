@@ -13,7 +13,7 @@ class ReleaseStore(Store):
     def get(self, id):
         raise NotImplemented
 
-    def get_all(self):
+    def get_all(self) -> Dict[str, Release]:
         stored_releases = self.storage_adapter.get_all()
         stored_reviews = self.review_store.get_all()
         releases = {}

@@ -1,3 +1,5 @@
+from typing import Dict
+
 from src.app.gateways.store import Store
 from src.collector.entities.review import Review
 
@@ -10,7 +12,7 @@ class ReviewStore(Store):
     def get(self, id):
         raise NotImplemented
 
-    def get_all(self):
+    def get_all(self) -> Dict[str, Review]:
         stored_reviews = self.storage_adapter.get_all()
         reviews = {}
         for review_id, stored_review in stored_reviews.items():

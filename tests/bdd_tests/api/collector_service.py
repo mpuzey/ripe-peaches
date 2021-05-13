@@ -17,7 +17,7 @@ from src.collector.service import CollectorService
 from mock import MagicMock
 
 
-def collect_reviews(collected_data):
+def collect_reviews(collected_data, enriched_releases):
 
     music_catalog = MusicCatalog()
     review_collector = MagicMock()
@@ -26,14 +26,13 @@ def collect_reviews(collected_data):
     release_collector = MusicReleaseCollector()
     music_cataloger = MusicCataloger(music_catalog, review_collector, release_collector)
 
-    spotify = Spotify()
+    spotify = MagicMock()
+    spotify.get_release_details.side_effect = enriched_releases
     enricher = Enricher(spotify)
 
     with patch('src.collector.service.FileAdapter') as mock_file_adapter, \
          patch('src.collector.service.aoty') as _, \
          patch('src.collector.service.metacritic') as _:
-
-        print(music_cataloger.publication_reviews)
 
         service = CollectorService(music_cataloger, enricher)
         service.collect_reviews()

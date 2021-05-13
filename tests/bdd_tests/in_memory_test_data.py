@@ -24,6 +24,27 @@ def get_publication_reviews() -> List[PublicationReview]:
     ]
 
 
+def get_enriched_releases() -> List[ExternalRelease]:
+    return [
+        ExternalRelease(
+            name='Our Raw Heart',
+            artist='Yob',
+            date='2019-02-15',
+            type='album',
+            spotify_url='https://spotify.com',
+            total_tracks=12
+        ),
+        ExternalRelease(
+            name='The Sciences',
+            artist='Sleep',
+            date='2019-01-15',
+            type='album',
+            spotify_url='https://spotify.com',
+            total_tracks=10
+        )
+    ]
+
+
 def get_external_releases() -> List[ExternalRelease]:
     return [
         ExternalRelease(

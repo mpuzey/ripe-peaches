@@ -12,7 +12,7 @@ class ArtistStore(Store):
     def get(self, id):
         raise NotImplemented
 
-    def get_all(self):
+    def get_all(self) -> Dict[str, Artist]:
         stored_artists = self.storage_adapter.get_all()
         stored_releases = self.release_store.get_all()
         artists = {}
