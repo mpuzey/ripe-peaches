@@ -2,9 +2,9 @@ import unittest
 
 from mock import call
 
-from tests.bdd_tests import in_memory_test_data
-from tests.bdd_tests import store_time_test_data
-from tests.bdd_tests.api.collector_service import collect_reviews
+from tests.api_tests import in_memory_test_data
+from tests.api_tests import store_time_test_data
+from tests.api_tests.api.collector_service import collect_reviews
 
 
 class TestService(unittest.TestCase):
