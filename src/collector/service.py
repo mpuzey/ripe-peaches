@@ -1,9 +1,11 @@
+from typing import Dict, List
+
 from src.app.gateways.artist_store import ArtistStore
 from src.app.gateways.release_store import ReleaseStore
 from src.app.gateways.review_store import ReviewStore
 from src.collector.web import metacritic, aoty
-import collections
-import copy
+from src.collector.entities.artist import Artist
+from src.collector.entities.review import Review
 
 from constants import METACRITIC_CURATED_PUBLICATIONS, METACRITIC_PUBLICATIONS_SAMPLE, AOTY_CURATED_PUBLICATIONS, AOTY_PUBLICATIONS_SAMPLE
 from src.app.db.file_adapter import FileAdapter
@@ -28,32 +30,13 @@ class CollectorService:
 
         # TODO: why is music_cataloger.publication_reviews blank when we step in here ????
         recently_reviewed_artists = self.music_cataloger.catalog_reviews()
-        for artist_id, artist in recently_reviewed_artists.items():
-            if artist.name == "Taylor Swift":
-                for release in artist.releases:
-                    print(release.name)
-                print('length is %s' + str(len(artist.releases)))
-                print('hi')
 
         archived_artists = self.artist_store.get_all()
-        for artist_id, artist in archived_artists.items():
-            if artist.name == "Taylor Swift":
-                for release in artist.releases:
-                    print(release.name)
-                print('length is %s' + str(len(artist.releases)))
-                print('hi')
 
         # archive_copy = archived_artists.copy()
         # known_artists = archive_copy.update(recently_reviewed_artists)
         # known_artists = {**archived_artists, **recently_reviewed_artists}
-        known_artists = deep_dict_merge(archived_artists, recently_reviewed_artists, False)
-        for artist_id, artist in known_artists.items():
-            if artist.name == "Taylor Swift":
-                for release in artist.releases:
-                    print(release.name)
-                print('hi')
-                print('length is %s' + str(len(artist.releases)))
-                print('length is %s' + str(len(artist.releases)))
+        known_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
         print('enriching release data')
 
         enriched_artists = self.enricher.add_release_dates(known_artists)
@@ -62,24 +45,36 @@ class CollectorService:
         self.release_store.put(enriched_artists)
 
 
-def deep_dict_merge(dct1, dct2, override=True) -> dict:
-    """
-    :param dct1: First dict to merge
-    :param dct2: Second dict to merge
-    :param override: if same key exists in both dictionaries, should override? otherwise ignore. (default=True)
-    :return: The merge dictionary
-    """
-    merged = copy.deepcopy(dct1)
-    for k, v2 in dct2.items():
-        if k in merged:
-            v1 = merged[k]
-            if isinstance(v1, dict) and isinstance(v2, collections.Mapping):
-                merged[k] = deep_dict_merge(v1, v2, override)
-            elif isinstance(v1, list) and isinstance(v2, list):
-                merged[k] = v1 + v2
-            else:
-                if override:
-                    merged[k] = copy.deepcopy(v2)
+def merge_artist_dicts(archived_artists: Dict[str, Artist], recently_reviewed_artists: Dict[str, Artist]) -> Dict[str, Artist]:
+
+    archived_artists = archived_artists.copy()
+    for artist_id, recently_reviewed_artist in recently_reviewed_artists.items():
+        if artist_id in archived_artists:
+            for recently_reviewed_release in recently_reviewed_artist.releases:
+                archived_releases = archived_artists.get(artist_id).releases
+                if archived_releases:
+                    for archived_release in archived_releases:
+                        if recently_reviewed_release.id is archived_release.id:
+                            combined_reviews = merge_review_lists(archived_release.reviews, recently_reviewed_release.reviews)
+                            archived_release.reviews = combined_reviews
+                            # actually append this back into archived artists
+                    # we are always going to hit this at the moment
+                    archived_releases.append(recently_reviewed_release)
+                    # actually append this back into archived artists
+                else:
+                    archived_artists[artist_id].releases = [recently_reviewed_release]
         else:
-            merged[k] = copy.deepcopy(v2)
-    return merged
+            archived_artists[artist_id] = recently_reviewed_artist
+
+    return archived_artists
+
+
+def merge_review_lists(archived_reviews: List[Review], recent_reviews: List[Review]) -> List[Review]:
+    combined_reviews = archived_reviews.copy()
+    for recent_review in recent_reviews:
+        for archived_review in archived_reviews:
+            if recent_review.id is archived_review.id:
+                break
+            combined_reviews.append(recent_review)
+
+    return combined_reviews
