@@ -5,8 +5,8 @@ from src.aggregator.entities.review import Review
 
 def get_artist_sample():
     return {
-        'd36d7e180b92eacd41f75ec53c4c4681f965c36db1dc7770e64e0f4e3166ab4': Artist(
-            id='d36d7e180b92eacd41f75ec53c4c4681f965c36db1dc7770e64e0f4e3166ab4',
+        '6d36d7e180b92eacd41f75ec53c4c4681f965c36db1dc7770e64e0f4e3166ab4': Artist(
+            id='6d36d7e180b92eacd41f75ec53c4c4681f965c36db1dc7770e64e0f4e3166ab4',
             name='Rp Boo',
             releases=[
                 Release(
@@ -32,8 +32,8 @@ def get_artist_sample():
                 )
             ],
         ),
-        'fd24a70ad382f7019780298658cc417995ee63c2b1e0a73c09ce2864e81da16': Artist(
-            id='fd24a70ad382f7019780298658cc417995ee63c2b1e0a73c09ce2864e81da16',
+        '7fd24a70ad382f7019780298658cc417995ee63c2b1e0a73c09ce2864e81da16': Artist(
+            id='7fd24a70ad382f7019780298658cc417995ee63c2b1e0a73c09ce2864e81da16',
             name='Okzharp',
             releases=[
                 Release(
