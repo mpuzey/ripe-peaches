@@ -40,5 +40,3 @@ class CollectorService:
 
         self.artist_store.put(enriched_artists)
         self.release_store.put(enriched_artists)
-
-
