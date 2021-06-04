@@ -42,9 +42,6 @@ class Spotify:
         search = 'https://api.spotify.com/v1/search'
         query = f'album:"{album_name}"+artist:"{artist_name}"'
 
-        if album_name == "Folklore":
-            print('hi')
-
         response = requests.get(search,
                                 headers={'Authorization': 'Bearer %s' % self.access_token},
                                 params=[('type', 'album'), ('q', query)])
@@ -61,9 +58,6 @@ class Spotify:
     def search_by_album(self, artist_name, album_name):
         search = 'https://api.spotify.com/v1/search'
         query = f'album:"{album_name}"'
-
-        if album_name == "Folklore":
-            print('hi')
 
         response = requests.get(search,
                                 headers={'Authorization': 'Bearer %s' % self.access_token},

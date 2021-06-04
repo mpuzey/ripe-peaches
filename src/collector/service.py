@@ -30,6 +30,11 @@ class CollectorService:
 
         archived_artists = self.artist_store.get_all()
 
+        for _, artist in archived_artists.items():
+            if artist.id == "4e879b681e30709667f06fae00c234cedc49022c4d41b805a4cd87ab876c96fc":
+                print('thats a bingo')
+
+
         # archive_copy = archived_artists.copy()
         # known_artists = archive_copy.update(recently_reviewed_artists)
         # known_artists = {**archived_artists, **recently_reviewed_artists}

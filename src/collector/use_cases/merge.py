@@ -8,26 +8,29 @@ def merge_artist_dicts(archived_artists: Dict[str, Artist], recently_reviewed_ar
     archived_artists = archived_artists.copy()
     for artist_id, recently_reviewed_artist in recently_reviewed_artists.items():
         if artist_id in archived_artists:
+            if artist_id == "c2ce09cb217d8d65cc7085546021ff3468401b68b634e963323f2bdfe030bc8e":
+                print('thats a bingo')
+            else:
+                continue
             archived_releases = archived_artists.get(artist_id).releases
             recently_reviewed_releases = recently_reviewed_artist.releases
 
             if not archived_releases:
-                # If there are no archived releases we can just save ALL recently reviewed releases
                 archived_releases = recently_reviewed_artist.releases
+            else:
+                for recently_reviewed_release in recently_reviewed_releases:
+                    for archived_release in archived_releases:
+                        if recently_reviewed_release.id is archived_release.id:
+                            current_release = archived_release
+                            combined_reviews = merge_review_lists(archived_release.reviews, recently_reviewed_release.reviews)
+                            archived_release.reviews = combined_reviews
 
-            for recently_reviewed_release in recently_reviewed_releases:
-                for archived_release in archived_releases:
-                    if recently_reviewed_release.id is archived_release.id:
-                        current_release = archived_release
-                        combined_reviews = merge_review_lists(archived_release.reviews, recently_reviewed_release.reviews)
-                        archived_release.reviews = combined_reviews
-
-                        # We need to remove the existing archived release with this release.id from the archived_releases list,
-                        # and then append the release as we do just below
-                        archived_releases.remove(archived_release)
-                        archived_releases.append(current_release)
-                    else:
-                        archived_releases.append(recently_reviewed_release)
+                            # We need to remove the existing archived release with this release.id from the archived_releases list,
+                            # and then append the release as we do just below
+                            archived_releases.remove(archived_release)
+                            archived_releases.append(current_release)
+                        else:
+                            archived_releases.append(recently_reviewed_release)
 
             archived_artists[artist_id].releases = archived_releases
         else:
