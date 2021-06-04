@@ -8,10 +8,10 @@ def merge_artist_dicts(archived_artists: Dict[str, Artist], recently_reviewed_ar
     archived_artists = archived_artists.copy()
     for artist_id, recently_reviewed_artist in recently_reviewed_artists.items():
         if artist_id in archived_artists:
-            if artist_id == "c2ce09cb217d8d65cc7085546021ff3468401b68b634e963323f2bdfe030bc8e":
-                print('thats a bingo')
-            else:
-                continue
+            # if artist_id == "c2ce09cb217d8d65cc7085546021ff3468401b68b634e963323f2bdfe030bc8e":
+            #     print('thats a bingo')
+            # else:
+            #     continue
             archived_releases = archived_artists.get(artist_id).releases
             recently_reviewed_releases = recently_reviewed_artist.releases
 
