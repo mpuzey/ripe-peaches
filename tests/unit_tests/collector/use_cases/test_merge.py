@@ -11,23 +11,16 @@ class TestMergeArtistDicts(unittest.TestCase):
 
     def test__merge_artist_dicts__WillAddArtistReleaseAndReviewToArchive_WhenArtistNotSeenBefore(self):
 
-        artist_dict_builder = ArtistDictionaryBuilder()
-        artist_dict_builder.add_artist('artist_id_123', 'Deafheaven')
+        artist_dict_builder = ArtistDictionaryBuilder().add_artist('artist_id_123', 'Deafheaven')
         archived_artists = artist_dict_builder.artist_dict()
 
-        artist_dict_builder.reset()
-        artist_dict_builder.add_artist('artist_id_456', 'YOB')
-        artist_dict_builder.add_release('artist_id_456', 'release_id_123', 'Clearing The Path')
-        artist_dict_builder.add_review('artist_id_456',
-                                       'release_id_123',
-                                       'review_id_123',
-                                       'pitchfork',
-                                       80,
-                                       'Posted Feb 12, 2021')
+        artist_dict_builder.reset()\
+            .add_artist('artist_id_456', 'YOB')\
+            .add_release('release_id_123', 'Clearing The Path')\
+            .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021')
         recently_review_artists = artist_dict_builder.artist_dict()
 
-        artist_dict_builder.add_artist('artist_id_123', 'Deafheaven')
-        expected_artists = artist_dict_builder.artist_dict()
+        expected_artists = artist_dict_builder.add_artist('artist_id_123', 'Deafheaven').artist_dict()
 
         actual_artists = merge_artist_dicts(archived_artists, recently_review_artists)
 
