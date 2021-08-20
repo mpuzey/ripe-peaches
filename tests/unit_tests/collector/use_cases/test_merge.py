@@ -4,65 +4,30 @@ from src.collector.entities.artist import Artist
 from src.collector.entities.release import Release
 from src.collector.entities.review import Review
 from src.collector.use_cases.merge import merge_artist_dicts
+from tests.unit_tests.collector.use_cases.test_merge_helper import ArtistDictionaryBuilder
 
 
 class TestMergeArtistDicts(unittest.TestCase):
 
     def test__merge_artist_dicts__WillAddArtistReleaseAndReviewToArchive_WhenArtistNotSeenBefore(self):
-        archived_artists = {
-            'artist_id_123': Artist(
-                id='artist_id_123',
-                name='Deafheaven',
-                releases=[]
-            )
-        }
 
-        recently_review_artists = {
-            'artist_id_456': Artist(
-                id='artist_id_456',
-                name='YOB',
-                releases=[
-                    Release(
-                        id='release_id_123',
-                        name='Clearing The Path',
-                        reviews=[
-                            Review(
-                                id='review_id_123',
-                                publication_name='pitchfork',
-                                score=80,
-                                date='',
-                                link='')
-                        ]
-                    ),
-                ]
-            )
-        }
+        artist_dict_builder = ArtistDictionaryBuilder()
+        artist_dict_builder.add_artist('artist_id_123', 'Deafheaven')
+        archived_artists = artist_dict_builder.artist_dict()
 
-        expected_artists = {
-            'artist_id_123': Artist(
-                id='artist_id_123',
-                name='Deafheaven',
-                releases=[]
-            ),
-            'artist_id_456': Artist(
-                id='artist_id_456',
-                name='YOB',
-                releases=[
-                    Release(
-                        id='release_id_123',
-                        name='Clearing The Path',
-                        reviews=[
-                            Review(
-                                id='review_id_123',
-                                publication_name='pitchfork',
-                                score=80,
-                                date='',
-                                link='')
-                        ]
-                    ),
-                ]
-            )
-        }
+        artist_dict_builder.reset()
+        artist_dict_builder.add_artist('artist_id_456', 'YOB')
+        artist_dict_builder.add_release('artist_id_456', 'release_id_123', 'Clearing The Path')
+        artist_dict_builder.add_review('artist_id_456',
+                                       'release_id_123',
+                                       'review_id_123',
+                                       'pitchfork',
+                                       80,
+                                       'Posted Feb 12, 2021')
+        recently_review_artists = artist_dict_builder.artist_dict()
+
+        artist_dict_builder.add_artist('artist_id_123', 'Deafheaven')
+        expected_artists = artist_dict_builder.artist_dict()
 
         actual_artists = merge_artist_dicts(archived_artists, recently_review_artists)
 
