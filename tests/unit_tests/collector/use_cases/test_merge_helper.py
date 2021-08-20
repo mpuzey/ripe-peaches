@@ -8,14 +8,15 @@ class ArtistDictionaryBuilder:
 
     def __init__(self):
         self.reset()
-        self.current_artist_id = None
-        self.current_release_id = None
 
     def artist_dict(self) -> Dict[str, Artist]:
-        return self._artist_dict
+        artist_dict = self._artist_dict
+        return artist_dict
 
     def reset(self):
         self._artist_dict = {}
+        self.current_artist_id = None
+        self.current_release_id = None
         return self
 
     def with_artist_id(self, artist_id: str):

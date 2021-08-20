@@ -9,269 +9,110 @@ from tests.unit_tests.collector.use_cases.test_merge_helper import ArtistDiction
 
 class TestMergeArtistDicts(unittest.TestCase):
 
+    # TODO: does this test really prove anything test__merge_artist_dicts__WillAddArtistMultipleReleasesAndReviewToArchive_WhenArtistNotSeenBefore doesn't prove?
     def test__merge_artist_dicts__WillAddArtistReleaseAndReviewToArchive_WhenArtistNotSeenBefore(self):
 
-        artist_dict_builder = ArtistDictionaryBuilder().add_artist('artist_id_123', 'Deafheaven')
-        archived_artists = artist_dict_builder.artist_dict()
+        artist_dict_builder = ArtistDictionaryBuilder()
+        # TODO: should the builder set some existing state up?
+        archived_artists = artist_dict_builder.add_artist('artist_id_123', 'Deafheaven').artist_dict()
 
-        artist_dict_builder.reset()\
+        recently_reviewed_artists = artist_dict_builder\
+            .reset()\
             .add_artist('artist_id_456', 'YOB')\
             .add_release('release_id_123', 'Clearing The Path')\
-            .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021')
-        recently_review_artists = artist_dict_builder.artist_dict()
+            .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021')\
+            .artist_dict()
 
         expected_artists = artist_dict_builder.add_artist('artist_id_123', 'Deafheaven').artist_dict()
 
-        actual_artists = merge_artist_dicts(archived_artists, recently_review_artists)
+        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
 
         assert actual_artists == expected_artists
 
     def test__merge_artist_dicts__WillAddArtistMultipleReleasesAndReviewToArchive_WhenArtistNotSeenBefore(self):
-        archived_artists = {
-            'artist_id_123': Artist(
-                id='artist_id_123',
-                name='Deafheaven',
-                releases=[]
-            )
-        }
 
-        recently_review_artists = {
-            'artist_id_456': Artist(
-                id='artist_id_456',
-                name='YOB',
-                releases=[
-                    Release(
-                        id='release_id_123',
-                        name='Clearing The Path',
-                        reviews=[
-                            Review(
-                                id='review_id_123',
-                                publication_name='pitchfork',
-                                score=80,
-                                date='',
-                                link='')
-                        ]
-                    ),
-                    Release(
-                        id='release_id_456',
-                        name='Atma',
-                        reviews=[
-                            Review(
-                                id='review_id_456',
-                                publication_name='pitchfork',
-                                score=80,
-                                date='',
-                                link='')
-                        ]
-                    )
-                ]
-            )
-        }
+        artist_dict_builder = ArtistDictionaryBuilder()
+        archived_artists = artist_dict_builder.add_artist('artist_id_123', 'Deafheaven').artist_dict()
 
-        expected_artists = {
-            'artist_id_123': Artist(
-                id='artist_id_123',
-                name='Deafheaven',
-                releases=[]
-            ),
-            'artist_id_456': Artist(
-                id='artist_id_456',
-                name='YOB',
-                releases=[
-                    Release(
-                        id='release_id_123',
-                        name='Clearing The Path',
-                        reviews=[
-                            Review(
-                                id='review_id_123',
-                                publication_name='pitchfork',
-                                score=80,
-                                date='',
-                                link='')
-                        ]
-                    ),
-                    Release(
-                        id='release_id_456',
-                        name='Atma',
-                        reviews=[
-                            Review(
-                                id='review_id_456',
-                                publication_name='pitchfork',
-                                score=80,
-                                date='',
-                                link='')
-                        ]
-                    )
-                ]
-            )
-        }
+        # TODO: fix value of this in debug
+        recently_reviewed_artists = artist_dict_builder \
+            .reset() \
+            .add_artist('artist_id_456', 'YOB') \
+            .add_release('release_id_123', 'Clearing The Path') \
+            .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021') \
+            .add_release('release_id_456', 'Atma') \
+            .add_review('review_id_456', 'pitchfork', 80, 'Posted Feb 13, 2021') \
+            .artist_dict()
 
-        actual_artists = merge_artist_dicts(archived_artists, recently_review_artists)
+        # TODO: fix value of this in debug
+        expected_artists = artist_dict_builder.add_artist('artist_id_123', 'Deafheaven').artist_dict()
+
+        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
 
         assert actual_artists == expected_artists
+        # TODO This test is assert true true currently
+        raise NotImplemented
 
     def test__merge_artist_dicts__WillAddArtistReleaseAndMultipleReviewsToArchive_WhenArtistNotSeenBefore(self):
         pass
 
     def test__merge_artist_dicts__WillAddReleaseAndReviewToArchive_WhenReleaseNotSeenBefore(self):
-        archived_artists = {
-            'artist_id_123': Artist(
-                id='artist_id_123',
-                name='YOB',
-                releases=[
-                    Release(
-                        id='release_id_123',
-                        name='Clearing The Path',
-                        reviews=[
-                            Review(
-                                id='review_id_123',
-                                publication_name='pitchfork',
-                                score=80,
-                                date='',
-                                link='')
-                        ],
-                    ),
-                ]
-            )
 
-        }
+        artist_dict_builder = ArtistDictionaryBuilder()
+        archived_artists = artist_dict_builder \
+            .add_artist('artist_id_456', 'YOB') \
+            .add_release('release_id_123', 'Clearing The Path') \
+            .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021') \
+            .artist_dict()
 
-        recently_review_artists = {
-            'artist_id_123': Artist(
-                id='artist_id_123',
-                name='YOB',
-                releases=[
-                    Release(
-                        id='release_id_456',
-                        name='Atma',
-                        reviews=[
-                            Review(
-                                id='review_id_456',
-                                publication_name='pitchfork',
-                                score=85,
-                                date='',
-                                link=''
-                            )
-                        ],
-                    )
-                ]
-            )
-        }
+        # TODO: fix value of this in debug
+        recently_reviewed_artists = artist_dict_builder \
+            .reset() \
+            .add_artist('artist_id_456', 'YOB') \
+            .add_release('release_id_456', 'Atma') \
+            .add_review('review_id_456', 'pitchfork', 80, 'Posted Feb 13, 2021') \
+            .artist_dict()
 
-        expected_artists = {
-            'artist_id_123': Artist(
-                id='artist_id_123',
-                name='YOB',
-                releases=[
-                    Release(
-                        id='release_id_123',
-                        name='Clearing The Path',
-                        reviews=[
-                            Review(
-                                id='review_id_123',
-                                publication_name='pitchfork',
-                                score=80,
-                                date='',
-                                link='')
-                        ],
-                    ),
-                    Release(
-                        id='release_id_456',
-                        name='Atma',
-                        reviews=[
-                            Review(
-                                id='review_id_456',
-                                publication_name='pitchfork',
-                                score=85,
-                                date='',
-                                link=''
-                            )
-                        ],
-                    )
-                ]
-            )
-        }
+        # TODO: fix value of this in debug
+        expected_artists = artist_dict_builder \
+            .add_artist('artist_id_456', 'YOB') \
+            .add_release('release_id_123', 'Clearing The Path') \
+            .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021') \
+            .artist_dict()
 
-        actual_artists = merge_artist_dicts(archived_artists, recently_review_artists)
+        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
 
         assert actual_artists == expected_artists
+        # TODO This test is assert true true currently
+        raise NotImplemented
 
     def test__merge_artist_dicts__WillAddReviewToArchive_WhenReviewNotSeenBefore(self):
-        archived_artists = {
-            'artist_id_123': Artist(
-                id='artist_id_123',
-                name='YOB',
-                releases=[
-                    Release(
-                        id='release_id_123',
-                        name='Clearing The Path',
-                        reviews=[
-                            Review(
-                                id='review_id_123',
-                                publication_name='pitchfork',
-                                score=80,
-                                date='',
-                                link='')
-                        ],
-                    ),
-                ]
-            )
 
-        }
+        artist_dict_builder = ArtistDictionaryBuilder()
+        archived_artists = artist_dict_builder \
+            .add_artist('artist_id_456', 'YOB') \
+            .add_release('release_id_123', 'Clearing The Path') \
+            .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021') \
+            .artist_dict()
 
-        recently_review_artists = {
-            'artist_id_123': Artist(
-                id='artist_id_123',
-                name='YOB',
-                releases=[
-                    Release(
-                        id='release_id_123',
-                        name='Clearing The Path',
-                        reviews=[
-                            Review(
-                                id='review_id_456',
-                                publication_name='the needledrop',
-                                score=70,
-                                date='',
-                                link=''
-                            )
-                        ]
-                    )
-                ]
-            )
-        }
+        # TODO: fix value of this in debug
+        recently_reviewed_artists = artist_dict_builder \
+            .reset() \
+            .add_artist('artist_id_456', 'YOB') \
+            .add_release('release_id_123', 'Clearing The Path') \
+            .add_review('review_id_456', 'the needledrop', 80, 'Posted Feb 13, 2021') \
+            .artist_dict()
 
-        expected_artists = {
-            'artist_id_123': Artist(
-                id='artist_id_123',
-                name='YOB',
-                releases=[
-                    Release(
-                        id='release_id_123',
-                        name='Clearing The Path',
-                        reviews=[
-                            Review(
-                                id='review_id_123',
-                                publication_name='pitchfork',
-                                score=80,
-                                date='',
-                                link=''),
-                            Review(
-                                id='review_id_456',
-                                publication_name='the needledrop',
-                                score=70,
-                                date='',
-                                link=''
-                            )
-                        ]
-                    )
-                ]
-            )
-        }
+        # TODO: fix value of this in debug
+        expected_artists = artist_dict_builder \
+            .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021') \
+            .artist_dict()
 
-        actual_artists = merge_artist_dicts(archived_artists, recently_review_artists)
+        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
 
         assert actual_artists == expected_artists
+        # TODO This test is assert true true currently
+        raise NotImplemented
 
     def test__merge_artists_dicts__WillNotAddArtist__WhenSeenBefore(self):
         pass
