@@ -63,7 +63,7 @@ class TestMergeArtistDicts(unittest.TestCase):
             .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021') \
             .artist_dict()
 
-        recently_reviewed_artists = artist_dict_builder \
+        recently_reviewed = artist_dict_builder \
             .reset() \
             .add_artist('artist_id_456', 'YOB') \
             .add_release('release_id_456', 'Atma') \
@@ -75,7 +75,7 @@ class TestMergeArtistDicts(unittest.TestCase):
             .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021') \
             .artist_dict()
 
-        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
+        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed )
 
         # TODO need to compare dicts properly
         assert actual_artists == expected_artists
@@ -83,27 +83,26 @@ class TestMergeArtistDicts(unittest.TestCase):
     def test__merge_artist_dicts__WillAddReviewToArchive_WhenReviewNotSeenBefore(self):
 
         artist_dict_builder = ArtistDictionaryBuilder()
-        archived_artists = artist_dict_builder \
+        archived_artists_builder = artist_dict_builder \
             .add_artist('artist_id_456', 'YOB') \
             .add_release('release_id_123', 'Clearing The Path') \
-            .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021') \
-            .artist_dict()
+            .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021')
+        archived_artists = archived_artists_builder.artist_dict()
 
-        recently_reviewed_artists = artist_dict_builder \
+        recently_reviewed_builder = artist_dict_builder \
             .reset() \
             .add_artist('artist_id_456', 'YOB') \
             .add_release('release_id_123', 'Clearing The Path') \
-            .add_review('review_id_456', 'the needledrop', 80, 'Posted Feb 13, 2021') \
-            .artist_dict()
+            .add_review('review_id_456', 'the needledrop', 80, 'Posted Feb 13, 2021')
+        recently_reviewed_artists = artist_dict_builder.artist_dict()
 
-        builder = artist_dict_builder.add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021')
+        builder = recently_reviewed_builder.add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021')
         expected_artists = builder.artist_dict()
-        # TODO expected releases is empty here
 
         actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
 
         # TODO need to compare dicts properly
-        assert actual_artists == expected_artists
+        assert cmp(actual_artists, expected_artists)
 
     def test__merge_artists_dicts__WillNotAddArtist__WhenSeenBefore(self):
         pass

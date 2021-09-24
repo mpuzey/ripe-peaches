@@ -21,11 +21,11 @@ class ArtistDictionaryBuilder:
 
     def select_artist(self, artist_id: str):
         self.current_artist_id = artist_id
-        return copy.deepcopy(self)
+        return copy.copy(self)
 
     def select_release(self, release_id: str):
         self.current_release_id = release_id
-        return copy.deepcopy(self)
+        return copy.copy(self)
 
     def add_artist(self, artist_id: str, artist_name: str):
         self.current_artist_id = artist_id
@@ -34,7 +34,7 @@ class ArtistDictionaryBuilder:
             name=artist_name,
             releases=[]
         )
-        return copy.deepcopy(self)
+        return copy.copy(self)
 
     def add_release(self, release_id: str, release_name: str):
         self.current_release_id = release_id
@@ -46,7 +46,7 @@ class ArtistDictionaryBuilder:
         )
         artist.releases.append(release)
         self._artist_dict[self.current_artist_id] = artist
-        return copy.deepcopy(self)
+        return copy.copy(self)
 
     def add_review(self, review_id: str, publication_name: str, score: int, date: str):
         artist = self._artist_dict[self.current_artist_id]
@@ -65,4 +65,4 @@ class ArtistDictionaryBuilder:
                 self._artist_dict[artist.id].releases[i] = release
                 break
 
-        return copy.deepcopy(self)
+        return copy.copy(self)
