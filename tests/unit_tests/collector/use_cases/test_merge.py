@@ -1,8 +1,5 @@
 import unittest
 
-from src.collector.entities.artist import Artist
-from src.collector.entities.release import Release
-from src.collector.entities.review import Review
 from src.collector.use_cases.merge import merge_artist_dicts
 from tests.unit_tests.collector.use_cases.test_merge_helper import ArtistDictionaryBuilder
 
@@ -27,7 +24,6 @@ class TestMergeArtistDicts(unittest.TestCase):
 
         actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
 
-        # TODO need to compare dicts properly
         assert actual_artists == expected_artists
 
     def test__merge_artist_dicts__WillAddArtistReleaseAndMultipleReviewsToArchive_WhenArtistNotSeenBefore(self):
@@ -56,7 +52,6 @@ class TestMergeArtistDicts(unittest.TestCase):
 
         actual_artists = merge_artist_dicts(archived_artists, recently_reviewed )
 
-        # TODO need to compare dicts properly
         assert actual_artists == expected_artists
 
     def test__merge_artist_dicts__WillAddReviewToArchive_WhenReviewNotSeenBefore(self):
@@ -83,10 +78,49 @@ class TestMergeArtistDicts(unittest.TestCase):
         assert actual_artists == expected_artists
 
     def test__merge_artists_dicts__WillNotAddArtist__WhenSeenBefore(self):
-        pass
+        artist_dict_builder = ArtistDictionaryBuilder()
+        archived_artists_builder = artist_dict_builder \
+            .add_artist('artist_id_456', 'YOB')
+        archived_artists = archived_artists_builder.artist_dict()
+
+        recently_reviewed_builder = ArtistDictionaryBuilder() \
+            .add_artist('artist_id_456', 'YOB')
+        recently_reviewed_artists = recently_reviewed_builder.artist_dict()
+
+        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
+
+        assert actual_artists == archived_artists
 
     def test__merge_artists_dicts__WillNotAddRelease__WhenSeenBefore(self):
-        pass
+        artist_dict_builder = ArtistDictionaryBuilder()
+        archived_artists_builder = artist_dict_builder \
+            .add_artist('artist_id_456', 'YOB') \
+            .add_release('release_id_123', 'Clearing The Path')
+        archived_artists = archived_artists_builder.artist_dict()
+
+        recently_reviewed_builder = ArtistDictionaryBuilder() \
+            .add_artist('artist_id_456', 'YOB') \
+            .add_release('release_id_123', 'Clearing The Path')
+        recently_reviewed_artists = recently_reviewed_builder.artist_dict()
+
+        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
+
+        assert actual_artists == archived_artists
 
     def test__merge_artists_dicts__WillNotAddReview__WhenSeenBefore(self):
-        pass
+        artist_dict_builder = ArtistDictionaryBuilder()
+        archived_artists_builder = artist_dict_builder \
+            .add_artist('artist_id_456', 'YOB') \
+            .add_release('release_id_123', 'Clearing The Path') \
+            .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021')
+        archived_artists = archived_artists_builder.artist_dict()
+
+        recently_reviewed_builder = ArtistDictionaryBuilder() \
+            .add_artist('artist_id_456', 'YOB') \
+            .add_release('release_id_123', 'Clearing The Path') \
+            .add_review('review_id_123', 'the pitchfork', 80, 'Posted Feb 12, 2021')
+        recently_reviewed_artists = recently_reviewed_builder.artist_dict()
+
+        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
+
+        assert actual_artists == archived_artists
