@@ -1,6 +1,6 @@
 import unittest
 
-from src.aggregator.aggregator import Aggregator
+from src.aggregator.review_aggregator import ReviewAggregator
 from tests.unit_tests.aggregator import test_data
 
 
@@ -8,11 +8,7 @@ class TestAggregator(unittest.TestCase):
 
     def test__aggregator__Aggregator__work__WillReturnDictOfAggregatedReleaseScores__WhenCalledWithValidAggregationData(self):
 
-        sample_aggregation_data = [
-            test_data.get_artist_sample(),
-            test_data.get_release_sample(),
-            test_data.get_review_sample()
-        ]
+        artists = test_data.get_artist_sample()
 
         expected_aggregated_scores = {
             '0227438fc7af5cd3e37464870b4fce85fae7a4f3ddebe80594b0181db2c31a4f':
@@ -37,7 +33,7 @@ class TestAggregator(unittest.TestCase):
                 }
         }
 
-        aggregator = Aggregator()
-        actual_aggregated_scores = aggregator.work(sample_aggregation_data)
+        aggregator = ReviewAggregator()
+        actual_aggregated_scores = aggregator.aggregate(artists)
 
         self.assertEqual(expected_aggregated_scores, actual_aggregated_scores)

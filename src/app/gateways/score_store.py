@@ -1,4 +1,4 @@
-from src.app.use_cases.store import Store
+from src.app.gateways.store import Store
 from constants import MINIMUM_REVIEWS_COUNTED
 
 
@@ -8,14 +8,20 @@ class ScoreStore(Store):
         self.storage_adapter = storage_adapter
         self.release_adapter = release_adapter
 
-    def get(self):
-        scores = self.storage_adapter.get()
-        releases = self.release_adapter.get()
+    def get(self, id):
+        raise NotImplemented
+
+    def get_all(self):
+        scores = self.storage_adapter.get_all()
+        releases = self.release_adapter.get_all()
 
         for _, score in scores.items():
 
             release_id = score.get('release_id')
             release = releases.get(release_id)
+            if not release:
+                print(f'A release with ID {release_id} could not be located')
+                continue
             release_date = release.get('date')
             if release_date:
                 scores[release_id]['date'] = release_date
