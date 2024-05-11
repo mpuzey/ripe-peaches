@@ -2,6 +2,7 @@ from src.app.gateways.store import Store
 from typing import Dict
 from src.collector.entities.artist import Artist
 from src.collector.entities.release import Release
+from src.collector.entities.review import Review
 
 
 class ReleaseStore(Store):
@@ -46,8 +47,15 @@ class ReleaseStore(Store):
             for release in artist.releases:
                 review_ids = []
                 for review in release.reviews:
-                    review_ids.append(review.id)
-                    review_documents[review.id] = review.__dict__
+                    # TODO: this is a workaround for two similarly named releases under one artist causing review ids to be set as of review
+                    if isinstance(review, str):
+                        print('review is string not object?: ' + review)
+                    if isinstance(review, Review):
+                        review_ids.append(review.id)
+                        review_documents[review.id] = review.__dict__
+                    # review_ids.append(review.id)
+                    # review_documents[review.id] = review.__dict__
+                # TODO: do some artists have dupe releases that can fall under the same key?
                 release.reviews = review_ids
                 release_documents[release.id] = release.__dict__
 

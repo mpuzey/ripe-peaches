@@ -42,6 +42,7 @@ class CollectorService:
         print('enriching release data')
 
         enriched_artists = self.enricher.add_release_dates(known_artists)
+        enriched_artists2 = enriched_artists.copy()
 
         self.artist_store.put(enriched_artists)
-        self.release_store.put(enriched_artists)
+        self.release_store.put(enriched_artists2)
