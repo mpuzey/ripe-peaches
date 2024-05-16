@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 
-class Aggregator(ABC):
+class MusicAggregator(ABC):
 
     @abstractmethod
-    def aggregate(self, data):
+    def aggregate_artists(self, artist):
         pass

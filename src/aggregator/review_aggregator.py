@@ -1,24 +1,24 @@
-from src.aggregator.aggregator import Aggregator
+from src.aggregator.aggregator import MusicAggregator
 from src.aggregator.entities.artist import Artist
 
 from src.common.crypto import calculate_hash
 from constants import THUMBS_UP_THRESHOLD
 
 
-class ReviewAggregator(Aggregator):
+class ReviewScoresAggregator(MusicAggregator):
 
-    def aggregate(self, artists):
+    def aggregate_artists(self, artists):
 
         scores = {}
 
         for artist_id, artist in artists.items():
-            artist_release_scores = self.__aggregate(artist)
+            artist_release_scores = self.__aggregate_artist(artist)
             if artist_release_scores:
                 scores.update(artist_release_scores)
 
         return scores
 
-    def __aggregate(self, artist: Artist):
+    def __aggregate_artist(self, artist: Artist):
 
         artist_id = artist.id
         artist_name = artist.name
