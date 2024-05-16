@@ -1,5 +1,5 @@
 from src.collector.controllers.review_collector import ReviewCollector
-from src.collector.entities.publication_review import PublicationReview
+from src.entities.publication_review import PublicationReview
 
 
 class MusicReviewCollector(ReviewCollector):

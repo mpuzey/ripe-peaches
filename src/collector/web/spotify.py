@@ -6,7 +6,7 @@ import requests
 import constants
 import string
 
-from src.collector.entities.external_release import ExternalRelease
+from src.entities.external_release import ExternalRelease
 
 
 class Spotify:
@@ -16,7 +16,6 @@ class Spotify:
 
     @staticmethod
     def _get_access_token():
-
         client_id = os.environ.get('SPOTIFY_CLIENT_ID')
         client_secret = os.environ.get('SPOTIFY_CLIENT_SECRET')
         client_details = '%s:%s' % (client_id, client_secret)
@@ -32,19 +31,49 @@ class Spotify:
         return access_token
 
     def get_release_details(self, artist_name, album_name) -> ExternalRelease:
+        spotify_album = self.search_by_album_and_artist(artist_name, album_name)
 
-        spotify_search = f'https://api.spotify.com/v1/search?type=album&q=album:"{album_name}"+artist:"{artist_name}"'
-        response = requests.get(spotify_search, headers={'Authorization': 'Bearer %s' % self._get_access_token()}).json()
+        if not spotify_album:
+            spotify_album = self.search_by_album(artist_name, album_name)
 
-        spotify_album = None
-        for album in response['albums']['items']:
+        return self.build_external_release(artist_name, album_name, spotify_album)
+
+    def search_by_album_and_artist(self, artist_name, album_name):
+        search = 'https://api.spotify.com/v1/search'
+        query = f'album:"{album_name}"+artist:"{artist_name}"'
+
+        response = requests.get(search,
+                                headers={'Authorization': 'Bearer %s' % self.access_token},
+                                params=[('type', 'album'), ('q', query)])
+
+        response_json = response.json()
+        spotify_album = {}
+        for album in response_json['albums']['items']:
             if album['name'].lower() == album_name.lower():
                 spotify_album = album
                 break
 
-        if not spotify_album:
-            return ExternalRelease(name=artist_name, artist=artist_name)
+        return spotify_album
 
+    def search_by_album(self, artist_name, album_name):
+        search = 'https://api.spotify.com/v1/search'
+        query = f'album:"{album_name}"'
+
+        response = requests.get(search,
+                                headers={'Authorization': 'Bearer %s' % self.access_token},
+                                params=[('type', 'album'), ('q', query)])
+
+        response_json = response.json()
+        spotify_album = {}
+        for album in response_json['albums']['items']:
+            for artist in album['artists']:
+                if artist['name'] in artist_name and album['name'].lower() == album_name.lower():
+                    spotify_album = album
+                    break
+
+        return spotify_album
+
+    def build_external_release(self, artist_name, album_name, spotify_album):
         release_date = spotify_album.get('release_date')
         album_type = spotify_album.get('album_type')
         total_tracks = spotify_album.get('total_tracks')
@@ -54,7 +83,7 @@ class Spotify:
             spotify_url = external_urls.get('spotify')
 
         return ExternalRelease(
-            name=artist_name,
+            name=album_name,
             artist=artist_name,
             date=release_date,
             type=album_type,
@@ -73,7 +102,7 @@ class Spotify:
                 offset = dict(parse.parse_qsl(parse.urlsplit(next_page).query)).get('offset', 0)
                 if int(offset) >= 10000:
                     break
-                response = requests.get(next_page, headers={'Authorization': 'Bearer %s' % self._get_access_token()}).json()
+                response = requests.get(next_page, headers={'Authorization': 'Bearer %s' % self.access_token}).json()
                 new_items, next_page = self._parse_response(response)
                 if new_items:
                     external_releases.extend(new_items)

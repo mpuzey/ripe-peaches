@@ -1,12 +1,11 @@
-from src.collector.entities.artist import Artist
-from src.collector.entities.release import Release
-from src.collector.entities.review import Review
+from src.entities.artist import Artist
+from src.entities.release import Release
+from src.entities.review import Review
 from src.collector.use_cases.librarian import Librarian
-from src.collector.controllers.review_collector import ReviewCollector
 
-from typing import Dict, List
-from src.collector.entities.publication_review import PublicationReview
-from src.collector.entities.external_release import ExternalRelease
+from typing import Dict
+from src.entities.publication_review import PublicationReview
+from src.entities.external_release import ExternalRelease
 from src.collector.use_cases.music_catalog import MusicCatalog
 from src.collector.controllers.release_collector import ReleaseCollector
 from src.collector.controllers.review_collector import ReviewCollector
@@ -33,6 +32,7 @@ class MusicCataloger(Librarian):
 
     def catalog_reviews(self) -> Dict[str, Artist]:
 
+        print(self.publication_reviews)
         for publication_review in self.publication_reviews:
 
             artist_name = publication_review.artist

@@ -3,7 +3,7 @@ import unittest
 from mock import patch, MagicMock
 
 from src.collector.web import metacritic
-from src.collector.entities.publication_review import PublicationReview
+from src.entities.publication_review import PublicationReview
 from tests.unit_tests.collector.web.meta_critic_html import get_reviews_html, get_first_review_html, \
     get_review_without_full_review
 

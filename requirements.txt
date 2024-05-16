@@ -1,5 +1,6 @@
-beautifulsoup4
+beautifulsoup4~=4.12.3
 requests==2.23.0
-tornado
+tornado~=6.4
 dataclasses-json
-mock
+mock~=5.1.0
+deepdiff~=7.0.1

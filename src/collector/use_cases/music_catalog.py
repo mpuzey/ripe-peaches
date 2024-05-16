@@ -1,6 +1,6 @@
-from src.collector.entities.artist import Artist
-from src.collector.entities.release import Release
-from src.collector.entities.review import Review
+from src.entities.artist import Artist
+from src.entities.release import Release
+from src.entities.review import Review
 from src.collector.use_cases.catalog import Catalog
 from typing import Dict, List
 
