@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from typing import Optional
 
 from constants import AOTY_PUBLICATION_URL, AOTY_REQUEST_HEADERS
-from src.collector.entities.publication_review import PublicationReview
+from src.entities.publication_review import PublicationReview
 
 
 def get_reviews(publication_name) -> [PublicationReview]:

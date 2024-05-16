@@ -1,7 +1,7 @@
 from typing import List
 from dataclasses import dataclass
 from dataclasses_json import dataclass_json
-from src.collector.entities.review import Review
+from src.entities.review import Review
 
 
 @dataclass_json

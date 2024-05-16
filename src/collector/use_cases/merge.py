@@ -1,8 +1,8 @@
 from typing import Dict, List
 from copy import deepcopy
-from src.collector.entities.artist import Artist
-from src.collector.entities.release import Release
-from src.collector.entities.review import Review
+from src.entities.artist import Artist
+from src.entities.release import Release
+from src.entities.review import Review
 
 
 def merge_artist_dicts(archive: Dict[str, Artist], new_artist_entries: Dict[str, Artist]) -> Dict[str, Artist]:

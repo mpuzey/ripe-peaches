@@ -1,8 +1,8 @@
 from src.app.gateways.store import Store
 from typing import Dict
-from src.collector.entities.artist import Artist
-from src.collector.entities.release import Release
-from src.collector.entities.review import Review
+from src.entities.artist import Artist
+from src.entities.release import Release
+from src.entities.review import Review
 
 
 class ReleaseStore(Store):

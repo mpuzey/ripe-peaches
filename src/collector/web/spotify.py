@@ -6,7 +6,7 @@ import requests
 import constants
 import string
 
-from src.collector.entities.external_release import ExternalRelease
+from src.entities.external_release import ExternalRelease
 
 
 class Spotify:

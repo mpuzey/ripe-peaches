@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from src.collector.entities.external_release import ExternalRelease
+from src.entities.external_release import ExternalRelease
 
 
 class ReleaseCollector(ABC):

@@ -1,6 +1,6 @@
 import unittest
 
-from src.collector.entities.artist import Artist
+from src.entities.artist import Artist
 from src.collector.use_cases.merge import merge_artist_dicts
 from tests.unit_tests.collector.use_cases.test_merge_helper import ArtistDictionaryBuilder
 

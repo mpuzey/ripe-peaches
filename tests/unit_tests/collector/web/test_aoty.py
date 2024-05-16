@@ -3,7 +3,7 @@ import unittest
 from mock import patch, MagicMock
 
 from src.collector.web import aoty
-from src.collector.entities.publication_review import PublicationReview
+from src.entities.publication_review import PublicationReview
 
 
 class TestAOTY(unittest.TestCase):

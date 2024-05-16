@@ -1,7 +1,7 @@
 from typing import Dict
 
 from src.app.gateways.store import Store
-from src.collector.entities.review import Review
+from src.entities.review import Review
 
 
 class ReviewStore(Store):

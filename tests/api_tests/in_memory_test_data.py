@@ -1,7 +1,7 @@
 from typing import List
 
-from src.collector.entities.publication_review import PublicationReview
-from src.collector.entities.external_release import ExternalRelease
+from src.entities.publication_review import PublicationReview
+from src.entities.external_release import ExternalRelease
 
 
 def get_publication_reviews() -> List[PublicationReview]:

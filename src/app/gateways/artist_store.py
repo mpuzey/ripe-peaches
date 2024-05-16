@@ -1,6 +1,6 @@
 from src.app.gateways.store import Store
 from typing import Dict
-from src.collector.entities.artist import Artist
+from src.entities.artist import Artist
 
 
 class ArtistStore(Store):

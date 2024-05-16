@@ -3,10 +3,10 @@ import unittest
 from mock import MagicMock
 
 from src.collector.controllers.music_review_collector import MusicReviewCollector
-from src.collector.entities.artist import Artist
-from src.collector.entities.review import Review
-from src.collector.entities.release import Release
-from src.collector.entities.publication_review import PublicationReview
+from src.entities.artist import Artist
+from src.entities.review import Review
+from src.entities.release import Release
+from src.entities.publication_review import PublicationReview
 
 from src.collector.use_cases.music_catalog import MusicCatalog
 from src.collector.use_cases.music_cataloger import MusicCataloger
