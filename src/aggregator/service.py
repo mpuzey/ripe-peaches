@@ -21,7 +21,7 @@ class AggregatorService:
         artists = self.artist_store.get_all()
 
         print('aggregating scores for artist releases...')
-        scores = self.aggregator.aggregate(artists)
+        scores = self.aggregator.aggregate_artists(artists)
         print('finished aggregating scores!')
 
         self.score_store.put(scores)

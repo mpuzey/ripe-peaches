@@ -1,6 +1,6 @@
 import unittest
 
-from src.aggregator.review_aggregator import ReviewAggregator
+from src.aggregator.review_aggregator import ReviewScoresAggregator
 from tests.unit_tests.aggregator import test_data
 
 
@@ -33,7 +33,7 @@ class TestAggregator(unittest.TestCase):
                 }
         }
 
-        aggregator = ReviewAggregator()
-        actual_aggregated_scores = aggregator.aggregate(artists)
+        aggregator = ReviewScoresAggregator()
+        actual_aggregated_scores = aggregator.aggregate_artists(artists)
 
         self.assertEqual(expected_aggregated_scores, actual_aggregated_scores)
