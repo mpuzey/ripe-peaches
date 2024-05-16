@@ -36,6 +36,11 @@ class ArtistDictionaryBuilder:
         )
         return copy.copy(self)
 
+    def set_artist(self, artist: Artist):
+        self.current_artist_id = artist.id
+        self._artist_dict[artist.id] = artist
+        return copy.copy(self)
+
     def add_release(self, release_id: str, release_name: str):
         self.current_release_id = release_id
         artist = self._artist_dict[self.current_artist_id]

@@ -1,5 +1,6 @@
 import unittest
 
+from src.collector.entities.artist import Artist
 from src.collector.use_cases.merge import merge_artist_dicts
 from tests.unit_tests.collector.use_cases.test_merge_helper import ArtistDictionaryBuilder
 
@@ -66,7 +67,7 @@ class TestMergeArtistDicts(unittest.TestCase):
             .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021') \
             .artist_dict()
 
-        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed )
+        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed)
 
         assert actual_artists == expected_artists
 
@@ -178,4 +179,21 @@ class TestMergeArtistDicts(unittest.TestCase):
 
         assert actual_artists == expected_artists
 
+    def test__merge_artists_dicts__WillHandleHangingReleaseIDMissingFromReleaseStore__WhenArchivedArtistIncludesReleaseID(self):
+        artist_dict_builder = ArtistDictionaryBuilder()
 
+        artist = Artist(id='artist_id_123', name='Future', releases=[None])
+
+        archived_artists = artist_dict_builder.set_artist(artist).artist_dict()
+
+        recently_reviewed_artists = ArtistDictionaryBuilder() \
+            .add_artist('artist_id_123', 'Future') \
+            .add_release('release_id_123', 'We Don\'T Trust You') \
+            .add_review('review_id_123', 'pitchfork', 50, '2024-03-20') \
+            .artist_dict()
+
+        expected_artists = recently_reviewed_artists.copy()
+
+        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
+
+        assert actual_artists == expected_artists

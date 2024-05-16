@@ -19,25 +19,13 @@ class CollectorService:
 
     def collect_reviews(self):
 
-        # TODO: the term "collect" is perhaps a bit overloaded. We describe the overall job of the service of going off
-        #  to the internet and storing new reviews collecting and we call the controllers that physically fetch the data
-        #  collectors as well
         self.music_cataloger.collect_reviews(metacritic, publications=METACRITIC_PUBLICATIONS_SAMPLE)
         self.music_cataloger.collect_reviews(aoty, publications=AOTY_PUBLICATIONS_SAMPLE)
 
-        # TODO: why is music_cataloger.publication_reviews blank when we step in here ????
         recently_reviewed_artists = self.music_cataloger.catalog_reviews()
 
         archived_artists = self.artist_store.get_all()
 
-        for _, artist in archived_artists.items():
-            if artist.id == "4e879b681e30709667f06fae00c234cedc49022c4d41b805a4cd87ab876c96fc":
-                print('thats a bingo')
-
-
-        # archive_copy = archived_artists.copy()
-        # known_artists = archive_copy.update(recently_reviewed_artists)
-        # known_artists = {**archived_artists, **recently_reviewed_artists}
         known_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
         print('enriching release data')
 
