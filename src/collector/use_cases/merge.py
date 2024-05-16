@@ -1,4 +1,5 @@
 from typing import Dict, List
+from copy import deepcopy
 from src.collector.entities.artist import Artist
 from src.collector.entities.release import Release
 from src.collector.entities.review import Review
@@ -16,36 +17,44 @@ def merge_artist_dicts(archive: Dict[str, Artist], new_artist_entries: Dict[str,
 
 
 def update_artist_entry(archive: Dict[str, Artist], new_artist_entry: Artist) -> Dict[str, Artist]:
+    updated_archive = archive.copy()
     artist_id = new_artist_entry.id
     archived_releases = archive.get(artist_id).releases
     recently_reviewed_releases = new_artist_entry.releases
 
-    if not archived_releases:
-        archived_releases = new_artist_entry.releases
-    else:
-        archived_releases = update_archived_releases(archived_releases, recently_reviewed_releases)
+    releases = []
+    # checks for None of [None]
+    if not archived_releases or not any(archived_releases):
+        releases = new_artist_entry.releases
+    if archived_releases:
+        releases = merge_releases(archived_releases, recently_reviewed_releases)
 
-    archive[artist_id].releases = archived_releases
+    updated_archive[artist_id].releases = releases
 
-    return archive
+    return updated_archive
 
 
-def update_archived_releases(archived_releases: List[Release], new_release_entries: List[Release]) -> List[Release]:
-    updated_releases = archived_releases.copy()
+def merge_releases(archived_releases: List[Release], new_release_entries: List[Release]) -> List[Release]:
+    merged_releases = archived_releases.copy()
     for new_release_entry in new_release_entries:
         for archived_release in archived_releases:
-            if new_release_entry.id is archived_release.id:
-                updated_releases = add_review_to_release_list(updated_releases, archived_release, new_release_entry)
-            else:
-                updated_releases.append(new_release_entry)
 
-    return updated_releases
+            # catch dead release references in artist store
+            if not archived_release:
+                return [new_release_entry]
+
+            if new_release_entry.id is archived_release.id:
+                merged_releases = add_review_to_release_list(merged_releases, archived_release, new_release_entry)
+            else:
+                merged_releases.append(new_release_entry)
+
+    return merged_releases
 
 
 def add_review_to_release_list(releases: List[Release], old_release: Release, new_release: Release) -> List[Release]:
-    current_release = old_release
+    current_release = deepcopy(old_release)
     combined_reviews = merge_review_lists(old_release.reviews, new_release.reviews)
-    old_release.reviews = combined_reviews
+    current_release.reviews = combined_reviews
 
     releases.remove(old_release)
     releases.append(current_release)
