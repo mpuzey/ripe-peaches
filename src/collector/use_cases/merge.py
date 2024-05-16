@@ -5,14 +5,14 @@ from src.collector.entities.review import Review
 
 
 def merge_artist_dicts(archive: Dict[str, Artist], new_artist_entries: Dict[str, Artist]) -> Dict[str, Artist]:
-    archive = archive.copy()
+    merged_archive = archive.copy()
     for artist_id, recently_reviewed_artist in new_artist_entries.items():
-        if artist_id in archive:
-            archive = update_artist_entry(archive, recently_reviewed_artist)
+        if artist_id in merged_archive:
+            merged_archive = update_artist_entry(merged_archive, recently_reviewed_artist)
         else:
-            archive[artist_id] = recently_reviewed_artist
+            merged_archive[artist_id] = recently_reviewed_artist
 
-    return archive
+    return merged_archive
 
 
 def update_artist_entry(archive: Dict[str, Artist], new_artist_entry: Artist) -> Dict[str, Artist]:

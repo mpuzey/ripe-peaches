@@ -51,6 +51,8 @@ class ReleaseStore(Store):
                     if isinstance(review, str):
                         print('review is string not object?: ' + review)
                     if isinstance(review, Review):
+                        if review.id == 'cfddd806b40d65bea4302b624c6f7bcb63f6e852f53e8660421c873d8d22c309':
+                            print('publication name ' +  review.publication_name)
                         review_ids.append(review.id)
                         review_documents[review.id] = review.__dict__
                     # review_ids.append(review.id)

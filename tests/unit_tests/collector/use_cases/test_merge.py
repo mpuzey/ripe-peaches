@@ -27,7 +27,23 @@ class TestMergeArtistDicts(unittest.TestCase):
         assert actual_artists == expected_artists
 
     def test__merge_artist_dicts__WillAddArtistReleaseAndMultipleReviewsToArchive_WhenArtistNotSeenBefore(self):
-        pass
+        artist_dict_builder = ArtistDictionaryBuilder()
+        archived_artists = artist_dict_builder.add_artist('artist_id_123', 'Deafheaven').artist_dict()
+
+        recently_reviewed_artists = artist_dict_builder \
+            .reset() \
+            .add_artist('artist_id_456', 'YOB') \
+            .add_release('release_id_123', 'Clearing The Path') \
+            .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021') \
+            .add_release('release_id_456', 'Clearing The Path') \
+            .add_review('review_id_456', '7-popmatters', 85, 'Posted Feb 13, 2021') \
+            .artist_dict()
+
+        expected_artists = artist_dict_builder.add_artist('artist_id_123', 'Deafheaven').artist_dict()
+
+        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
+
+        assert actual_artists == expected_artists
 
     def test__merge_artist_dicts__WillAddReleaseAndReviewToArchive_WhenReleaseNotSeenBefore(self):
 
@@ -124,3 +140,42 @@ class TestMergeArtistDicts(unittest.TestCase):
         actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
 
         assert actual_artists == archived_artists
+
+    def test__merge_artists_dicts__WillHandleTwoReleasesUnderTheSameArtist__WhenNewArtist(self):
+        archived_artists = {}
+
+        recently_reviewed_builder = ArtistDictionaryBuilder() \
+            .add_artist('artist_id_456', 'Future') \
+            .add_release('release_id_123', 'We Don\'T Trust You') \
+            .add_review('review_id_123', 'pitchfork', 50, '2024-03-20') \
+            .add_release('release_id_456', 'We Still Don\'T Trust You') \
+            .add_review('review_id_456', 'the pitchfork', 60, '2024-04-09') \
+            .add_review('review_id_456', 'popmatters', 45, '2024-04-09')
+        recently_reviewed_artists = recently_reviewed_builder.artist_dict()
+
+        expected_artists = recently_reviewed_artists
+
+        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
+
+        assert actual_artists == expected_artists
+
+    def test__merge_artists_dicts__WillHandleTwoReleasesUnderTheSameArtist__WhenArchivedArtist(self):
+        artist_dict_builder = ArtistDictionaryBuilder()
+        archived_artists = artist_dict_builder.add_artist('artist_id_123', 'Future').artist_dict()
+
+        recently_reviewed_artists = ArtistDictionaryBuilder() \
+            .add_artist('artist_id_123', 'Future') \
+            .add_release('release_id_123', 'We Don\'T Trust You') \
+            .add_review('review_id_123', 'pitchfork', 50, '2024-03-20') \
+            .add_release('release_id_456', 'We Still Don\'T Trust You') \
+            .add_review('review_id_123', 'the pitchfork', 60, '2024-04-09') \
+            .add_review('review_id_456', 'popmatters', 45, '2024-04-09') \
+            .artist_dict()
+
+        expected_artists = recently_reviewed_artists
+
+        actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
+
+        assert actual_artists == expected_artists
+
+
