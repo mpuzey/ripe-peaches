@@ -1,5 +1,5 @@
 from src.collector.controllers.release_collector import ReleaseCollector
-from src.collector.entities.external_release import ExternalRelease
+from src.entities.external_release import ExternalRelease
 
 
 class MusicReleaseCollector(ReleaseCollector):

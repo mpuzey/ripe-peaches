@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from src.collector.entities.publication_review import PublicationReview
+from src.entities.publication_review import PublicationReview
 
 
 class ReviewCollector(ABC):

@@ -3,9 +3,9 @@ import unittest
 from mock import MagicMock
 
 from src.collector.controllers.music_release_collector import MusicReleaseCollector
-from src.collector.entities.artist import Artist
-from src.collector.entities.external_release import ExternalRelease
-from src.collector.entities.release import Release
+from src.entities.artist import Artist
+from src.entities.external_release import ExternalRelease
+from src.entities.release import Release
 
 from src.collector.use_cases.music_catalog import MusicCatalog
 from src.collector.use_cases.music_cataloger import MusicCataloger

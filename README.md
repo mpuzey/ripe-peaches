@@ -47,3 +47,9 @@ core application and will place our data in some storage backend so that the UI 
 [localhost:8888/reviews](http://localhost:8888/reviews)
 * You can run the server in the IDE of your choice such as the community edition of [PyCharm](https://www.jetbrains.com/pycharm/). 
 In the case of PyCharm, ensure that your Python 3.6 install is selected as the project interpreter.
+  
+### Run the tests 
+
+```
+python3 -m unittest discover tests/
+```

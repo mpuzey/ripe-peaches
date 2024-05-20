@@ -1,7 +1,7 @@
 import json
 
 from constants import ROOT_PATH
-from src.app.gateways.storage_adapter import StorageAdapter
+from src.app.db.storage_adapter import StorageAdapter
 
 
 class FileAdapter(StorageAdapter):
@@ -9,13 +9,16 @@ class FileAdapter(StorageAdapter):
     def __init__(self, file_name):
         self.file_path = ROOT_PATH + '/src/app/db/%s.json' % file_name
 
-    def get(self):
+    def get(self, id):
+        raise NotImplemented
+
+    def get_all(self):
         """ This API should return a full dict of keys from the file. """
         try:
             with open(self.file_path, 'r') as outfile:
                 data = json.load(outfile)
                 return data
-        except IOError:
+        except Exception as e:
             print('file path %s does not exist' % self.file_path)
             return {}
 
@@ -23,7 +26,7 @@ class FileAdapter(StorageAdapter):
         """ This API needs to take a dict, read existing keys from the file, updates existing documents
          if necessary and dumps the result to file."""
 
-        existing_documents = self.get()
+        existing_documents = self.get_all()
 
         documents = {}
         documents.update(existing_documents)

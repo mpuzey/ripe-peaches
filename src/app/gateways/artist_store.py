@@ -1,15 +1,34 @@
-from src.app.use_cases.store import Store
+from src.app.gateways.store import Store
 from typing import Dict
-from src.collector.entities.artist import Artist
+from src.entities.artist import Artist
 
 
 class ArtistStore(Store):
 
-    def __init__(self, storage_adapter):
+    def __init__(self, storage_adapter, release_store):
         self.storage_adapter = storage_adapter
+        self.release_store = release_store
 
-    def get(self):
-        artists = self.storage_adapter.get()
+    def get(self, id):
+        raise NotImplemented
+
+    def get_all(self) -> Dict[str, Artist]:
+        stored_artists = self.storage_adapter.get_all()
+        stored_releases = self.release_store.get_all()
+        artists = {}
+        for artist_id, stored_artist in stored_artists.items():
+            releases = []
+            for release_id in stored_artist.get('releases'):
+                release = stored_releases.get(release_id)
+                releases.append(release)
+
+            artist = Artist(
+                id=artist_id,
+                name=stored_artist.get('name'),
+                releases=releases
+            )
+            artists[artist_id] = artist
+
         return artists
 
     def put(self, artists: Dict[str, Artist]):
