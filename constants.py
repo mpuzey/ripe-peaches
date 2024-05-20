@@ -5,7 +5,7 @@ ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 PUBLIC_ROOT = os.path.join(ROOT_PATH, 'static')
 
 
-# Metacritic - scraping from metacritic is slow but we pull 1000 releases at at time
+# Metacritic - scraping from metacritic is slow but we pull 100 releases at a time
 METACRITIC_CURATED_PUBLICATIONS = ['pitchfork', 'consequence-of-sound', 'rolling-stone',
                                    'the-guardian', 'drowned-in-sound', 'the-quietus',
                                    'sputnikmusic', 'spin', 'beats-per-minute-formerly-one-thirty-bpm',
@@ -17,12 +17,12 @@ METACRITIC_CURATED_PUBLICATIONS = ['pitchfork', 'consequence-of-sound', 'rolling
                                    'the-av-club', 'the-skinny']
 METACRITIC_PUBLICATIONS_SAMPLE = ['the-quietus', 'sputnikmusic', 'consequence-of-sound', 'uncut', 'record-collector']
 METACRITIC_PUBLICATION_URL = 'https://www.metacritic.com/publication/{publication_name}?' \
-      'filter=music&num_items={release_count}'
+      'filter=albums&num_items={release_count}'
 METACRITIC_REQUEST_HEADERS = {
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 '
                   '(KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'
 }
-METACRITIC_SCRAPE_BATCH_SIZE = 1000
+METACRITIC_SCRAPE_BATCH_SIZE = 100
 
 # AOTY - scraping from AOTY is quicker but we pull only 30 releases at once
 AOTY_PUBLICATIONS_SAMPLE = ['57-the-needle-drop', '7-popmatters', '8-all-music', '2-av-club']
@@ -41,7 +41,7 @@ SPOTIFY_NEW_RELEASE_SEARCH = 'https://api.spotify.com/v1/search?type=album&q={ch
 ARTIST_PARTS_REGEX = '(?:.*?\/){3}([^\/?#]+)'
 
 # Aggregation
-THUMBS_UP_THRESHOLD = 80
+THUMBS_UP_THRESHOLD = 70
 
 # Scores
 MINIMUM_REVIEWS_COUNTED = 5

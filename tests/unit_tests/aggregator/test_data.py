@@ -1,6 +1,6 @@
-from src.aggregator.entities.artist import Artist
-from src.aggregator.entities.release import Release
-from src.aggregator.entities.review import Review
+from src.entities.artist import Artist
+from src.entities.release import Release
+from src.entities.review import Review
 
 
 def get_artist_sample():

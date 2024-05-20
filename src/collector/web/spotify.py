@@ -31,6 +31,8 @@ class Spotify:
         return access_token
 
     def get_release_details(self, artist_name, album_name) -> ExternalRelease:
+
+        print('enriching ' + artist_name + ' release: ' + album_name + 'from Spotify')
         spotify_album = self.search_by_album_and_artist(artist_name, album_name)
 
         if not spotify_album:
