@@ -5,32 +5,32 @@ import base64
 import requests
 import constants
 import string
+import aiohttp
 
 from src.entities.external_release import ExternalRelease
 
 
 class Spotify:
 
-    def __init__(self):
+    def __init__(self, session):
         self.access_token = self._get_access_token()
+        # self.session = aiohttp.ClientSession()
+        self.session = session
 
-    @staticmethod
-    def _get_access_token():
+    async def _get_access_token(self):
         client_id = os.environ.get('SPOTIFY_CLIENT_ID')
         client_secret = os.environ.get('SPOTIFY_CLIENT_SECRET')
         client_details = '%s:%s' % (client_id, client_secret)
         encoded_client_details = base64.b64encode(client_details.encode('utf-8')).decode('utf-8')
         details = 'Basic %s' % encoded_client_details
 
-        authorization_response = requests.post('https://accounts.spotify.com/api/token',
-                                               data={'grant_type': 'client_credentials'},
-                                               headers={'Authorization': details})
+        async with self.session.post('https://accounts.spotify.com/api/token',
+                                     # will this data be accepted by aiohttp?
+                                     data={'grant_type': 'client_credentials'},
+                                     headers={'Authorization': details}) as authorization_response:
+            return await json.loads(authorization_response.text()).get('access_token')
 
-        access_token = json.loads(authorization_response.text).get('access_token')
-
-        return access_token
-
-    def get_release_details(self, artist_name, album_name) -> ExternalRelease:
+    async def get_release_details(self, artist_name, album_name) -> ExternalRelease:
 
         print('enriching ' + artist_name + ' release: ' + album_name + 'from Spotify')
         spotify_album = self.search_by_album_and_artist(artist_name, album_name)
@@ -38,9 +38,10 @@ class Spotify:
         if not spotify_album:
             spotify_album = self.search_by_album(artist_name, album_name)
 
+        #  need to return a coroutine ExternalRelease object
         return self.build_external_release(artist_name, album_name, spotify_album)
 
-    def search_by_album_and_artist(self, artist_name, album_name):
+    async def search_by_album_and_artist(self, artist_name, album_name):
         search = 'https://api.spotify.com/v1/search'
         query = f'album:"{album_name}"+artist:"{artist_name}"'
 
@@ -57,7 +58,7 @@ class Spotify:
 
         return spotify_album
 
-    def search_by_album(self, artist_name, album_name):
+    async def search_by_album(self, artist_name, album_name):
         search = 'https://api.spotify.com/v1/search'
         query = f'album:"{album_name}"'
 
@@ -75,7 +76,8 @@ class Spotify:
 
         return spotify_album
 
-    def build_external_release(self, artist_name, album_name, spotify_album):
+    @staticmethod
+    async def build_external_release(artist_name, album_name, spotify_album):
         release_date = spotify_album.get('release_date')
         album_type = spotify_album.get('album_type')
         total_tracks = spotify_album.get('total_tracks')
@@ -93,7 +95,7 @@ class Spotify:
             spotify_url=spotify_url
         )
 
-    def get_releases(self) -> [ExternalRelease]:
+    async def get_releases(self) -> [ExternalRelease]:
         print('Fetching recent releases from Spotify...')
 
         external_releases = []
@@ -112,7 +114,7 @@ class Spotify:
         return self._parse_releases(external_releases)
 
     @staticmethod
-    def _parse_response(response):
+    async def _parse_response(response):
 
         albums = response.get('albums')
 
@@ -125,7 +127,7 @@ class Spotify:
         return valid_items, albums.get('next')
 
     @staticmethod
-    def _parse_releases(external_releases) -> [ExternalRelease]:
+    async def _parse_releases(external_releases) -> [ExternalRelease]:
 
         releases = []
         for external_release in external_releases:

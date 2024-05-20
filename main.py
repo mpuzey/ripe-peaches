@@ -30,8 +30,8 @@ def start_collector_service():
     review_collector = MusicReviewCollector()
     release_collector = MusicReleaseCollector()
     music_cataloger = MusicCataloger(music_catalog, review_collector, release_collector)
-    spotify = Spotify()
-    enricher = Enricher(spotify)
+    # spotify = Spotify()
+    enricher = Enricher
     service = CollectorService(music_cataloger, enricher)
     service.collect_reviews()
 
