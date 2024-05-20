@@ -1,4 +1,5 @@
 import asyncio
+import time
 
 from typing import Dict
 
@@ -15,14 +16,22 @@ class Enricher:
     async def add_release_dates(self, artists: Dict[str, Artist]) -> Dict[str, Artist]:
         enriched_artists = artists.copy()
 
+        start_time = time.time()
+
         async with aiohttp.ClientSession() as session:
             tasks = []
             for artist_id, artist in enriched_artists.items():
                 enrich_artist_task = self.enrich_artist(session, artist)
                 tasks.append(enrich_artist_task)
-                # enriched_artist = await enrich_artist_task
-                # enriched_artists[artist_id] = enriched_artist
-            enriched_artists = await asyncio.gather(*tasks)
+            enriched_artist_list = await asyncio.gather(*tasks)
+
+            for enriched_artist in enriched_artist_list:
+                if enriched_artist.id == artist_id:
+                    enriched_artists[artist_id] = enriched_artist
+
+        end_time = time.time()
+
+        print(f"Time taken: {end_time - start_time} seconds")
 
         return enriched_artists
 

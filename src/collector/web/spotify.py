@@ -38,7 +38,6 @@ class Spotify:
         if not spotify_album:
             spotify_album = self.search_by_album(artist_name, album_name)
 
-        #  need to return a coroutine ExternalRelease object
         return self.build_external_release(artist_name, album_name, spotify_album)
 
     async def search_by_album_and_artist(self, artist_name, album_name):
@@ -77,7 +76,7 @@ class Spotify:
         return spotify_album
 
     @staticmethod
-    async def build_external_release(artist_name, album_name, spotify_album):
+    async def build_external_release(artist_name, album_name, spotify_album) -> ExternalRelease:
         release_date = spotify_album.get('release_date')
         album_type = spotify_album.get('album_type')
         total_tracks = spotify_album.get('total_tracks')
@@ -95,7 +94,7 @@ class Spotify:
             spotify_url=spotify_url
         )
 
-    async def get_releases(self) -> [ExternalRelease]:
+    def get_releases(self) -> [ExternalRelease]:
         print('Fetching recent releases from Spotify...')
 
         external_releases = []
@@ -114,7 +113,7 @@ class Spotify:
         return self._parse_releases(external_releases)
 
     @staticmethod
-    async def _parse_response(response):
+    def _parse_response(response):
 
         albums = response.get('albums')
 
@@ -127,7 +126,7 @@ class Spotify:
         return valid_items, albums.get('next')
 
     @staticmethod
-    async def _parse_releases(external_releases) -> [ExternalRelease]:
+    def _parse_releases(external_releases) -> [ExternalRelease]:
 
         releases = []
         for external_release in external_releases:

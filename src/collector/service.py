@@ -1,3 +1,5 @@
+import asyncio
+
 from src.app.gateways.artist_store import ArtistStore
 from src.app.gateways.release_store import ReleaseStore
 from src.app.gateways.review_store import ReviewStore
@@ -29,7 +31,7 @@ class CollectorService:
         known_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
         print('enriching release data')
 
-        enriched_artists = self.enricher.add_release_dates(known_artists)
+        enriched_artists = asyncio.run(self.enricher.add_release_dates(known_artists))
         enriched_artists2 = enriched_artists.copy()
 
         self.artist_store.put(enriched_artists)
