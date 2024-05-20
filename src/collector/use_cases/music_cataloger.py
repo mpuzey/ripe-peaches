@@ -32,7 +32,6 @@ class MusicCataloger(Librarian):
 
     def catalog_reviews(self) -> Dict[str, Artist]:
 
-        print(self.publication_reviews)
         for publication_review in self.publication_reviews:
 
             artist_name = publication_review.artist

@@ -19,8 +19,8 @@ class CollectorService:
 
     def collect_reviews(self):
 
-        self.music_cataloger.collect_reviews(metacritic, publications=METACRITIC_PUBLICATIONS_SAMPLE)
-        self.music_cataloger.collect_reviews(aoty, publications=AOTY_PUBLICATIONS_SAMPLE)
+        self.music_cataloger.collect_reviews(metacritic, publications=METACRITIC_CURATED_PUBLICATIONS)
+        self.music_cataloger.collect_reviews(aoty, publications=AOTY_CURATED_PUBLICATIONS)
 
         recently_reviewed_artists = self.music_cataloger.catalog_reviews()
 
