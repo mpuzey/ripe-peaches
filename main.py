@@ -3,14 +3,9 @@ tornado web server. """
 import tornado.ioloop
 import tornado.web
 
-from constants import PUBLIC_ROOT
+from src.app.service import start_app
 from src.aggregator.service import AggregatorService
 from src.aggregator.review_aggregator import ReviewScoresAggregator
-from src.app.db.file_adapter import FileAdapter
-from src.app.gateways.review_store import ReviewStore
-from src.app.gateways.score_store import ScoreStore
-from src.app.web.reviews_handler import ReviewsHandler
-from src.app.web.scores_handler import ScoresHandler
 from src.collector.use_cases.music_catalog import MusicCatalog
 from src.collector.use_cases.music_cataloger import MusicCataloger
 from src.collector.use_cases.enricher import Enricher
@@ -20,22 +15,14 @@ from src.collector.controllers.music_review_collector import MusicReviewCollecto
 from src.collector.service import CollectorService
 
 
-def make_app():
-    """ This function returns an Application instance loaded with the necessary request handlers
-    for the app.
-    """
+def start_all_services():
+    run_jobs()
+    start_app()
 
+
+def run_jobs():
     start_collector_service()
     start_aggregator_service()
-
-    review_store = ReviewStore(FileAdapter('reviews'))
-    score_store = ScoreStore(FileAdapter('scores'), FileAdapter('releases'))
-
-    return tornado.web.Application([
-        (r'/', ScoresHandler, {'store': score_store}),
-        (r'/public/(.*)', tornado.web.StaticFileHandler, {'path': PUBLIC_ROOT}),
-        (r'/reviews', ReviewsHandler, {'store': review_store})
-    ])
 
 
 def start_collector_service():
@@ -57,6 +44,4 @@ def start_aggregator_service():
 
 if __name__ == '__main__':
     """ This function is the entry point for the application. """
-    app = make_app()
-    app.listen(8888)
-    tornado.ioloop.IOLoop.current().start()
+    start_all_services()
