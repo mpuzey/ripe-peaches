@@ -2,4 +2,5 @@ beautifulsoup4
 requests==2.31.0
 tornado
 dataclasses-json
-mock
+mock~=5.1.0
+deepdiff~=7.0.1

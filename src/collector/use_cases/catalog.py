@@ -1,7 +1,7 @@
 from typing import List, Dict
-from src.collector.entities.release import Release
-from src.collector.entities.review import Review
-from src.collector.entities.artist import Artist
+from src.entities.release import Release
+from src.entities.review import Review
+from src.entities.artist import Artist
 from abc import ABC, abstractmethod
 
 

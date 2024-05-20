@@ -1,7 +1,7 @@
 import re
 import requests
 from bs4 import BeautifulSoup
-from src.collector.entities.publication_review import PublicationReview
+from src.entities.publication_review import PublicationReview
 
 from constants import ARTIST_PARTS_REGEX, METACRITIC_PUBLICATION_URL, METACRITIC_REQUEST_HEADERS, \
     METACRITIC_SCRAPE_BATCH_SIZE

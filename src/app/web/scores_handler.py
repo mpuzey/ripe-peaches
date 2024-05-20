@@ -12,6 +12,6 @@ class ScoresHandler(BaseHandler):
         self.store = store
 
     def get(self):
-        scores = self.store.get()
+        scores = self.store.get_all()
         self.write({'scores': scores})
         # self.render(os.path.join(PUBLIC_ROOT, 'index.html'))
