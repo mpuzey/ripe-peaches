@@ -24,13 +24,15 @@ class Spotify:
         encoded_client_details = base64.b64encode(client_details.encode('utf-8')).decode('utf-8')
         details = 'Basic %s' % encoded_client_details
 
-        async with self.session.post('https://accounts.spotify.com/api/token',
-                                     # will this data be accepted by aiohttp?
-                                     data={'grant_type': 'client_credentials'},
-                                     headers={'Authorization': details}) as authorization_response:
+        async with (self.session.post('https://accounts.spotify.com/api/token',
+                                      # will this data be accepted by aiohttp?
+                                      data={'grant_type': 'client_credentials'},
+                                      headers={'Authorization': details})
+                    as authorization_response):
+
             return await json.loads(authorization_response.text()).get('access_token')
 
-    async def get_release_details(self, artist_name, album_name) -> ExternalRelease:
+    async def get_release_details(self, artist_name, album_name): #-> ExternalRelease:
 
         print('enriching ' + artist_name + ' release: ' + album_name + 'from Spotify')
         spotify_album = self.search_by_album_and_artist(artist_name, album_name)
@@ -44,11 +46,11 @@ class Spotify:
         search = 'https://api.spotify.com/v1/search'
         query = f'album:"{album_name}"+artist:"{artist_name}"'
 
-        response = requests.get(search,
-                                headers={'Authorization': 'Bearer %s' % self.access_token},
-                                params=[('type', 'album'), ('q', query)])
+        async with self.session.get(search,
+                                    headers={'Authorization': 'Bearer %s' % self.access_token},
+                                    params=[('type', 'album'), ('q', query)]) as response:
+            response_json = await response.json()
 
-        response_json = response.json()
         spotify_album = {}
         for album in response_json['albums']['items']:
             if album['name'].lower() == album_name.lower():
@@ -61,11 +63,10 @@ class Spotify:
         search = 'https://api.spotify.com/v1/search'
         query = f'album:"{album_name}"'
 
-        response = requests.get(search,
-                                headers={'Authorization': 'Bearer %s' % self.access_token},
-                                params=[('type', 'album'), ('q', query)])
-
-        response_json = response.json()
+        async with self.session.get(search,
+                                    headers={'Authorization': 'Bearer %s' % self.access_token},
+                                    params=[('type', 'album'), ('q', query)]) as response:
+            response_json = await response.json()
         spotify_album = {}
         for album in response_json['albums']['items']:
             for artist in album['artists']:
