@@ -1,7 +1,5 @@
 """ This is the main module for the application. It's in charge of creating and configuring the
 tornado web server. """
-import tornado.ioloop
-import tornado.web
 
 from src.app.service import start_app
 from src.aggregator.service import AggregatorService
@@ -30,8 +28,8 @@ def start_collector_service():
     review_collector = MusicReviewCollector()
     release_collector = MusicReleaseCollector()
     music_cataloger = MusicCataloger(music_catalog, review_collector, release_collector)
-    # spotify = Spotify()
-    enricher = Enricher
+    spotify = Spotify
+    enricher = Enricher(spotify)
     service = CollectorService(music_cataloger, enricher)
     service.collect_reviews()
 

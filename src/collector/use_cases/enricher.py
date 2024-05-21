@@ -5,6 +5,7 @@ from typing import Dict
 
 import aiohttp
 
+from src.collector.web.spotify_album import SpotifyAlbum
 from src.entities.artist import Artist
 
 
@@ -22,12 +23,15 @@ class Enricher:
             tasks = []
             for artist_id, artist in enriched_artists.items():
                 enrich_artist_task = self.enrich_artist(session, artist)
-                tasks.append(enrich_artist_task)
-            enriched_artist_list = await asyncio.gather(*tasks)
+                tasks.append((enrich_artist_task, artist))
+            responses = await asyncio.gather(*(task[0] for task in tasks))
 
-            for enriched_artist in enriched_artist_list:
-                if enriched_artist.id == artist_id:
-                    enriched_artists[artist_id] = enriched_artist
+            processing_tasks = [self.process_response(response, task[1]) for response, task in zip(responses, tasks)]
+            processed_responses = await asyncio.gather(*processing_tasks)
+
+            for processed_response in processed_responses:
+                if processed_response.id == artist_id:
+                    enriched_artists[artist_id] = processed_response
 
         end_time = time.time()
 
@@ -42,7 +46,7 @@ class Enricher:
             if not release.date:
                 enrichment_source = self.source(session)
 
-                release_details = enrichment_source.get_release_details(artist.name, release.name)
+                release_details = await enrichment_source.get_spotify_album(artist.name, release.name)
                 release.type = release_details.type
                 release.date = release_details.date
                 release.total_tracks = release_details.total_tracks
@@ -51,4 +55,7 @@ class Enricher:
             enriched_releases.append(release)
 
         artist.releases = enriched_releases
-        yield artist
+        return artist
+
+    def process_response(self, album, artist: Artist):
+        self.source.get_release_from_album(album, artist)

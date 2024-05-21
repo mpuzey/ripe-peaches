@@ -6,7 +6,10 @@ import requests
 import constants
 import string
 import aiohttp
+from typing import Coroutine
 
+from src.collector.web.spotify_album import SpotifyAlbum
+from src.entities.artist import Artist
 from src.entities.external_release import ExternalRelease
 
 
@@ -14,33 +17,36 @@ class Spotify:
 
     def __init__(self, session):
         self.access_token = self._get_access_token()
-        # self.session = aiohttp.ClientSession()
         self.session = session
 
-    async def _get_access_token(self):
+    @staticmethod
+    def _get_access_token():
         client_id = os.environ.get('SPOTIFY_CLIENT_ID')
         client_secret = os.environ.get('SPOTIFY_CLIENT_SECRET')
         client_details = '%s:%s' % (client_id, client_secret)
         encoded_client_details = base64.b64encode(client_details.encode('utf-8')).decode('utf-8')
         details = 'Basic %s' % encoded_client_details
 
-        async with (self.session.post('https://accounts.spotify.com/api/token',
-                                      # will this data be accepted by aiohttp?
-                                      data={'grant_type': 'client_credentials'},
-                                      headers={'Authorization': details})
-                    as authorization_response):
+        authorization_response = requests.post('https://accounts.spotify.com/api/token',
+                                               data={'grant_type': 'client_credentials'},
+                                               headers={'Authorization': details})
 
-            return await json.loads(authorization_response.text()).get('access_token')
+        access_token = json.loads(authorization_response.text).get('access_token')
 
-    async def get_release_details(self, artist_name, album_name): #-> ExternalRelease:
+        return access_token
+
+    async def get_spotify_album(self, artist_name, album_name):  # -> Coroutine[None, None, SpotifyAlbum]:
 
         print('enriching ' + artist_name + ' release: ' + album_name + 'from Spotify')
-        spotify_album = self.search_by_album_and_artist(artist_name, album_name)
+        spotify_album = await self.search_by_album_and_artist(artist_name, album_name)
 
         if not spotify_album:
-            spotify_album = self.search_by_album(artist_name, album_name)
+            spotify_album = await self.search_by_album(artist_name, album_name)
 
-        return self.build_external_release(artist_name, album_name, spotify_album)
+        return spotify_album
+
+    async def get_release_from_album(self, spotify_album, artist: Artist):  # -> Coroutine[None, None, ExternalRelease]:
+        return await self.build_external_release(spotify_album, artist)
 
     async def search_by_album_and_artist(self, artist_name, album_name):
         search = 'https://api.spotify.com/v1/search'
@@ -77,7 +83,7 @@ class Spotify:
         return spotify_album
 
     @staticmethod
-    async def build_external_release(artist_name, album_name, spotify_album) -> ExternalRelease:
+    async def build_external_release(spotify_album, artist) -> ExternalRelease:
         release_date = spotify_album.get('release_date')
         album_type = spotify_album.get('album_type')
         total_tracks = spotify_album.get('total_tracks')
@@ -87,8 +93,8 @@ class Spotify:
             spotify_url = external_urls.get('spotify')
 
         return ExternalRelease(
-            name=album_name,
-            artist=artist_name,
+            name=spotify_album.get('name'),
+            artist=artist.name,
             date=release_date,
             type=album_type,
             total_tracks=total_tracks,

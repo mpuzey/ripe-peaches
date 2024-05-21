@@ -22,7 +22,7 @@ class CollectorService:
     def collect_reviews(self):
 
         self.music_cataloger.collect_reviews(metacritic, publications=METACRITIC_PUBLICATIONS_SAMPLE)
-        self.music_cataloger.collect_reviews(aoty, publications=AOTY_CURATED_PUBLICATIONS)
+        self.music_cataloger.collect_reviews(aoty, publications=AOTY_PUBLICATIONS_SAMPLE)
 
         recently_reviewed_artists = self.music_cataloger.catalog_reviews()
 
@@ -31,7 +31,7 @@ class CollectorService:
         known_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
         print('enriching release data')
 
-        enriched_artists = asyncio.run(self.enricher.add_release_dates(known_artists))
+        enriched_artists = asyncio.run(self.enricher.add_release_dates(artists=known_artists))
         enriched_artists2 = enriched_artists.copy()
 
         self.artist_store.put(enriched_artists)
