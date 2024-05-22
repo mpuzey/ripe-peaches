@@ -20,9 +20,11 @@ class Enricher:
         start_time = time.time()
 
         async with aiohttp.ClientSession() as session:
+            enrichment_source = self.source(session)
+
             tasks = []
             for artist_id, artist in enriched_artists.items():
-                enrich_artist_task = self.enrich_artist(session, artist)
+                enrich_artist_task = self.enrich_artist(enrichment_source, artist)
                 tasks.append((enrich_artist_task, artist))
             responses = await asyncio.gather(*(task[0] for task in tasks))
 
@@ -39,12 +41,12 @@ class Enricher:
 
         return enriched_artists
 
-    async def enrich_artist(self, session: aiohttp.ClientSession, artist: Artist) -> Artist:
+    @staticmethod
+    async def enrich_artist(enrichment_source, artist: Artist) -> Artist:
 
         enriched_releases = []
         for release in artist.releases:
             if not release.date:
-                enrichment_source = self.source(session)
 
                 release_details = await enrichment_source.get_spotify_album(artist.name, release.name)
                 release.type = release_details.type

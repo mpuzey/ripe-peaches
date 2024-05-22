@@ -5,3 +5,4 @@ dataclasses-json
 mock~=5.1.0
 deepdiff~=7.0.1
 aiohttp~=3.9.5
+asynctest~=0.13.0

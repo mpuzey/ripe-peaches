@@ -1,8 +1,11 @@
 import os
+from ssl import SSLEOFError
 from urllib import parse
 import json
 import base64
 import requests
+from aiohttp import ContentTypeError
+
 import constants
 import string
 import aiohttp
@@ -30,7 +33,7 @@ class Spotify:
         authorization_response = requests.post('https://accounts.spotify.com/api/token',
                                                data={'grant_type': 'client_credentials'},
                                                headers={'Authorization': details})
-
+        print(authorization_response.text)
         access_token = json.loads(authorization_response.text).get('access_token')
 
         return access_token
@@ -52,16 +55,26 @@ class Spotify:
         search = 'https://api.spotify.com/v1/search'
         query = f'album:"{album_name}"+artist:"{artist_name}"'
 
-        async with self.session.get(search,
-                                    headers={'Authorization': 'Bearer %s' % self.access_token},
-                                    params=[('type', 'album'), ('q', query)]) as response:
-            response_json = await response.json()
-
         spotify_album = {}
-        for album in response_json['albums']['items']:
-            if album['name'].lower() == album_name.lower():
-                spotify_album = album
-                break
+
+        try:
+            async with (self.session.get(search,
+                                         headers={'Authorization': 'Bearer %s' % self.access_token},
+                                         params=[('type', 'album'), ('q', query)])
+                        as response):
+                response_json = await response.json()
+                # response_status_code = response.status
+                # response_reason = response.reason
+                # if response_status_code != 200:
+                #     print(f'Error: {response_status_code} - {response_reason}')
+                #     return spotify_album
+
+            for album in response_json['albums']['items']:
+                if album['name'].lower() == album_name.lower():
+                    return album
+
+        except ContentTypeError as e:
+            print(e)
 
         return spotify_album
 
