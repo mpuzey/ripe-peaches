@@ -33,7 +33,6 @@ class Spotify:
         authorization_response = requests.post('https://accounts.spotify.com/api/token',
                                                data={'grant_type': 'client_credentials'},
                                                headers={'Authorization': details})
-        print(authorization_response.text)
         access_token = json.loads(authorization_response.text).get('access_token')
 
         return access_token

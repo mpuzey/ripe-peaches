@@ -4,7 +4,7 @@ from typing import Any, Tuple
 import aiohttp
 import asynctest
 from aiohttp import ContentTypeError
-from asynctest import MagicMock
+from asynctest import MagicMock, CoroutineMock
 
 from src.collector.web.spotify import Spotify
 
@@ -14,30 +14,34 @@ class CoroutineMagicMock:
 
 
 class TestSpotify(asynctest.TestCase):
-
     # def setUp(self):
-    #     client_session = MagicMock()
-    #     self.spotify = Spotify(client_session)
+    #     self.session = aiohttp.ClientSession()
+    #
+    # def tearDown(self):
+    #     self.loop.run_until_complete(self.session.close())
 
-    @asynctest.patch('src.collector.web.spotify.aiohttp.ClientSession')
+    @asynctest.patch('src.collector.web.spotify.aiohttp.ClientSession.get', new_callable=asynctest.CoroutineMock)
     @asynctest.patch('src.collector.web.spotify.requests.post')
-    async def test__spotify__Spotify__get_spotify_album__CompletesEnrichment__WhenUnexpectedMimeTypeReceivedWith429ToTooManyRequestsStatus(self, mock_post, mock_session):
+    async def test__spotify__Spotify__get_spotify_album__ReturnsSpotifyAlbum__WhenUnexpectedMimeTypeErrorIsStatusReceivedFromSessionGet(
+            self, mock_post, mock_get):
 
         authorization_response = MagicMock()
         authorization_response.text = '{"access_token": "mock_access_token"}'
         mock_post.return_value = authorization_response
 
         search_by_artist_response = MagicMock()
+        search_by_artist_response.json = CoroutineMock()
         search_by_artist_response.json.side_effect = ContentTypeError(MagicMock(), (MagicMock()))
-        mock_session.get.return_value = search_by_artist_response
 
-        async with aiohttp.ClientSession() as client_session:
+        # Mock the __aenter__ and __aexit__ methods
+        mock_get.return_value.__aenter__.return_value = search_by_artist_response
+        mock_get.return_value.__aexit__ = CoroutineMock()
 
-            spotify = Spotify(client_session)
+        expected_album = {'name': 'Now & Then [Single]', 'artist': 'The Beatles'}
 
-            try:
-                album = await spotify.get_spotify_album('The Beatles', 'Now & Then [Single]')
-            except ContentTypeError as e:
-                assert str(e) == 'Attempt to decode JSON with unexpected mimetype: '
+        spotify = Spotify(aiohttp.ClientSession())
 
-        assert album is not None # TODO: diff album to expected album
+        album = await spotify.get_spotify_album('The Beatles', 'Now & Then [Single]')
+
+        assert album == expected_album
+
