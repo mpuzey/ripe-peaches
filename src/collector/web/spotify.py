@@ -63,8 +63,12 @@ class Spotify:
                                          headers={'Authorization': 'Bearer %s' % self.access_token},
                                          params=[('type', 'album'), ('q', query)])
                         as response):
+                print('TEST?--------')
                 response_json = await response.json()
-                # response_status_code = response.status
+                response_status_code = response.status
+                if response_status_code == 200:
+                    print(f' {response_status_code}')
+                    return spotify_album
                 # response_reason = response.reason
                 # if response_status_code != 200:
                 #     print(f'Error: {response_status_code} - {response_reason}')
@@ -75,9 +79,9 @@ class Spotify:
                         return album
 
         except ContentTypeError as e:
-            print(e)
-        finally:
-            raise e
+            print('test2 --------', e)
+
+        return spotify_album
 
     async def search_by_album(self, artist_name, album_name):
         search = 'https://api.spotify.com/v1/search'
