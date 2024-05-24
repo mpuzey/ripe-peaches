@@ -1,4 +1,5 @@
 import os
+from asyncio import sleep
 from ssl import SSLEOFError
 from urllib import parse
 import json
@@ -55,6 +56,7 @@ class Spotify:
         query = f'album:"{album_name}"+artist:"{artist_name}"'
 
         spotify_album = {}
+        response_json = None
 
         try:
             async with (self.session.get(search,
@@ -67,10 +69,10 @@ class Spotify:
                 # if response_status_code != 200:
                 #     print(f'Error: {response_status_code} - {response_reason}')
                 #     return spotify_album
-
-            for album in response_json['albums']['items']:
-                if album['name'].lower() == album_name.lower():
-                    return album
+            if response_json is not None and 'albums' in response_json and 'items' in response_json['albums']:
+                for album in response_json['albums']['items']:
+                    if album['name'].lower() == album_name.lower():
+                        return album
 
         except ContentTypeError as e:
             print(e)
@@ -81,16 +83,26 @@ class Spotify:
         search = 'https://api.spotify.com/v1/search'
         query = f'album:"{album_name}"'
 
-        async with self.session.get(search,
-                                    headers={'Authorization': 'Bearer %s' % self.access_token},
-                                    params=[('type', 'album'), ('q', query)]) as response:
-            response_json = await response.json()
         spotify_album = {}
-        for album in response_json['albums']['items']:
-            for artist in album['artists']:
-                if artist['name'] in artist_name and album['name'].lower() == album_name.lower():
-                    spotify_album = album
-                    break
+        response_json = None
+
+        try:
+            async with self.session.get(search,
+                                        headers={'Authorization': 'Bearer %s' % self.access_token},
+                                        params=[('type', 'album'), ('q', query)]) as response:
+                response_json = await response.json()
+            spotify_album = {}
+            for album in response_json['albums']['items']:
+                for artist in album['artists']:
+                    if artist['name'] in artist_name and album['name'].lower() == album_name.lower():
+                        return album
+
+            if response_json is not None and 'albums' in response_json and 'items' in response_json['albums']:
+                for album in response_json['albums']['items']:
+                    if album['name'].lower() == album_name.lower():
+                        return album
+        except ContentTypeError as e:
+            print(e)
 
         return spotify_album
 
