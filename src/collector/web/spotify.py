@@ -76,8 +76,8 @@ class Spotify:
 
         except ContentTypeError as e:
             print(e)
-
-        return spotify_album
+        finally:
+            raise e
 
     async def search_by_album(self, artist_name, album_name):
         search = 'https://api.spotify.com/v1/search'
@@ -92,15 +92,12 @@ class Spotify:
                                         params=[('type', 'album'), ('q', query)]) as response:
                 response_json = await response.json()
             spotify_album = {}
-            for album in response_json['albums']['items']:
-                for artist in album['artists']:
-                    if artist['name'] in artist_name and album['name'].lower() == album_name.lower():
-                        return album
 
             if response_json is not None and 'albums' in response_json and 'items' in response_json['albums']:
                 for album in response_json['albums']['items']:
-                    if album['name'].lower() == album_name.lower():
-                        return album
+                    for artist in album['artists']:
+                        if artist['name'] in artist_name and album['name'].lower() == album_name.lower():
+                            return album
         except ContentTypeError as e:
             print(e)
 
