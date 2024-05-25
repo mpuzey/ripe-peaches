@@ -63,23 +63,20 @@ class Spotify:
                                          headers={'Authorization': 'Bearer %s' % self.access_token},
                                          params=[('type', 'album'), ('q', query)])
                         as response):
-                print('TEST?--------')
+                # print('SUCCESS?-------- artist: %s album: %s' % (artist_name, album_name))
                 response_json = await response.json()
                 response_status_code = response.status
-                if response_status_code == 200:
-                    print(f' {response_status_code}')
+                response_reason = response.reason
+                if response_status_code != 200:
+                    print(f'Error: {response_status_code} - {response_reason}')
                     return spotify_album
-                # response_reason = response.reason
-                # if response_status_code != 200:
-                #     print(f'Error: {response_status_code} - {response_reason}')
-                #     return spotify_album
             if response_json is not None and 'albums' in response_json and 'items' in response_json['albums']:
                 for album in response_json['albums']['items']:
                     if album['name'].lower() == album_name.lower():
                         return album
 
         except ContentTypeError as e:
-            print('test2 --------', e)
+            print('ContentTypeError -------- %s artist: %s album: %s', e, artist_name, album_name)
 
         return spotify_album
 

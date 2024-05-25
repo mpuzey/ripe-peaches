@@ -92,19 +92,10 @@ class TestSpotify(asynctest.TestCase):
         mock_post.return_value = authorization_response
 
         search_by_artist_response = MagicMock()
-        search_by_artist_response.json = CoroutineMock()
-        # search_by_artist_response.json.side_effect = raise_content_type_error
+        search_by_artist_response.json.side_effect = raise_content_type_error
 
-        # TODO: does response.json() raise the exception or does session.get()?
-
-        # Create an instance of MockClientResponse with the JSON data you want response.json() to return
-        # TODO: note that this is probably the wrong approach because if we are getting into the .json() call in the try
-        #       then that show that we have not raised the ContentTypeError exception on the session.get with statement
-        search_by_artist_response = MockClientResponse(json_data={"albums": {"items": []}})
-
-        # Mock the __aenter__ and __aexit__ methods
+        # Mock the __aenter__ methods
         mock_get.return_value.__aenter__.return_value = search_by_artist_response
-        mock_get.return_value.__aexit__ = CoroutineMock()
 
         expected_album = {'name': 'Now & Then [Single]', 'artist': 'The Beatles'}
 
