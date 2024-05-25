@@ -1,6 +1,4 @@
 import os
-from asyncio import sleep
-from ssl import SSLEOFError
 from urllib import parse
 import json
 import base64
@@ -9,8 +7,6 @@ from aiohttp import ContentTypeError
 
 import constants
 import string
-import aiohttp
-from typing import Coroutine
 
 from src.collector.web.spotify_album import SpotifyAlbum
 from src.entities.artist import Artist
@@ -63,7 +59,6 @@ class Spotify:
                                          headers={'Authorization': 'Bearer %s' % self.access_token},
                                          params=[('type', 'album'), ('q', query)])
                         as response):
-                # print('SUCCESS?-------- artist: %s album: %s' % (artist_name, album_name))
                 response_json = await response.json()
                 response_status_code = response.status
                 response_reason = response.reason
@@ -76,7 +71,7 @@ class Spotify:
                         return album
 
         except ContentTypeError as e:
-            print('ContentTypeError -------- %s artist: %s album: %s', e, artist_name, album_name)
+            print('status code: 429 - Spotify rate limit has been hit, exception: %s, artist: %s, album: %s', e, artist_name, album_name)
 
         return spotify_album
 

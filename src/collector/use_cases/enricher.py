@@ -49,10 +49,11 @@ class Enricher:
             if not release.date:
 
                 release_details = await enrichment_source.get_spotify_album(artist.name, release.name)
-                release.type = release_details.type
-                release.date = release_details.date
-                release.total_tracks = release_details.total_tracks
-                release.spotify_url = release_details.spotify_url
+                if release_details:
+                    release.type = release_details.type
+                    release.date = release_details.date
+                    release.total_tracks = release_details.total_tracks
+                    release.spotify_url = release_details.spotify_url
 
             enriched_releases.append(release)
 
