@@ -1,4 +1,4 @@
-import os
+import aiohttp
 from urllib import parse
 import json
 import base64
@@ -8,6 +8,7 @@ from aiohttp import ContentTypeError
 import constants
 import string
 
+from config import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_RESULTS_LIMIT
 from src.collector.web.spotify_album import SpotifyAlbum
 from src.entities.artist import Artist
 from src.entities.external_release import ExternalRelease
@@ -21,8 +22,8 @@ class Spotify:
 
     @staticmethod
     def _get_access_token():
-        client_id = os.environ.get('SPOTIFY_CLIENT_ID')
-        client_secret = os.environ.get('SPOTIFY_CLIENT_SECRET')
+        client_id = SPOTIFY_CLIENT_ID
+        client_secret = SPOTIFY_CLIENT_SECRET
         client_details = '%s:%s' % (client_id, client_secret)
         encoded_client_details = base64.b64encode(client_details.encode('utf-8')).decode('utf-8')
         details = 'Basic %s' % encoded_client_details
@@ -57,7 +58,7 @@ class Spotify:
         try:
             async with (self.session.get(search,
                                          headers={'Authorization': 'Bearer %s' % self.access_token},
-                                         params=[('type', 'album'), ('q', query)])
+                                         params=[('type', 'album'), ('q', query), ('limit', SPOTIFY_RESULTS_LIMIT)],)
                         as response):
                 response_json = await response.json()
                 response_status_code = response.status
@@ -65,7 +66,10 @@ class Spotify:
                 if response_status_code != 200:
                     print(f'Error: {response_status_code} - {response_reason}')
                     return spotify_album
-            if response_json is not None and 'albums' in response_json and 'items' in response_json['albums']:
+                # if response_json is not None and 'albums' in response_json and 'items' in response_json['albums']:
+                #     for album in response_json['albums']['items']:
+                #         if album['name'].lower() == album_name.lower():
+                #             return album
                 for album in response_json['albums']['items']:
                     if album['name'].lower() == album_name.lower():
                         return album

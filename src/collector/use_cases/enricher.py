@@ -24,8 +24,8 @@ class Enricher:
 
             tasks = []
             for artist_id, artist in enriched_artists.items():
-                enrich_artist_task = self.enrich_artist(enrichment_source, artist)
-                tasks.append((enrich_artist_task, artist))
+                fetch_enrichment_data_task = self.fetch_enrichment_data(enrichment_source, artist)
+                tasks.append((fetch_enrichment_data_task, artist))
             responses = await asyncio.gather(*(task[0] for task in tasks))
 
             processing_tasks = [self.process_response(response, task[1]) for response, task in zip(responses, tasks)]
@@ -42,23 +42,45 @@ class Enricher:
         return enriched_artists
 
     @staticmethod
-    async def enrich_artist(enrichment_source, artist: Artist) -> Artist:
-
-        enriched_releases = []
+    async def fetch_enrichment_data(enrichment_source, artist: Artist):
         for release in artist.releases:
             if not release.date:
+                return await enrichment_source.get_spotify_album(artist.name, release.name)
+        return {}
 
-                release_details = await enrichment_source.get_spotify_album(artist.name, release.name)
-                if release_details:
-                    release.type = release_details.type
-                    release.date = release_details.date
-                    release.total_tracks = release_details.total_tracks
-                    release.spotify_url = release_details.spotify_url
+    """
+    Process the response from the source and update the artist's releases with the enriched release details.
+
+    Args:
+        album (str): The album name.
+        artist (Artist): The artist object.
+
+    Returns:
+        Artist: The updated artist object with enriched release details.
+
+    TODO:
+        - Handle multiple releases being enriched without duplicating or removing other releases which have already
+          been enriched. process_response is called for each response back from Spotify (each release) so is not unique
+          per artist.
+    """
+    def process_response(self, album, artist: Artist) -> Artist:
+        if not album:
+            return artist
+
+        release_details = self.source.get_release_from_album(album, artist)
+
+        enriched_releases = []
+        # TODO: need to be able to handle multiple releases being enriched without duplicating or removing other
+        #  releases which have already been enriched. process_response is called for each response back from Spotify
+        #  (each release) so is not unique per artist.
+        for release in artist.releases:
+            if release.name == release_details.name:
+                release.type = release_details.type
+                release.date = release_details.date
+                release.total_tracks = release_details.total_tracks
+                release.spotify_url = release_details.spotify_url
 
             enriched_releases.append(release)
 
         artist.releases = enriched_releases
         return artist
-
-    def process_response(self, album, artist: Artist):
-        self.source.get_release_from_album(album, artist)
