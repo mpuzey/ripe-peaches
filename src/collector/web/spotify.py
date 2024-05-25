@@ -50,7 +50,7 @@ class Spotify:
 
     async def search_by_album_and_artist(self, artist_name, album_name):
         search = 'https://api.spotify.com/v1/search'
-        query = f'album:"{album_name}"+artist:"{artist_name}"'
+        query = f'album:"{album_name}" artist:"{artist_name}"'
 
         spotify_album = {}
         response_json = None
