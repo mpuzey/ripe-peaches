@@ -2,7 +2,7 @@ from src.aggregator.aggregator import MusicAggregator
 from src.entities.artist import Artist
 
 from src.common.crypto import calculate_hash
-from constants import THUMBS_UP_THRESHOLD
+from config import THUMBS_UP_THRESHOLD
 
 
 class ReviewScoresAggregator(MusicAggregator):

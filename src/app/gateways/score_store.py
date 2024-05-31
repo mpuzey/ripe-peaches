@@ -1,5 +1,5 @@
 from src.app.gateways.store import Store
-from constants import MINIMUM_REVIEWS_COUNTED
+from config import MINIMUM_REVIEWS_COUNTED
 
 
 class ScoreStore(Store):

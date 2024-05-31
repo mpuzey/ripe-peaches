@@ -1,6 +1,8 @@
-beautifulsoup4
+beautifulsoup4~=4.12.3
 requests==2.31.0
-tornado
+tornado~=6.4
 dataclasses-json
 mock~=5.1.0
 deepdiff~=7.0.1
+aiohttp~=3.9.5
+asynctest~=0.13.0
