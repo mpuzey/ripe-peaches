@@ -20,7 +20,7 @@ class TestSpotify(asynctest.TestCase):
 
     @asynctest.patch('src.collector.web.spotify.aiohttp.ClientSession.get', new_callable=AsyncContextManagerMock)
     @asynctest.patch('src.collector.web.spotify.requests.post')
-    async def test__spotify__Spotify__get_spotify_album__ReturnsSpotifyAlbum__WhenSessionGetIsSuccessful(
+    async def test__spotify__Spotify__get_album__ReturnsSpotifyAlbum__WhenSessionGetIsSuccessful(
             self, mock_post, mock_get):
         authorization_response = MagicMock()
         authorization_response.text = '{"access_token": "mock_access_token"}'
@@ -37,7 +37,7 @@ class TestSpotify(asynctest.TestCase):
         expected_album = search_by_artist_and_album_success_response().get('albums').get('items')[0]
 
         spotify = Spotify(self.session)
-        album = await spotify.get_spotify_album('The Beatles', 'Now & Then [Single]')
+        album = await spotify.get_album('The Beatles', 'Now & Then [Single]')
 
         assert album == expected_album
 
@@ -59,7 +59,7 @@ class TestSpotify(asynctest.TestCase):
     """
     @asynctest.patch('src.collector.web.spotify.aiohttp.ClientSession.get', new_callable=AsyncContextManagerMock)
     @asynctest.patch('src.collector.web.spotify.requests.post')
-    async def test__spotify__Spotify__get_spotify_album__ReturnsSpotifyAlbum__WhenUnexpectedMimeTypeErrorIsStatusReceivedFromSessionGet(
+    async def test__spotify__Spotify__get_album__ReturnsSpotifyAlbum__WhenUnexpectedMimeTypeErrorIsStatusReceivedFromSessionGet(
             self, mock_post, mock_get):
         authorization_response = MagicMock()
         authorization_response.text = '{"access_token": "mock_access_token"}'
@@ -72,6 +72,6 @@ class TestSpotify(asynctest.TestCase):
 
         spotify = Spotify(self.session)
 
-        album = await spotify.get_spotify_album('The Beatles', 'Now & Then [Single]')
+        album = await spotify.get_album('The Beatles', 'Now & Then [Single]')
 
         assert album == {}

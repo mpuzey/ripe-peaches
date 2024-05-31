@@ -35,7 +35,7 @@ class Spotify:
 
         return access_token
 
-    async def get_spotify_album(self, artist_name, album_name):  # -> Coroutine[None, None, SpotifyAlbum]:
+    async def get_album(self, artist_name, album_name):  # -> Coroutine[None, None, SpotifyAlbum]:
 
         print('enriching ' + artist_name + ' release: ' + album_name + 'from Spotify')
         spotify_album = await self.search_by_album_and_artist(artist_name, album_name)
@@ -82,13 +82,10 @@ class Spotify:
                 if response_status_code != 200:
                     print(f'Error: {response_status_code} - {response_reason}')
                     return spotify_album
-                # if response_json is not None and 'albums' in response_json and 'items' in response_json['albums']:
-                #     for album in response_json['albums']['items']:
-                #         if album['name'].lower() == album_name.lower():
-                #             return album
-                for album in response_json['albums']['items']:
-                    if album['name'].lower() == album_name.lower():
-                        return album
+                if response_json is not None and 'albums' in response_json and 'items' in response_json['albums']:
+                    for album in response_json['albums']['items']:
+                        if album['name'].lower() == album_name.lower():
+                            return album
 
         except ContentTypeError as e:
             print('status code: 429 - Spotify rate limit has been hit, exception: %s, artist: %s, album: %s', e, artist_name, album_name)
@@ -103,11 +100,16 @@ class Spotify:
         response_json = None
 
         try:
-            async with self.session.get(search,
-                                        headers={'Authorization': 'Bearer %s' % self.access_token},
-                                        params=[('type', 'album'), ('q', query)]) as response:
+            async with (self.session.get(search,
+                                         headers={'Authorization': 'Bearer %s' % self.access_token},
+                                         params=[('type', 'album'), ('q', query), ('limit', SPOTIFY_RESULTS_LIMIT)])
+                        as response):
                 response_json = await response.json()
-            spotify_album = {}
+            response_status_code = response.status
+            response_reason = response.reason
+            if response_status_code != 200:
+                print(f'Error: {response_status_code} - {response_reason}')
+                return spotify_album
 
             if response_json is not None and 'albums' in response_json and 'items' in response_json['albums']:
                 for album in response_json['albums']['items']:

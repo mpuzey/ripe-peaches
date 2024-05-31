@@ -15,25 +15,12 @@ class Enricher:
         self.source = source
 
     async def add_release_dates(self, artists: Dict[str, Artist]) -> Dict[str, Artist]:
-        enriched_artists = artists.copy()
 
         start_time = time.time()
 
         async with aiohttp.ClientSession() as session:
             enrichment_source = self.source(session)
-
-            tasks = []
-            for artist_id, artist in enriched_artists.items():
-                fetch_enrichment_data_task = self.fetch_enrichment_data(enrichment_source, artist)
-                tasks.append((fetch_enrichment_data_task, artist))
-            responses = await asyncio.gather(*(task[0] for task in tasks))
-
-            processing_tasks = [self.process_response(response, task[1]) for response, task in zip(responses, tasks)]
-            processed_responses = await asyncio.gather(*processing_tasks)
-
-            for processed_response in processed_responses:
-                if processed_response.id == artist_id:
-                    enriched_artists[artist_id] = processed_response
+            enriched_artists = await self.enrich_artists(artists, enrichment_source)
 
         end_time = time.time()
 
@@ -41,11 +28,29 @@ class Enricher:
 
         return enriched_artists
 
+    async def enrich_artists(self, artists, enrichment_source):
+        enriched_artists = artists.copy()
+
+        tasks = []
+        for artist_id, artist in enriched_artists.items():
+            fetch_enrichment_data_task = self.fetch_enrichment_data(enrichment_source, artist)
+            tasks.append((fetch_enrichment_data_task, artist))
+        responses = await asyncio.gather(*(task[0] for task in tasks))
+
+        processing_tasks = [self.process_response(response, task[1]) for response, task in zip(responses, tasks)]
+        processed_responses = await asyncio.gather(*processing_tasks)
+
+        for processed_response in processed_responses:
+            if processed_response.id == artist_id:
+                enriched_artists[artist_id] = processed_response
+
+        return enriched_artists
+
     @staticmethod
     async def fetch_enrichment_data(enrichment_source, artist: Artist):
         for release in artist.releases:
             if not release.date:
-                return await enrichment_source.get_spotify_album(artist.name, release.name)
+                return await enrichment_source.get_album(artist.name, release.name)
         return {}
 
     """
