@@ -26,7 +26,6 @@ class CustomClientSession(aiohttp.ClientSession):
 
 
 def raise_content_type_error():
-    print("raise_content_type_error is called")
     content_type_error = ContentTypeError(MagicMock(), MagicMock())
     raise content_type_error
 
@@ -37,12 +36,6 @@ class MockClientResponse:
         self._json_data = json_data
         self.status = 200
         self.reason = 'OK'
-
-    # async def __aenter__(self):
-    #     return self.json()
-
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
-        pass
 
     async def json(self):
         return self._json_data

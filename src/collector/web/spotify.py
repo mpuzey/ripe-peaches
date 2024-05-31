@@ -45,8 +45,24 @@ class Spotify:
 
         return spotify_album
 
-    async def get_release_from_album(self, spotify_album, artist: Artist):  # -> Coroutine[None, None, ExternalRelease]:
-        return await self.build_external_release(spotify_album, artist)
+    @staticmethod
+    async def get_release_from_album(spotify_album, artist: Artist) -> ExternalRelease:
+        release_date = spotify_album.get('release_date')
+        album_type = spotify_album.get('album_type')
+        total_tracks = spotify_album.get('total_tracks')
+        external_urls = spotify_album.get('external_urls')
+        spotify_url = None
+        if external_urls:
+            spotify_url = external_urls.get('spotify')
+
+        return ExternalRelease(
+            name=spotify_album.get('name'),
+            artist=artist.name,
+            date=release_date,
+            type=album_type,
+            total_tracks=total_tracks,
+            spotify_url=spotify_url
+        )
 
     async def search_by_album_and_artist(self, artist_name, album_name):
         search = 'https://api.spotify.com/v1/search'

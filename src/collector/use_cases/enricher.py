@@ -49,7 +49,10 @@ class Enricher:
         return {}
 
     """
-    Process the response from the source and update the artist's releases with the enriched release details.
+    Processes the response from the source (e.g. Spotify) and updates the artist's releases with the enriched release 
+    details for the single release. Handles a single release being enriched without duplicating the release or removing
+    other releases which may or may not have already been enriched. process_response is called for each response back 
+    from Spotify (each release) so a call to it is not unique per artist.
 
     Args:
         album (str): The album name.
@@ -57,22 +60,14 @@ class Enricher:
 
     Returns:
         Artist: The updated artist object with enriched release details.
-
-    TODO:
-        - Handle multiple releases being enriched without duplicating or removing other releases which have already
-          been enriched. process_response is called for each response back from Spotify (each release) so is not unique
-          per artist.
     """
-    def process_response(self, album, artist: Artist) -> Artist:
-        if not album:
+    async def process_response(self, album_from_source, artist: Artist) -> Artist:
+        if not album_from_source:
             return artist
 
-        release_details = self.source.get_release_from_album(album, artist)
+        release_details = await self.source.get_release_from_album(album_from_source, artist)
 
         enriched_releases = []
-        # TODO: need to be able to handle multiple releases being enriched without duplicating or removing other
-        #  releases which have already been enriched. process_response is called for each response back from Spotify
-        #  (each release) so is not unique per artist.
         for release in artist.releases:
             if release.name == release_details.name:
                 release.type = release_details.type
