@@ -20,19 +20,42 @@ class Enricher:
         self._current_concurrency = 10  # Start with high concurrency
         # Track if we're seeing rate limits
         self._rate_limited = False
+        # Track statistics
+        self.total_releases = 0
+        self.releases_with_dates = 0
+        self.releases_enriched = 0
 
     async def add_release_dates(self, artists: Dict[str, Artist]) -> Dict[str, Artist]:
         start_time = time.time()
+
+        # Count initial statistics
+        self.count_release_stats(artists)
+        initial_releases_with_dates = self.releases_with_dates
 
         async with aiohttp.ClientSession() as session:
             enrichment_source = self.source(session)
             enriched_artists = await self.enrich_artists(artists, enrichment_source)
 
+        # Count final statistics
+        self.count_release_stats(enriched_artists)
+        
         end_time = time.time()
 
         print(f"Time taken: {end_time - start_time} seconds")
+        print(f"New dates added: {self.releases_with_dates - initial_releases_with_dates}")
 
         return enriched_artists
+
+    def count_release_stats(self, artists: Dict[str, Artist]):
+        """Count the number of releases and releases with dates"""
+        self.total_releases = 0
+        self.releases_with_dates = 0
+        
+        for artist_id, artist in artists.items():
+            self.total_releases += len(artist.releases)
+            for release in artist.releases:
+                if release.date:
+                    self.releases_with_dates += 1
 
     async def enrich_artists(self, artists, enrichment_source):
         enriched_artists = artists.copy()
@@ -40,11 +63,26 @@ class Enricher:
         # Create a semaphore to limit concurrent requests
         semaphore = asyncio.Semaphore(self._current_concurrency)
         
-        # Create tasks to process each artist
+        # Skip artists with all releases already enriched
         tasks = []
+        skipped_count = 0
+        needs_enrichment_count = 0
+        
         for artist_id, artist in enriched_artists.items():
-            task = self.enrich_artist_with_retries(semaphore, enrichment_source, artist)
-            tasks.append(task)
+            # Check if any release needs enrichment
+            releases_needing_enrichment = [r for r in artist.releases if not r.date]
+            
+            if releases_needing_enrichment:
+                needs_enrichment_count += len(releases_needing_enrichment)
+                task = self.enrich_artist_with_retries(semaphore, enrichment_source, artist)
+                tasks.append(task)
+            else:
+                skipped_count += 1
+                # Just return the original artist since no enrichment is needed
+                tasks.append(asyncio.create_task(asyncio.sleep(0, result=artist)))
+        
+        print(f"Skipping {skipped_count} artists that already have all releases enriched")
+        print(f"Need to enrich {needs_enrichment_count} releases from {len(tasks) - skipped_count} artists")
         
         # Process all artists with retries for rate limiting
         processed_responses = await asyncio.gather(*tasks)
@@ -69,14 +107,44 @@ class Enricher:
         """
         retries = 0
         
-        while True:  # Keep trying until we succeed or explicitly decide to skip
+        # Make a copy of the artist to work with
+        enriched_artist = artist.copy()
+        
+        # Get releases that need enrichment
+        releases_to_enrich = [r for r in enriched_artist.releases if not r.date]
+        
+        # If no releases need enrichment, just return the artist
+        if not releases_to_enrich:
+            return enriched_artist
+            
+        # Try to enrich one release at a time until all are done
+        while releases_to_enrich:
+            current_release = releases_to_enrich[0]
+            
             try:
                 async with semaphore:
-                    # Fetch the enrichment data for this artist
-                    album_data = await self.fetch_enrichment_data(enrichment_source, artist)
+                    # Fetch the enrichment data for this specific release
+                    print(f"Need to enrich: {enriched_artist.name} - {current_release.name}")
+                    album_data = await enrichment_source.get_album(enriched_artist.name, current_release.name)
                     
-                    # Process the response and return the enriched artist
-                    return await self.process_response(album_data, artist)
+                    # Process the response
+                    if album_data:
+                        release_details = await self.source.get_release_from_album(album_data, enriched_artist)
+                        
+                        # Update the release with enrichment data
+                        for i, release in enumerate(enriched_artist.releases):
+                            if release.name == release_details.name:
+                                release.type = release_details.type
+                                release.date = release_details.date
+                                release.total_tracks = release_details.total_tracks
+                                release.spotify_url = release_details.spotify_url
+                                self.releases_enriched += 1
+                                break
+                    
+                    # Remove this release from the list to enrich
+                    releases_to_enrich.pop(0)
+                    # Reset retries for the next release
+                    retries = 0
                     
             except RateLimitError as e:
                 retries += 1
@@ -102,48 +170,12 @@ class Enricher:
                 # If we've hit MAX_RETRIES, cool down significantly but don't give up
                 if retries >= self.MAX_RETRIES:
                     cool_down = 60  # 1 minute cool down
-                    print(f"Artist {artist.name} hit max retries. Extended cooldown for {cool_down} seconds.")
+                    print(f"Artist {enriched_artist.name} hit max retries. Extended cooldown for {cool_down} seconds.")
                     await asyncio.sleep(cool_down)
                     retries = self.MAX_RETRIES // 2  # Reset to half max retries to allow more attempts
                 else:
-                    print(f"Rate limit hit for artist {artist.name}. Retrying in {sleep_time:.2f}s (attempt {retries}/{self.MAX_RETRIES})")
+                    print(f"Rate limit hit for artist {enriched_artist.name}. Retrying in {sleep_time:.2f}s (attempt {retries}/{self.MAX_RETRIES})")
                     await asyncio.sleep(sleep_time)
 
-    @staticmethod
-    async def fetch_enrichment_data(enrichment_source, artist: Artist):
-        for release in artist.releases:
-            if not release.date:
-                return await enrichment_source.get_album(artist.name, release.name)
-        return {}
-
-    """
-    Processes the response from the source (e.g. Spotify) and updates the artist's releases with the enriched release 
-    details for the single release. Handles a single release being enriched without duplicating the release or removing
-    other releases which may or may not have already been enriched. process_response is called for each response back 
-    from Spotify (each release) so a call to it is not unique per artist.
-
-    Args:
-        album (str): The album name.
-        artist (Artist): The artist object.
-
-    Returns:
-        Artist: The updated artist object with enriched release details.
-    """
-    async def process_response(self, album_from_source, artist: Artist) -> Artist:
-        if not album_from_source:
-            return artist
-
-        release_details = await self.source.get_release_from_album(album_from_source, artist)
-
-        enriched_releases = []
-        for release in artist.releases:
-            if release.name == release_details.name:
-                release.type = release_details.type
-                release.date = release_details.date
-                release.total_tracks = release_details.total_tracks
-                release.spotify_url = release_details.spotify_url
-
-            enriched_releases.append(release)
-
-        artist.releases = enriched_releases
-        return artist
+        # Return the enriched artist after processing all releases
+        return enriched_artist
