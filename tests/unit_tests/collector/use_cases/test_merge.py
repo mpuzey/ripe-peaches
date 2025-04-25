@@ -1,7 +1,9 @@
 import unittest
 
 from src.entities.artist import Artist
-from src.collector.use_cases.merge import merge_artist_dicts
+from src.entities.release import Release
+from src.entities.review import Review
+from src.collector.use_cases.merge import merge_artist_dicts, merge_releases
 from tests.unit_tests.collector.use_cases.test_merge_helper import ArtistDictionaryBuilder
 
 
@@ -63,8 +65,12 @@ class TestMergeArtistDicts(unittest.TestCase):
             .artist_dict()
 
         expected_artists = artist_dict_builder \
+            .reset() \
+            .add_artist('artist_id_456', 'YOB') \
             .add_release('release_id_123', 'Clearing The Path') \
             .add_review('review_id_123', 'pitchfork', 80, 'Posted Feb 12, 2021') \
+            .add_release('release_id_456', 'Atma') \
+            .add_review('review_id_456', 'pitchfork', 80, 'Posted Feb 13, 2021') \
             .artist_dict()
 
         actual_artists = merge_artist_dicts(archived_artists, recently_reviewed)
@@ -197,3 +203,230 @@ class TestMergeArtistDicts(unittest.TestCase):
         actual_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
 
         assert actual_artists == expected_artists
+    
+    def test__merge_releases__WillPreserveEnrichmentData__WhenMergingReleasesWithSameID(self):
+        """Test that enrichment data like dates are preserved when merging releases"""
+        # Create a release with enrichment data (date, type, etc.)
+        enriched_release = Release(
+            id='release_123',
+            name='Test Album',
+            reviews=[],
+            date='2023-05-15',
+            type='album',
+            total_tracks=12,
+            spotify_url='https://spotify.com/album/123'
+        )
+        
+        # Create the same release but without enrichment data (as if from new review)
+        new_review = Review(
+            id='review_456',
+            publication_name='Pitchfork',
+            score=85,
+            date='2023-05-20',
+            link='https://pitchfork.com/reviews/123'
+        )
+        
+        unenriched_release = Release(
+            id='release_123',
+            name='Test Album',
+            reviews=[new_review],
+            date=None,
+            type=None,
+            total_tracks=None,
+            spotify_url=None
+        )
+        
+        # Merge the releases
+        merged_releases = merge_releases([enriched_release], [unenriched_release])
+        
+        # Check that enrichment data was preserved
+        self.assertEqual(len(merged_releases), 1)
+        self.assertEqual(merged_releases[0].id, 'release_123')
+        self.assertEqual(merged_releases[0].date, '2023-05-15')  # Original date preserved
+        self.assertEqual(merged_releases[0].type, 'album')  # Original type preserved
+        self.assertEqual(merged_releases[0].total_tracks, 12)  # Original tracks preserved
+        self.assertEqual(merged_releases[0].spotify_url, 'https://spotify.com/album/123')  # Original URL preserved
+        self.assertEqual(len(merged_releases[0].reviews), 1)  # New review was added
+    
+    def test__merge_releases__WillUpdateMissingEnrichmentData__WhenNewReleaseHasIt(self):
+        """Test that missing enrichment data is updated when new release has it"""
+        # Create a release without enrichment data
+        unenriched_release = Release(
+            id='release_123',
+            name='Test Album',
+            reviews=[],
+            date=None,
+            type=None,
+            total_tracks=None,
+            spotify_url=None
+        )
+        
+        # Create the same release but with enrichment data
+        enriched_release = Release(
+            id='release_123',
+            name='Test Album',
+            reviews=[],
+            date='2023-05-15',
+            type='album',
+            total_tracks=12,
+            spotify_url='https://spotify.com/album/123'
+        )
+        
+        # Merge the releases
+        merged_releases = merge_releases([unenriched_release], [enriched_release])
+        
+        # Check that enrichment data was added
+        self.assertEqual(len(merged_releases), 1)
+        self.assertEqual(merged_releases[0].id, 'release_123')
+        self.assertEqual(merged_releases[0].date, '2023-05-15')
+        self.assertEqual(merged_releases[0].type, 'album')
+        self.assertEqual(merged_releases[0].total_tracks, 12)
+        self.assertEqual(merged_releases[0].spotify_url, 'https://spotify.com/album/123')
+    
+    def test__merge_releases__WillNotAddDuplicateReleases__WhenMergingReleasesWithSameID(self):
+        """Test that duplicate releases are not added when merging"""
+        # Create two identical releases
+        release1 = Release(
+            id='release_123',
+            name='Test Album',
+            reviews=[],
+            date='2023-05-15',
+            type='album',
+            total_tracks=12,
+            spotify_url='https://spotify.com/album/123'
+        )
+        
+        release2 = Release(
+            id='release_123',
+            name='Test Album',
+            reviews=[],
+            date='2023-05-15',
+            type='album',
+            total_tracks=12,
+            spotify_url='https://spotify.com/album/123'
+        )
+        
+        # Merge the releases
+        merged_releases = merge_releases([release1], [release2])
+        
+        # Check that there's only one release in the result
+        self.assertEqual(len(merged_releases), 1)
+        self.assertEqual(merged_releases[0].id, 'release_123')
+    
+    def test__merge_releases__WillAddNewReleases__WhenMergingReleasesWithDifferentIDs(self):
+        """Test that new releases are added when merging"""
+        # Create two different releases
+        release1 = Release(
+            id='release_123',
+            name='Test Album 1',
+            reviews=[],
+            date='2023-05-15',
+            type='album',
+            total_tracks=12,
+            spotify_url='https://spotify.com/album/123'
+        )
+        
+        release2 = Release(
+            id='release_456',
+            name='Test Album 2',
+            reviews=[],
+            date='2023-06-20',
+            type='album',
+            total_tracks=10,
+            spotify_url='https://spotify.com/album/456'
+        )
+        
+        # Merge the releases
+        merged_releases = merge_releases([release1], [release2])
+        
+        # Check that both releases are in the result
+        self.assertEqual(len(merged_releases), 2)
+        release_ids = [r.id for r in merged_releases]
+        self.assertIn('release_123', release_ids)
+        self.assertIn('release_456', release_ids)
+    
+    def test__merge_releases__WillCombineReviews__WhenMergingReleasesWithSameID(self):
+        """Test that reviews are combined when merging releases with the same ID"""
+        review1 = Review(
+            id='review_123',
+            publication_name='Pitchfork',
+            score=85,
+            date='2023-05-20',
+            link='https://pitchfork.com/reviews/123'
+        )
+        
+        review2 = Review(
+            id='review_456',
+            publication_name='NME',
+            score=90,
+            date='2023-05-25',
+            link='https://nme.com/reviews/456'
+        )
+        
+        release1 = Release(
+            id='release_123',
+            name='Test Album',
+            reviews=[review1],
+            date='2023-05-15',
+            type='album',
+            total_tracks=12,
+            spotify_url='https://spotify.com/album/123'
+        )
+        
+        release2 = Release(
+            id='release_123',
+            name='Test Album',
+            reviews=[review2],
+            date='2023-05-15',
+            type='album',
+            total_tracks=12,
+            spotify_url='https://spotify.com/album/123'
+        )
+        
+        # Merge the releases
+        merged_releases = merge_releases([release1], [release2])
+        
+        # Check that both reviews are in the result
+        self.assertEqual(len(merged_releases), 1)
+        self.assertEqual(len(merged_releases[0].reviews), 2)
+        review_ids = [r.id for r in merged_releases[0].reviews]
+        self.assertIn('review_123', review_ids)
+        self.assertIn('review_456', review_ids)
+    
+    def test__merge_releases__WillNotDuplicateReviews__WhenMergingReleasesWithSameReviews(self):
+        """Test that reviews are not duplicated when merging releases with the same reviews"""
+        review = Review(
+            id='review_123',
+            publication_name='Pitchfork',
+            score=85,
+            date='2023-05-20',
+            link='https://pitchfork.com/reviews/123'
+        )
+        
+        release1 = Release(
+            id='release_123',
+            name='Test Album',
+            reviews=[review],
+            date='2023-05-15',
+            type='album',
+            total_tracks=12,
+            spotify_url='https://spotify.com/album/123'
+        )
+        
+        release2 = Release(
+            id='release_123',
+            name='Test Album',
+            reviews=[review],
+            date='2023-05-15',
+            type='album',
+            total_tracks=12,
+            spotify_url='https://spotify.com/album/123'
+        )
+        
+        # Merge the releases
+        merged_releases = merge_releases([release1], [release2])
+        
+        # Check that there's only one review in the result
+        self.assertEqual(len(merged_releases), 1)
+        self.assertEqual(len(merged_releases[0].reviews), 1)
+        self.assertEqual(merged_releases[0].reviews[0].id, 'review_123')
