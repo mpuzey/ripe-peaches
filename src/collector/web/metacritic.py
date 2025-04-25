@@ -3,8 +3,8 @@ import requests
 from bs4 import BeautifulSoup
 from src.entities.publication_review import PublicationReview
 
-from constants import ARTIST_PARTS_REGEX, METACRITIC_PUBLICATION_URL, METACRITIC_REQUEST_HEADERS, \
-    METACRITIC_SCRAPE_BATCH_SIZE
+from constants import ARTIST_PARTS_REGEX, METACRITIC_PUBLICATION_URL, METACRITIC_REQUEST_HEADERS
+from config import METACRITIC_SCRAPE_BATCH_SIZE
 
 
 def get_reviews(publication_name) -> [PublicationReview]:

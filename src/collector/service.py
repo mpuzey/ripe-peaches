@@ -1,10 +1,12 @@
+import asyncio
+
 from src.app.gateways.artist_store import ArtistStore
 from src.app.gateways.release_store import ReleaseStore
 from src.app.gateways.review_store import ReviewStore
 from src.collector.web import metacritic, aoty
 from src.collector.use_cases.merge import merge_artist_dicts
 
-from constants import METACRITIC_CURATED_PUBLICATIONS, METACRITIC_PUBLICATIONS_SAMPLE, AOTY_CURATED_PUBLICATIONS, AOTY_PUBLICATIONS_SAMPLE
+from config import METACRITIC_CURATED_PUBLICATIONS, METACRITIC_PUBLICATIONS_SAMPLE, AOTY_CURATED_PUBLICATIONS, AOTY_PUBLICATIONS_SAMPLE
 from src.app.db.file_adapter import FileAdapter
 
 
@@ -20,7 +22,7 @@ class CollectorService:
     def collect_reviews(self):
 
         self.music_cataloger.collect_reviews(metacritic, publications=METACRITIC_PUBLICATIONS_SAMPLE)
-        self.music_cataloger.collect_reviews(aoty, publications=AOTY_CURATED_PUBLICATIONS)
+        self.music_cataloger.collect_reviews(aoty, publications=AOTY_PUBLICATIONS_SAMPLE)
 
         recently_reviewed_artists = self.music_cataloger.catalog_reviews()
 
@@ -29,7 +31,7 @@ class CollectorService:
         known_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
         print('enriching release data')
 
-        enriched_artists = self.enricher.add_release_dates(known_artists)
+        enriched_artists = asyncio.run(self.enricher.add_release_dates(artists=known_artists))
         enriched_artists2 = enriched_artists.copy()
 
         self.artist_store.put(enriched_artists)

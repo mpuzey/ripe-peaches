@@ -1,81 +1,88 @@
-import os
+import aiohttp
 from urllib import parse
 import json
 import base64
 import requests
+from aiohttp import ContentTypeError
+
 import constants
 import string
 
+from config import SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, SPOTIFY_RESULTS_LIMIT
+from src.collector.web.spotify_album import SpotifyAlbum
+from src.entities.artist import Artist
 from src.entities.external_release import ExternalRelease
+
+
+class RateLimitError(Exception):
+    """
+    Exception raised when Spotify API rate limit is reached.
+    """
+    def __init__(self, message="Spotify API rate limit exceeded", retry_after=None):
+        self.message = message
+        self.retry_after = retry_after
+        super().__init__(self.message)
 
 
 class Spotify:
 
-    def __init__(self):
+    def __init__(self, session):
+        print(f"Initializing Spotify with Client ID length: {len(SPOTIFY_CLIENT_ID) if SPOTIFY_CLIENT_ID else 'None'}, Secret length: {len(SPOTIFY_CLIENT_SECRET) if SPOTIFY_CLIENT_SECRET else 'None'}")
         self.access_token = self._get_access_token()
+        self.session = session
 
     @staticmethod
     def _get_access_token():
-        client_id = os.environ.get('SPOTIFY_CLIENT_ID')
-        client_secret = os.environ.get('SPOTIFY_CLIENT_SECRET')
+        client_id = SPOTIFY_CLIENT_ID
+        client_secret = SPOTIFY_CLIENT_SECRET
+        
+        if not client_id or not client_secret:
+            print("WARNING: Missing Spotify credentials!")
+            print(f"Client ID: {'Present' if client_id else 'Missing'}")
+            print(f"Client Secret: {'Present' if client_secret else 'Missing'}")
+            return None
+            
         client_details = '%s:%s' % (client_id, client_secret)
         encoded_client_details = base64.b64encode(client_details.encode('utf-8')).decode('utf-8')
         details = 'Basic %s' % encoded_client_details
 
-        authorization_response = requests.post('https://accounts.spotify.com/api/token',
-                                               data={'grant_type': 'client_credentials'},
-                                               headers={'Authorization': details})
+        try:
+            authorization_response = requests.post('https://accounts.spotify.com/api/token',
+                                                data={'grant_type': 'client_credentials'},
+                                                headers={'Authorization': details})
+            
+            if authorization_response.status_code != 200:
+                print(f"Spotify authentication failed with status code: {authorization_response.status_code}")
+                print(f"Response: {authorization_response.text}")
+                return None
+                
+            access_token = json.loads(authorization_response.text).get('access_token')
+            print(f"Successfully obtained Spotify access token: {access_token[:5]}...")
+            return access_token
+        except Exception as e:
+            print(f"Error getting Spotify access token: {e}")
+            return None
 
-        access_token = json.loads(authorization_response.text).get('access_token')
+    async def get_album(self, artist_name, album_name):  # -> Coroutine[None, None, SpotifyAlbum]:
+        print('enriching ' + artist_name + ' release: ' + album_name + ' from Spotify')
+        
+        if not self.access_token:
+            print("No access token available - authentication failed")
+            return {}
+        
+        try:
+            spotify_album = await self.search_by_album_and_artist(artist_name, album_name)
 
-        return access_token
+            if not spotify_album:
+                spotify_album = await self.search_by_album(artist_name, album_name)
+                
+            return spotify_album
+        except RateLimitError as e:
+            # Propagate rate limit errors up to be handled by the enricher
+            raise
 
-    def get_release_details(self, artist_name, album_name) -> ExternalRelease:
-
-        print('enriching ' + artist_name + ' release: ' + album_name + 'from Spotify')
-        spotify_album = self.search_by_album_and_artist(artist_name, album_name)
-
-        if not spotify_album:
-            spotify_album = self.search_by_album(artist_name, album_name)
-
-        return self.build_external_release(artist_name, album_name, spotify_album)
-
-    def search_by_album_and_artist(self, artist_name, album_name):
-        search = 'https://api.spotify.com/v1/search'
-        query = f'album:"{album_name}"+artist:"{artist_name}"'
-
-        response = requests.get(search,
-                                headers={'Authorization': 'Bearer %s' % self.access_token},
-                                params=[('type', 'album'), ('q', query)])
-
-        response_json = response.json()
-        spotify_album = {}
-        for album in response_json['albums']['items']:
-            if album['name'].lower() == album_name.lower():
-                spotify_album = album
-                break
-
-        return spotify_album
-
-    def search_by_album(self, artist_name, album_name):
-        search = 'https://api.spotify.com/v1/search'
-        query = f'album:"{album_name}"'
-
-        response = requests.get(search,
-                                headers={'Authorization': 'Bearer %s' % self.access_token},
-                                params=[('type', 'album'), ('q', query)])
-
-        response_json = response.json()
-        spotify_album = {}
-        for album in response_json['albums']['items']:
-            for artist in album['artists']:
-                if artist['name'] in artist_name and album['name'].lower() == album_name.lower():
-                    spotify_album = album
-                    break
-
-        return spotify_album
-
-    def build_external_release(self, artist_name, album_name, spotify_album):
+    @staticmethod
+    async def get_release_from_album(spotify_album, artist: Artist) -> ExternalRelease:
         release_date = spotify_album.get('release_date')
         album_type = spotify_album.get('album_type')
         total_tracks = spotify_album.get('total_tracks')
@@ -85,8 +92,102 @@ class Spotify:
             spotify_url = external_urls.get('spotify')
 
         return ExternalRelease(
-            name=album_name,
-            artist=artist_name,
+            name=spotify_album.get('name'),
+            artist=artist.name,
+            date=release_date,
+            type=album_type,
+            total_tracks=total_tracks,
+            spotify_url=spotify_url
+        )
+
+    async def search_by_album_and_artist(self, artist_name, album_name):
+        search = 'https://api.spotify.com/v1/search'
+        query = f'album:"{album_name}" artist:{artist_name}'
+
+        spotify_album = {}
+        
+        async with self.session.get(
+            search,
+            headers={'Authorization': f'Bearer {self.access_token}'},
+            params=[('type', 'album'), ('q', query), ('limit', SPOTIFY_RESULTS_LIMIT)]
+        ) as response:
+            response_status_code = response.status
+            
+            # Handle rate limiting
+            if response_status_code == 429:
+                retry_after = int(response.headers.get('Retry-After', 30))
+                raise RateLimitError(
+                    f'Spotify rate limit hit for artist: {artist_name}, album: {album_name}',
+                    retry_after=retry_after
+                )
+            
+            # Handle other errors
+            if response_status_code != 200:
+                print(f'Error: {response_status_code} - {response.reason}')
+                return spotify_album
+                
+            try:
+                response_json = await response.json()
+                if 'albums' in response_json and 'items' in response_json['albums']:
+                    for album in response_json['albums']['items']:
+                        if album['name'].lower() == album_name.lower():
+                            return album
+            except ContentTypeError as e:
+                print(f'Error parsing response: {e}')
+                
+        return spotify_album
+
+    async def search_by_album(self, artist_name, album_name):
+        search = 'https://api.spotify.com/v1/search'
+        query = f'album:"{album_name}"'
+
+        spotify_album = {}
+        
+        async with self.session.get(
+            search,
+            headers={'Authorization': f'Bearer {self.access_token}'},
+            params=[('type', 'album'), ('q', query), ('limit', SPOTIFY_RESULTS_LIMIT)]
+        ) as response:
+            response_status_code = response.status
+            
+            # Handle rate limiting
+            if response_status_code == 429:
+                retry_after = int(response.headers.get('Retry-After', 30))
+                raise RateLimitError(
+                    f'Spotify rate limit hit for artist: {artist_name}, album: {album_name}',
+                    retry_after=retry_after
+                )
+            
+            # Handle other errors
+            if response_status_code != 200:
+                print(f'Error: {response_status_code} - {response.reason}')
+                return spotify_album
+                
+            try:
+                response_json = await response.json()
+                if 'albums' in response_json and 'items' in response_json['albums']:
+                    for album in response_json['albums']['items']:
+                        for artist in album['artists']:
+                            if artist['name'] in artist_name and album['name'].lower() == album_name.lower():
+                                return album
+            except ContentTypeError as e:
+                print(f'Error parsing response: {e}')
+                
+        return spotify_album
+
+    @staticmethod
+    async def build_external_release(spotify_album, artist) -> ExternalRelease:
+        release_date = spotify_album.get('release_date')
+        album_type = spotify_album.get('album_type')
+        total_tracks = spotify_album.get('total_tracks')
+        external_urls = spotify_album.get('external_urls')
+        spotify_url = None
+        if external_urls:
+            spotify_url = external_urls.get('spotify')
+
+        return ExternalRelease(
+            name=spotify_album.get('name'),
+            artist=artist.name,
             date=release_date,
             type=album_type,
             total_tracks=total_tracks,
