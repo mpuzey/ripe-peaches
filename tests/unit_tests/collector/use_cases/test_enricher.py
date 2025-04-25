@@ -115,27 +115,124 @@ class TestEnricherAsync:
 
     @patch('asyncio.sleep', new_callable=AsyncMock)
     @patch('random.uniform', return_value=1.0)  # Simplify jitter for testing
-    async def test_enrich_artist_max_retries_exceeded(self, mock_uniform, mock_sleep):
+    async def test_enrich_artist_continuous_retry_without_giving_up(self, mock_uniform, mock_sleep):
+        """Test that the enricher keeps retrying and never gives up."""
         # Setup test data
         artist = Artist('1', 'Test Artist', [Release('Test Release', 'Test Release', [], None, None, None, None)])
         mock_semaphore = AsyncMock()
         mock_enrichment_source = AsyncMock()
         
-        # Create side effects that always raise RateLimitError
-        rate_limit_error = RateLimitError("Rate limit hit")
+        # Make sure the MAX_RETRIES count is high enough for this test
+        original_max_retries = self.enricher.MAX_RETRIES
+        self.enricher.MAX_RETRIES = 3
+        
+        # Create side effects that raise rate limit errors MAX_RETRIES times, then succeed
+        side_effects = [RateLimitError("Rate limit hit")] * self.enricher.MAX_RETRIES
+        side_effects.append({'name': 'Test Release'})  # Finally succeed
         
         # Setup mocks for internal methods
         with patch.object(self.enricher, 'fetch_enrichment_data', new_callable=AsyncMock) as mock_fetch:
-            # Always hit rate limit
-            mock_fetch.side_effect = rate_limit_error
-            
-            # Run the method
-            result = await self.enricher.enrich_artist_with_retries(mock_semaphore, mock_enrichment_source, artist)
-            
-            # Assertions
-            assert result == artist  # Should return original artist on failure
-            assert mock_fetch.call_count == self.enricher.MAX_RETRIES + 1
-            assert mock_sleep.call_count == self.enricher.MAX_RETRIES
+            with patch.object(self.enricher, 'process_response', new_callable=AsyncMock) as mock_process:
+                # Mock rate limit then success
+                mock_fetch.side_effect = side_effects
+                
+                # Mock successful processing after retry
+                expected_result = Artist('1', 'Test Artist', [Release('Test Release', 'Test Release', [], '2022-01-01', 'album', 10, 'https://spotify.com')])
+                mock_process.return_value = expected_result
+                
+                # Run the method
+                result = await self.enricher.enrich_artist_with_retries(mock_semaphore, mock_enrichment_source, artist)
+                
+                # Assertions
+                assert result == expected_result
+                assert mock_fetch.call_count == self.enricher.MAX_RETRIES + 1
+                mock_process.assert_called_once_with({'name': 'Test Release'}, artist)
+                assert mock_sleep.call_count == self.enricher.MAX_RETRIES
+        
+        # Restore original MAX_RETRIES
+        self.enricher.MAX_RETRIES = original_max_retries
+
+    @patch('asyncio.sleep', new_callable=AsyncMock)
+    @patch('random.uniform', return_value=1.0)  # Simplify jitter for testing
+    async def test_enrich_artist_extends_cooldown_at_max_retries(self, mock_uniform, mock_sleep):
+        """Test that the enricher extends cooldown at MAX_RETRIES instead of giving up."""
+        # Setup test data
+        artist = Artist('1', 'Test Artist', [Release('Test Release', 'Test Release', [], None, None, None, None)])
+        mock_semaphore = AsyncMock()
+        mock_enrichment_source = AsyncMock()
+        
+        # Make sure MAX_RETRIES is small enough for this test
+        original_max_retries = self.enricher.MAX_RETRIES
+        self.enricher.MAX_RETRIES = 2
+        
+        # Sets of rate limit errors to trigger the extended cooldown then success
+        side_effects = []
+        # First set will hit MAX_RETRIES
+        side_effects.extend([RateLimitError("Rate limit hit")] * self.enricher.MAX_RETRIES)
+        # After extended cooldown, succeed on the next attempt
+        side_effects.append({'name': 'Test Release'})
+        
+        # Setup mocks for internal methods
+        with patch.object(self.enricher, 'fetch_enrichment_data', new_callable=AsyncMock) as mock_fetch:
+            with patch.object(self.enricher, 'process_response', new_callable=AsyncMock) as mock_process:
+                # Mock rate limit responses then success
+                mock_fetch.side_effect = side_effects
+                
+                # Mock successful processing after retry
+                expected_result = Artist('1', 'Test Artist', [Release('Test Release', 'Test Release', [], '2022-01-01', 'album', 10, 'https://spotify.com')])
+                mock_process.return_value = expected_result
+                
+                # Run the method
+                result = await self.enricher.enrich_artist_with_retries(mock_semaphore, mock_enrichment_source, artist)
+                
+                # Assertions
+                assert result == expected_result
+                assert mock_fetch.call_count == self.enricher.MAX_RETRIES + 1
+                mock_process.assert_called_once_with({'name': 'Test Release'}, artist)
+                
+                # The last sleep should be a longer cooldown (60 seconds by default)
+                last_sleep_call = mock_sleep.call_args_list[-1]
+                assert last_sleep_call[0][0] >= 30  # Extended cooldown should be at least 30s
+        
+        # Restore original MAX_RETRIES
+        self.enricher.MAX_RETRIES = original_max_retries
+
+    @patch('asyncio.sleep', new_callable=AsyncMock)
+    @patch('random.uniform', return_value=1.0)  # Simplify jitter for testing
+    async def test_enrich_artist_with_rate_limit_retry_after_respects_spotify_header(self, mock_uniform, mock_sleep):
+        """Test that the enricher respects Spotify's Retry-After header."""
+        # Setup test data
+        artist = Artist('1', 'Test Artist', [Release('Test Release', 'Test Release', [], None, None, None, None)])
+        mock_semaphore = AsyncMock()
+        mock_enrichment_source = AsyncMock()
+        
+        # Create a side effect that raises RateLimitError with specific retry_after value
+        fetch_results = [
+            RateLimitError("Rate limit hit", retry_after=42),  # Specific retry time from Spotify
+            {'name': 'Test Release'}
+        ]
+        
+        # Setup mocks for internal methods
+        with patch.object(self.enricher, 'fetch_enrichment_data', new_callable=AsyncMock) as mock_fetch:
+            with patch.object(self.enricher, 'process_response', new_callable=AsyncMock) as mock_process:
+                # Mock rate limit then success
+                mock_fetch.side_effect = fetch_results
+                
+                # Mock successful processing after retry
+                expected_result = Artist('1', 'Test Artist', [Release('Test Release', 'Test Release', [], '2022-01-01', 'album', 10, 'https://spotify.com')])
+                mock_process.return_value = expected_result
+                
+                # Run the method
+                result = await self.enricher.enrich_artist_with_retries(mock_semaphore, mock_enrichment_source, artist)
+                
+                # Assertions
+                assert result == expected_result
+                assert mock_fetch.call_count == 2
+                mock_process.assert_called_once_with({'name': 'Test Release'}, artist)
+                
+                # Should sleep based on retry_after value from Spotify plus jitter
+                expected_sleep_time = 42 + 1.0  # retry_after from Spotify + mocked jitter
+                mock_sleep.assert_called_once_with(expected_sleep_time)
 
     async def test_fetch_enrichment_data_with_missing_date(self):
         # Test data

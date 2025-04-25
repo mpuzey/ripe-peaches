@@ -10,10 +10,11 @@ def search_by_artist_and_album_success_response():
             'items': [
                 {
                     'name': 'Now & Then [Single]',
-                    'artists': ['The Beatles'],
-                    'type': 'single',
-                    'external_urls': 'https://open.spotify.com/album/2qQP2NgOoH6HqknnbpJmIk?si=GEiQbz98T5CwWiU9DqPlNQ',
-                    'total_tracks': '2'
+                    'artists': [{'name': 'The Beatles'}],
+                    'album_type': 'single',
+                    'external_urls': {'spotify': 'https://open.spotify.com/album/2qQP2NgOoH6HqknnbpJmIk?si=GEiQbz98T5CwWiU9DqPlNQ'},
+                    'total_tracks': 2,
+                    'release_date': '2023-11-02'
                 }
             ]
         }
