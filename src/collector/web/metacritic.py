@@ -54,15 +54,25 @@ def extract_data(review_html) -> PublicationReview:
         return None
 
     artist_parts = groups.group(1).split('-')
-
     artist = ' '.join([part.capitalize() for part in artist_parts])
+    
+    # Extract album cover URL - find the img element within the product_image
+    cover_url = None
+    product_image = review_html.find('div', attrs={'class': 'product_image'})
+    if product_image and product_image.find('img'):
+        cover_url = product_image.find('img').get('src')
+        # Make sure we have the full URL
+        if cover_url and not cover_url.startswith('http'):
+            cover_url = f"https://www.metacritic.com{cover_url}"
+    
     return PublicationReview(
         artist=artist,
         release_name=release_name,
         score=score,
         publication_name=publication_name,
         date=date,
-        link=link
+        link=link,
+        cover_url=cover_url
     )
 
 

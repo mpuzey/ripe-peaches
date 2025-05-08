@@ -12,7 +12,9 @@ class ScoresHandler(BaseHandler):
         self.store = store
 
     def get(self):
+        # Get scores from the store
         scores = self.store.get_all()
+        
         # Set CORS headers
         self.set_header("Access-Control-Allow-Origin", "*")
         self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")

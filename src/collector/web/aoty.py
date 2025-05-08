@@ -41,13 +41,23 @@ def extract_data(review_html, publication_name) -> Optional[PublicationReview]:
 
     link = review_html.find('div', attrs={'class': 'ratingText'}).a['href']
     score = int(rating.text)
+    
+    # Extract album cover URL - find the img element within the albumImage div
+    cover_url = None
+    album_image = review_html.find('div', attrs={'class': 'albumImage'})
+    if album_image and album_image.find('img'):
+        cover_url = album_image.find('img').get('src')
+        # Make sure we have the full URL
+        if cover_url and not cover_url.startswith('http'):
+            cover_url = f"https:{cover_url}" if cover_url.startswith('//') else f"https://www.albumoftheyear.org{cover_url}"
 
     return PublicationReview(
         artist=artist,
         release_name=release_name,
         score=score,
         link=link,
-        publication_name=publication_name
+        publication_name=publication_name,
+        cover_url=cover_url
     )
 
 

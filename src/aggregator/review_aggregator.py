@@ -46,7 +46,8 @@ class ReviewScoresAggregator(MusicAggregator):
                 'artist_id': artist_id,
                 'artist_name': artist_name,
                 'score': aggregate_score,
-                'reviews_counted': len(review_ids)
+                'reviews_counted': len(review_ids),
+                'cover_url': release.cover_url
             }
 
         return artist_release_scores

@@ -6,8 +6,9 @@ function AlbumCard({ album }) {
   const albumName = album.release_name || 'Unknown Album';
   const artistName = album.artist_name || 'Unknown Artist';
   
-  // Use the Diamond Jubilee album cover for all albums as a sample
-  // In a real application, we would use unique covers for each album
+  // Use the cover URL from the backend if available, otherwise use the default Diamond Jubilee cover
+  const defaultCover = "https://f4.bcbits.com/img/a1091823768_10.jpg";
+  const albumCoverUrl = album.cover_url || defaultCover;
   
   // Format date to show just the year
   const releaseYear = album.date ? new Date(album.date).getFullYear() : 'Unknown';
@@ -29,7 +30,7 @@ function AlbumCard({ album }) {
   return (
     <div className="album-card">
       <div className="album-cover">
-        <img src="https://f4.bcbits.com/img/a1962013209_16.jpg" alt={albumName} />
+        <img src={albumCoverUrl} alt={albumName} />
       </div>
       <div className="album-info">
         <div className={`score ${getScoreColorClass(album.score || 0)}`}>

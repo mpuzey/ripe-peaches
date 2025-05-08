@@ -16,15 +16,29 @@ class ScoreStore(Store):
         releases = self.release_adapter.get_all()
 
         for _, score in scores.items():
-
             release_id = score.get('release_id')
             release = releases.get(release_id)
             if not release:
                 print(f'A release with ID {release_id} could not be located')
                 continue
-            release_date = release.get('date')
-            if release_date:
-                scores[release_id]['date'] = release_date
+                
+            # Add release data to the score
+            if isinstance(release, dict):
+                # Handle release as a dictionary
+                if 'date' in release:
+                    score['date'] = release['date']
+                    
+                # Add cover URL if available
+                if 'cover_url' in release and release['cover_url']:
+                    score['cover_url'] = release['cover_url']
+            else:
+                # Handle release as an object
+                if hasattr(release, 'date') and release.date:
+                    score['date'] = release.date
+                    
+                # Add cover URL if available in the release object
+                if hasattr(release, 'cover_url') and release.cover_url:
+                    score['cover_url'] = release.cover_url
 
         return {_: value for _, value in scores.items() if value.get('reviews_counted') > MINIMUM_REVIEWS_COUNTED}
 
