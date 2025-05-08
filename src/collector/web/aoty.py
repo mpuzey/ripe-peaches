@@ -42,14 +42,23 @@ def extract_data(review_html, publication_name) -> Optional[PublicationReview]:
     link = review_html.find('div', attrs={'class': 'ratingText'}).a['href']
     score = int(rating.text)
     
-    # Extract album cover URL - find the img element within the albumImage div
+    # Extract album cover URL - look for lazy-loaded images (data-src attribute)
     cover_url = None
-    album_image = review_html.find('div', attrs={'class': 'albumImage'})
-    if album_image and album_image.find('img'):
-        cover_url = album_image.find('img').get('src')
-        # Make sure we have the full URL
-        if cover_url and not cover_url.startswith('http'):
-            cover_url = f"https:{cover_url}" if cover_url.startswith('//') else f"https://www.albumoftheyear.org{cover_url}"
+    img_element = review_html.find('img', class_="lazyload")
+    
+    if img_element:
+        # Check for data-src attribute first (lazy-loaded images)
+        if img_element.has_attr('data-src'):
+            cover_url = img_element['data-src']
+        # Fallback to regular src if data-src is not available
+        elif img_element.has_attr('src') and img_element['src'] != 'https://cdn.albumoftheyear.org/images/clear.gif':
+            cover_url = img_element['src']
+    
+    # Make sure we have the full URL
+    if cover_url and not cover_url.startswith('http'):
+        cover_url = f"https:{cover_url}" if cover_url.startswith('//') else f"https://www.albumoftheyear.org{cover_url}"
+    
+    print(f"Found cover for {artist} - {release_name}: {cover_url}")
 
     return PublicationReview(
         artist=artist,
