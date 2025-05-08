@@ -2,11 +2,12 @@ import React from 'react';
 import './AlbumCard.css';
 
 function AlbumCard({ album }) {
-  // Generate placeholder album cover
+  // Album details
   const albumName = album.release_name || 'Unknown Album';
   const artistName = album.artist_name || 'Unknown Artist';
   
-  const placeholderCover = `https://via.placeholder.com/200x200/333333/ffffff?text=${encodeURIComponent(albumName)}`;
+  // Use the Diamond Jubilee album cover for all albums as a sample
+  // In a real application, we would use unique covers for each album
   
   // Format date to show just the year
   const releaseYear = album.date ? new Date(album.date).getFullYear() : 'Unknown';
@@ -28,7 +29,7 @@ function AlbumCard({ album }) {
   return (
     <div className="album-card">
       <div className="album-cover">
-        <img src={placeholderCover} alt={albumName} />
+        <img src="https://f4.bcbits.com/img/a1962013209_16.jpg" alt={albumName} />
       </div>
       <div className="album-info">
         <div className={`score ${getScoreColorClass(album.score || 0)}`}>
