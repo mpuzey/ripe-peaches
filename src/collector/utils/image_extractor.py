@@ -128,61 +128,6 @@ class ImageExtractor:
 
 # Common extraction strategies for different sites
 
-def metacritic_extraction_strategies(base_url: str) -> List[Callable]:
-    """
-    Get extraction strategies for Metacritic
-    
-    Args:
-        base_url: Base URL for Metacritic
-        
-    Returns:
-        List of extraction strategies
-    """
-    def main_image_strategy(soup, html):
-        # Look for the main image
-        main_image = soup.find('img', class_='product_image')
-        if main_image and main_image.has_attr('src'):
-            return main_image['src']
-        return None
-        
-    def og_image_strategy(soup, html):
-        # Look for og:image meta tag
-        og_image = soup.find('meta', property='og:image')
-        if og_image and og_image.has_attr('content'):
-            return og_image['content']
-        return None
-        
-    def large_image_strategy(soup, html):
-        # Look for any image with 'large' in the class
-        large_image = soup.find('img', class_=lambda c: c and 'large' in str(c).lower())
-        if large_image and large_image.has_attr('src'):
-            return large_image['src']
-        return None
-        
-    def schema_image_strategy(soup, html):
-        # Look for the schema.org image property
-        schema_image = soup.find(lambda tag: tag.has_attr('itemprop') and tag['itemprop'] == 'image')
-        if schema_image and schema_image.has_attr('src'):
-            return schema_image['src']
-        return None
-        
-    def header_image_strategy(soup, html):
-        # Look for any image in the page header
-        header = soup.find('div', class_='product_page_title_row')
-        if header:
-            header_img = header.find('img')
-            if header_img and header_img.has_attr('src'):
-                return header_img['src']
-        return None
-    
-    return [
-        main_image_strategy,
-        og_image_strategy,
-        large_image_strategy,
-        schema_image_strategy,
-        header_image_strategy
-    ]
-
 def aoty_extraction_strategies(base_url: str) -> List[Callable]:
     """
     Get extraction strategies for Album of the Year

@@ -8,32 +8,20 @@ from typing import List, Optional
 
 from constants import ARTIST_PARTS_REGEX, METACRITIC_PUBLICATION_URL, METACRITIC_REQUEST_HEADERS
 from config import METACRITIC_SCRAPE_BATCH_SIZE
-from src.collector.utils.image_extractor import ImageExtractor, metacritic_extraction_strategies
-from src.collector.utils.prefetch_cache import get_cached_cover_url
 
 # Enhanced headers to avoid being blocked
 ENHANCED_HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
     'Accept-Language': 'en-US,en;q=0.9',
-    'Referer': 'https://www.metacritic.com/',
-    'sec-ch-ua': '"Not A(Brand";v="24", "Google Chrome";v="120"',
-    'sec-ch-ua-mobile': '?0',
-    'sec-ch-ua-platform': '"Windows"',
+    'Referer': 'https://www.metacritic.com/music/constant-noise/benefits',
+    'Connection': 'keep-alive',
+    'DNT': '1',
     'Sec-Fetch-Dest': 'document',
     'Sec-Fetch-Mode': 'navigate',
-    'Sec-Fetch-Site': 'same-origin',
+    'Sec-Fetch-Site': 'cross-site',
     'Sec-Fetch-User': '?1',
-    'DNT': '1',
-    'Connection': 'keep-alive'
 }
-
-# Initialize the image extractor once with reduced delay
-image_extractor = ImageExtractor(
-    headers=ENHANCED_HEADERS,
-    base_url="https://www.metacritic.com",
-    delay=0.1
-)
 
 # Maximum number of concurrent requests
 MAX_WORKERS = 5
@@ -124,35 +112,16 @@ def extract_data(review_html) -> Optional[PublicationReview]:
 
     review_product_href = review_html.find('div', attrs={'class': 'review_product'}).a['href']
     
-    # For test data, support special handling of artist-name/album-name pattern
-    if '/music/artist-name/' in review_product_href:
-        artist = "Artist Name"
-    else:
-        # Regular processing for real URLs
-        groups = re.search(ARTIST_PARTS_REGEX, review_product_href)
-        if not groups:
-            print('failed to parse metacritic html for release: %s got artist: %s' % (release_name, review_product_href))
-            return None
+    # Regular processing for real URLs
+    groups = re.search(ARTIST_PARTS_REGEX, review_product_href)
+    if not groups:
+        print('failed to parse metacritic html for release: %s got artist: %s' % (release_name, review_product_href))
+        return None
 
-        artist_parts = groups.group(1).split('-')
-        artist = ' '.join([part.capitalize() for part in artist_parts])
+    artist_parts = groups.group(1).split('-')
+    artist = ' '.join([part.capitalize() for part in artist_parts])
     
-    # Try to get cover URL from cache first, then fall back to extraction
-    cover_url = get_cached_cover_url(review_product_href, "metacritic")
-    
-    # If not in cache, use the image extractor
-    if not cover_url:
-        cover_url = image_extractor.extract_cover_url(
-            review_product_href,
-            metacritic_extraction_strategies(image_extractor.base_url)
-        )
-    
-    # Only log if no cover found (reduce noise)
-    if not cover_url:
-        print(f"Metacritic: No cover found for {artist} - {release_name}")
-        # Save the HTML for debugging
-        with open(f"debug_metacritic_{artist}_{release_name}.html", "w", encoding="utf-8") as f:
-            f.write(str(review_html))
+    cover_url = None
     
     return PublicationReview(
         artist=artist,
