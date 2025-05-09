@@ -40,9 +40,13 @@ function App() {
 
   return (
     <div className="app">
-      <header className="app-header">
-        <h1>Ripe Peaches</h1>
-        <p>Fresh Music Reviews</p>
+      <header className="app-header app-header-left">
+        <div className="logo-and-tagline">
+          <div className="logo-circle">
+            <img src="/images/ripe-peaches-logo.png" alt="Ripe Peaches Logo" className="peach-logo-huge" />
+          </div>
+          <div className="tagline">Fresh Music Reviews</div>
+        </div>
       </header>
       <div className="container">
         <div className="filter-section">
