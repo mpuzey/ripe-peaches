@@ -21,7 +21,7 @@ def make_app():
     """ This function returns an Application instance loaded with the necessary request handlers
     for the app.
     """
-
+    # Initialize stores
     review_store = ReviewStore(FileAdapter('reviews'))
     score_store = ScoreStore(FileAdapter('scores'), FileAdapter('releases'))
 

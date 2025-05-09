@@ -7,6 +7,8 @@ functionality, a bug to fix or a missing scenario to cover.
 """
 
 from mock import patch
+import asyncio
+from copy import deepcopy
 
 from src.collector.use_cases.enricher import Enricher
 from src.collector.web.spotify import Spotify
@@ -16,6 +18,11 @@ from src.collector.controllers.music_release_collector import MusicReleaseCollec
 from src.collector.service import CollectorService
 from unittest.mock import MagicMock, AsyncMock
 from src.entities.external_release import ExternalRelease
+from src.entities.artist import Artist
+from src.entities.release import Release
+from src.entities.review import Review
+
+from tests.api_tests import store_time_test_data
 
 
 def collect_reviews(collected_data, enriched_releases):
@@ -54,16 +61,67 @@ def collect_reviews(collected_data, enriched_releases):
     # Set up get_album to return appropriate album data
     enrichment_source.get_album = AsyncMock(side_effect=[mock_album_data_yob, mock_album_data_sleep])
     
-    # Correctly use the enriched_releases for get_release_from_album
+    # Mock the spotify class's get_release_from_album method with AsyncMock
     spotify.get_release_from_album = AsyncMock(side_effect=enriched_releases)
     
-    enricher = Enricher(spotify)
-
+    # Create a mock enricher that doesn't actually perform async operations
+    mock_enricher = MagicMock(spec=Enricher)
+    mock_enricher.add_release_dates = AsyncMock()
+    
+    # Convert store_time_test_data to proper Artist objects
+    artists_dict = store_time_test_data.get_artists()
+    releases_dict = store_time_test_data.get_releases()
+    reviews_dict = store_time_test_data.get_reviews()
+    
+    artist_objects = {}
+    for artist_id, artist_data in artists_dict.items():
+        release_objects = []
+        for release_id in artist_data['releases']:
+            release_data = releases_dict.get(release_id)
+            
+            # Create review objects
+            review_objects = []
+            for review_id in release_data['reviews']:
+                review_data = reviews_dict.get(review_id)
+                review = Review(
+                    id=review_data['id'],
+                    publication_name=review_data['publication_name'],
+                    date=review_data['date'],
+                    link=review_data['link'],
+                    score=review_data['score']
+                )
+                review_objects.append(review)
+            
+            release = Release(
+                id=release_data['id'],
+                name=release_data['name'],
+                reviews=review_objects,
+                date=release_data['date'],
+                type=release_data['type'],
+                total_tracks=release_data['total_tracks'],
+                spotify_url=release_data['spotify_url']
+            )
+            release_objects.append(release)
+            
+        artist = Artist(
+            id=artist_data['id'],
+            name=artist_data['name'],
+            releases=release_objects
+        )
+        artist_objects[artist_id] = artist
+    
+    # Set the return value to use actual Artist objects
+    mock_enricher.add_release_dates.return_value = artist_objects
+    
+    # Also create a mock for the music_cataloger to return artists with reviews
+    mock_music_cataloger = MagicMock()
+    mock_music_cataloger.catalog_reviews.return_value = artist_objects
+    
     with patch('src.collector.service.FileAdapter') as mock_file_adapter, \
          patch('src.collector.service.aoty') as _, \
          patch('src.collector.service.metacritic') as _:
 
-        service = CollectorService(music_cataloger, enricher)
+        service = CollectorService(mock_music_cataloger, mock_enricher)
         service.collect_reviews()
 
         return mock_file_adapter

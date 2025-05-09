@@ -6,7 +6,7 @@ from src.app.gateways.review_store import ReviewStore
 from src.collector.web import metacritic, aoty
 from src.collector.use_cases.merge import merge_artist_dicts
 
-from config import METACRITIC_CURATED_PUBLICATIONS, METACRITIC_PUBLICATIONS_SAMPLE, AOTY_CURATED_PUBLICATIONS, AOTY_PUBLICATIONS_SAMPLE
+from config import METACRITIC_PUBLICATIONS, METACRITIC_PUBLICATIONS_SAMPLE, AOTY_PUBLICATIONS, AOTY_PUBLICATIONS_SAMPLE
 from src.app.db.file_adapter import FileAdapter
 
 
@@ -21,8 +21,8 @@ class CollectorService:
 
     def collect_reviews(self):
 
-        self.music_cataloger.collect_reviews(metacritic, publications=METACRITIC_PUBLICATIONS_SAMPLE)
-        self.music_cataloger.collect_reviews(aoty, publications=AOTY_PUBLICATIONS_SAMPLE)
+        self.music_cataloger.collect_reviews(metacritic, publications=METACRITIC_PUBLICATIONS)
+        self.music_cataloger.collect_reviews(aoty, publications=AOTY_PUBLICATIONS)
 
         recently_reviewed_artists = self.music_cataloger.catalog_reviews()
 

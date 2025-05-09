@@ -21,7 +21,8 @@ class ReviewStore(Store):
                 publication_name=stored_review.get('publication_name'),
                 score=stored_review.get('score'),
                 date=stored_review.get('date'),
-                link=stored_review.get('link')
+                link=stored_review.get('link'),
+                cover_url=stored_review.get('cover_url')
             )
             reviews[review_id] = review
 

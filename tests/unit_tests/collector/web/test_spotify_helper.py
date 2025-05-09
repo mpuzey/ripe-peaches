@@ -9,12 +9,16 @@ def search_by_artist_and_album_success_response():
         'albums': {
             'items': [
                 {
+                    'id': 'dummy_id',
                     'name': 'Now & Then [Single]',
                     'artists': [{'name': 'The Beatles'}],
-                    'album_type': 'single',
+                    'album_type': 'album',
                     'external_urls': {'spotify': 'https://open.spotify.com/album/2qQP2NgOoH6HqknnbpJmIk?si=GEiQbz98T5CwWiU9DqPlNQ'},
                     'total_tracks': 2,
-                    'release_date': '2023-11-02'
+                    'release_date': '2023-11-02',
+                    'images': [
+                        {'height': 640, 'url': 'https://mock.cover/nowandthen.jpg', 'width': 640}
+                    ]
                 }
             ]
         }

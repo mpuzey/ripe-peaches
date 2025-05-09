@@ -1,0 +1,119 @@
+name: PR Code Review
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write  # Needed to comment on PRs
+
+jobs:
+  pr-review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for proper diff analysis
+      
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      
+      - name: Cache pip dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-pr-review-${{ hashFiles('**/requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-pr-review-
+      
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pylint bandit coverage black
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      
+      - name: Check code style with Black
+        id: black
+        continue-on-error: true
+        run: |
+          echo "::set-output name=result::$(black --check --diff ./src |& tee black_output.txt)"
+          if [ -s black_output.txt ]; then
+            echo "::set-output name=status::failure"
+          else
+            echo "::set-output name=status::success"
+          fi
+      
+      - name: Run linting with flake8
+        id: flake8
+        continue-on-error: true
+        run: |
+          flake8 ./src --count --max-complexity=10 --max-line-length=120 --statistics --output-file=flake8_output.txt
+          echo "::set-output name=result::$(cat flake8_output.txt)"
+          if [ -s flake8_output.txt ]; then
+            echo "::set-output name=status::failure"
+          else
+            echo "::set-output name=status::success"
+          fi
+      
+      - name: Check for security issues with bandit
+        id: bandit
+        continue-on-error: true
+        run: |
+          bandit -r ./src -f txt -o bandit_output.txt
+          echo "::set-output name=result::$(cat bandit_output.txt)"
+          if grep -q "Issue:" bandit_output.txt; then
+            echo "::set-output name=status::failure"
+          else
+            echo "::set-output name=status::success"
+          fi
+      
+      - name: Run unit tests with coverage
+        id: tests
+        continue-on-error: true
+        run: |
+          coverage run -m unittest discover tests
+          coverage report -m > coverage_output.txt
+          echo "::set-output name=result::$(cat coverage_output.txt)"
+          COVERAGE_PERCENT=$(grep "TOTAL" coverage_output.txt | awk '{print $4}')
+          echo "::set-output name=coverage::$COVERAGE_PERCENT"
+          if coverage report --fail-under=70; then
+            echo "::set-output name=status::success"
+          else
+            echo "::set-output name=status::failure"
+          fi
+      
+      - name: Comment PR with review results
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const blackStatus = "${{ steps.black.outputs.status }}" === "success" ? "✅" : "❌";
+            const flake8Status = "${{ steps.flake8.outputs.status }}" === "success" ? "✅" : "❌";
+            const banditStatus = "${{ steps.bandit.outputs.status }}" === "success" ? "✅" : "❌";
+            const testsStatus = "${{ steps.tests.outputs.status }}" === "success" ? "✅" : "❌";
+            
+            const body = `## Code Review Results
+
+            | Check | Status | Details |
+            | ----- | ------ | ------- |
+            | Code Formatting (Black) | ${blackStatus} | ${blackStatus === "✅" ? "No formatting issues" : "Code needs formatting"} |
+            | Linting (Flake8) | ${flake8Status} | ${flake8Status === "✅" ? "No linting issues" : "Linting issues found"} |
+            | Security Check (Bandit) | ${banditStatus} | ${banditStatus === "✅" ? "No security issues" : "Security issues detected"} |
+            | Unit Tests | ${testsStatus} | Coverage: ${{ steps.tests.outputs.coverage }} |
+
+            ${
+              blackStatus === "❌" || flake8Status === "❌" || banditStatus === "❌" || testsStatus === "❌" 
+              ? "### There are issues that need to be fixed before merging!"
+              : "### All checks passed. Ready for review!"
+            }
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: body
+            }); 

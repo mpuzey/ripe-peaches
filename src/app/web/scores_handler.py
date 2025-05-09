@@ -12,6 +12,20 @@ class ScoresHandler(BaseHandler):
         self.store = store
 
     def get(self):
+        # Get scores from the store
         scores = self.store.get_all()
+        
+        # Set CORS headers
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
+        self.set_header("Access-Control-Allow-Methods", "GET, OPTIONS")
         self.write({'scores': scores})
         # self.render(os.path.join(PUBLIC_ROOT, 'index.html'))
+        
+    def options(self):
+        # Respond to OPTIONS requests with CORS headers
+        self.set_header("Access-Control-Allow-Origin", "*")
+        self.set_header("Access-Control-Allow-Headers", "x-requested-with, content-type")
+        self.set_header("Access-Control-Allow-Methods", "GET, OPTIONS") 
+        self.set_status(204)
+        self.finish()
