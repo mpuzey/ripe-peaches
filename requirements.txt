@@ -5,3 +5,5 @@ pytest==7.0.1
 pytest-cov==3.0.0
 aiohttp==3.8.4
 beautifulsoup4==4.11.1
+mock== 5.1.0
+requests==2.31.0
