@@ -11,6 +11,7 @@ class PublicationReview:
     publication_name: str
     link: str
     date: str = None
+    cover_url: str = None
 
     # def artist(self) -> Artist:
     #     id = calculate_hash(self.artist)

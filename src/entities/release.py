@@ -14,3 +14,4 @@ class Release:
     type: str = None
     total_tracks: int = None
     spotify_url: str = None
+    cover_url: str = None
