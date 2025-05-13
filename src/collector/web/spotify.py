@@ -4,6 +4,7 @@ import json
 import base64
 import requests
 from aiohttp import ContentTypeError
+import re
 
 import constants
 import string
@@ -78,13 +79,40 @@ class Spotify:
             print("No access token available - authentication failed")
             return {}
         try:
+            # 1. Try album+artist (original and normalized)
             search_result = await self.search_by_album_and_artist(artist_name, album_name)
-            if not search_result['albums']['items']:
-                search_result = await self.search_by_album(artist_name, album_name)
-            album_id = self._find_best_album_id(search_result, artist_name, album_name)
-            if album_id:
-                return await self.get_album_details(album_id)
-            print("No matching album found.")
+            if search_result['albums']['items']:
+                album_id = self._find_best_album_id(search_result, artist_name, album_name)
+                if album_id:
+                    return await self.get_album_details(album_id)
+            # 2. Try album name only (original and normalized)
+            print("[Fallback] Trying album name only...")
+            search_result = await self.search_by_album('', album_name)
+            if search_result['albums']['items']:
+                album_id = self._find_best_album_id(search_result, '', album_name)
+                if album_id:
+                    return await self.get_album_details(album_id)
+            # 3. Try normalized album name only
+            norm_album = self._normalize_name(album_name)
+            search_result = await self.search_by_album('', norm_album)
+            if search_result['albums']['items']:
+                album_id = self._find_best_album_id(search_result, '', norm_album)
+                if album_id:
+                    return await self.get_album_details(album_id)
+            # 4. Try artist name only (original and normalized)
+            print("[Fallback] Trying artist name only...")
+            search_result = await self.search_by_album_and_artist(artist_name, '')
+            if search_result['albums']['items']:
+                album_id = self._find_best_album_id(search_result, artist_name, '')
+                if album_id:
+                    return await self.get_album_details(album_id)
+            norm_artist = self._normalize_name(artist_name)
+            search_result = await self.search_by_album_and_artist(norm_artist, '')
+            if search_result['albums']['items']:
+                album_id = self._find_best_album_id(search_result, norm_artist, '')
+                if album_id:
+                    return await self.get_album_details(album_id)
+            print("No matching album found after all fallbacks.")
             return {}
         except RateLimitError as e:
             raise
@@ -140,27 +168,49 @@ class Spotify:
             return external_urls.get('spotify')
         return None
 
-    async def search_by_album_and_artist(self, artist_name, album_name):
+    def _normalize_name(self, name):
+        name = re.sub(r'\(.*?\)', '', name)
+        name = re.sub(r'[-–—]', '', name)
+        name = re.sub(r'[^a-zA-Z0-9 ]', '', name)
+        return name.strip().lower()
+
+    def _log_spotify_search(self, label, query, result):
+        print(f"[Spotify Search] {label}: {query}")
+        print(f"[Spotify Search] Results for {label}: {len(result['albums']['items'])}")
+
+    async def _spotify_search(self, query, by_artist=True, artist_name=None, album_name=None):
         search = 'https://api.spotify.com/v1/search'
-        query = f'album:"{album_name}" artist:{artist_name}'
-        
         async with self.session.get(
             search,
             headers={'Authorization': f'Bearer {self.access_token}'},
             params=[('type', 'album'), ('q', query), ('limit', SPOTIFY_RESULTS_LIMIT)]
         ) as response:
-            return await self._parse_search_response(response, artist_name, album_name)
+            return await self._parse_search_response(response, artist_name, album_name, by_artist=by_artist)
+
+    async def search_by_album_and_artist(self, artist_name, album_name):
+        norm_artist = self._normalize_name(artist_name)
+        norm_album = self._normalize_name(album_name)
+        query = f'album:"{album_name}" artist:{artist_name}'
+        norm_query = f'album:"{norm_album}" artist:{norm_artist}'
+        result = await self._spotify_search(query, True, artist_name, album_name)
+        self._log_spotify_search('Original', query, result)
+        if not result['albums']['items']:
+            norm_result = await self._spotify_search(norm_query, True, norm_artist, norm_album)
+            self._log_spotify_search('Normalized', norm_query, norm_result)
+            return norm_result
+        return result
 
     async def search_by_album(self, artist_name, album_name):
-        search = 'https://api.spotify.com/v1/search'
+        norm_album = self._normalize_name(album_name)
         query = f'album:"{album_name}"'
-        
-        async with self.session.get(
-            search,
-            headers={'Authorization': f'Bearer {self.access_token}'},
-            params=[('type', 'album'), ('q', query), ('limit', SPOTIFY_RESULTS_LIMIT)]
-        ) as response:
-            return await self._parse_search_response(response, artist_name, album_name, by_artist=False)
+        norm_query = f'album:"{norm_album}"'
+        result = await self._spotify_search(query, False, artist_name, album_name)
+        self._log_spotify_search('Original', query, result)
+        if not result['albums']['items']:
+            norm_result = await self._spotify_search(norm_query, False, artist_name, norm_album)
+            self._log_spotify_search('Normalized', norm_query, norm_result)
+            return norm_result
+        return result
             
     async def _parse_search_response(self, response, artist_name, album_name, by_artist=True):
         result = {'albums': {'items': []}}
@@ -173,17 +223,6 @@ class Spotify:
         if response.status != 200:
             print(f'Error: {response.status} - {response.reason}')
             return result
-            try:
-                response_json = await response.json()
-            items = response_json.get('albums', {}).get('items', [])
-            if by_artist:
-                filtered = [a for a in items if a['name'].lower() == album_name.lower()]
-                result['albums']['items'] = filtered
-            else:
-                filtered = [a for a in items if any(artist_name.lower() in artist['name'].lower() for artist in a['artists']) and a['name'].lower() == album_name.lower()]
-                result['albums']['items'] = filtered
-            except ContentTypeError as e:
-                print(f'Error parsing response: {e}')
         return result
 
     @staticmethod

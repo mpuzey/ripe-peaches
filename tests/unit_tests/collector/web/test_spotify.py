@@ -90,3 +90,19 @@ class TestSpotify(unittest.IsolatedAsyncioTestCase):
         enricher = Enricher(mock_source)
         enricher._update_release_with_details(artist, mock_release)
         self.assertEqual(artist.releases[0].cover_url, 'https://mock.cover/nowandthen.jpg')
+
+    def test_normalize_name(self):
+        spotify = Spotify(None)
+        self.assertEqual(spotify._normalize_name('Test (Deluxe Edition)'), 'test')
+        self.assertEqual(spotify._normalize_name('A-L-B-U-M!'), 'album')
+        self.assertEqual(spotify._normalize_name('  Weird   Name  '), 'weird name')
+        self.assertEqual(spotify._normalize_name('Beyoncé – Lemonade'), 'beyonc lemonade')
+        self.assertEqual(spotify._normalize_name('Hello.World'), 'helloworld')
+
+    @patch('builtins.print')
+    def test_log_spotify_search(self, mock_print):
+        spotify = Spotify(None)
+        result = {'albums': {'items': [1, 2, 3]}}
+        spotify._log_spotify_search('TestLabel', 'album:"Test" artist:Test', result)
+        mock_print.assert_any_call('[Spotify Search] TestLabel: album:"Test" artist:Test')
+        mock_print.assert_any_call('[Spotify Search] Results for TestLabel: 3')
