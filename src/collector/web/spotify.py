@@ -165,25 +165,24 @@ class Spotify:
     async def _parse_search_response(self, response, artist_name, album_name, by_artist=True):
         result = {'albums': {'items': []}}
         if response.status == 429:
-                retry_after = int(response.headers.get('Retry-After', 30))
-                raise RateLimitError(
-                    f'Spotify rate limit hit for artist: {artist_name}, album: {album_name}',
-                    retry_after=retry_after
-                )
+            retry_after = int(response.headers.get('Retry-After', 30))
+            raise RateLimitError(
+                f'Spotify rate limit hit for artist: {artist_name}, album: {album_name}',
+                retry_after=retry_after
+            )
         if response.status != 200:
             print(f'Error: {response.status} - {response.reason}')
             return result
-            try:
-                response_json = await response.json()
+        try:
+            response_json = await response.json()
             items = response_json.get('albums', {}).get('items', [])
             if by_artist:
                 filtered = [a for a in items if a['name'].lower() == album_name.lower()]
-                result['albums']['items'] = filtered
             else:
                 filtered = [a for a in items if any(artist_name.lower() in artist['name'].lower() for artist in a['artists']) and a['name'].lower() == album_name.lower()]
-                result['albums']['items'] = filtered
-            except ContentTypeError as e:
-                print(f'Error parsing response: {e}')
+            result['albums']['items'] = filtered
+        except ContentTypeError as e:
+            print(f'Error parsing response: {e}')
         return result
 
     @staticmethod
