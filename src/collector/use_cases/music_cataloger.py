@@ -16,7 +16,12 @@ from src.common.crypto import calculate_hash
 
 class MusicCataloger(Librarian):
 
-    def __init__(self, catalog: MusicCatalog, review_collector: ReviewCollector, release_collector: ReleaseCollector):
+    def __init__(
+        self,
+        catalog: MusicCatalog,
+        review_collector: ReviewCollector,
+        release_collector: ReleaseCollector,
+    ):
         self.catalog = catalog
         self.review_collector = review_collector
         self.release_collector = release_collector
@@ -24,8 +29,10 @@ class MusicCataloger(Librarian):
         self.publication_reviews = []
         self.external_releases = []
 
-    def collect_reviews(self,  source, **kwargs) -> [PublicationReview]:
-        self.publication_reviews = self.review_collector.collect_reviews(source, **kwargs)
+    def collect_reviews(self, source, **kwargs) -> [PublicationReview]:
+        self.publication_reviews = self.review_collector.collect_reviews(
+            source, **kwargs
+        )
 
     def collect_releases(self, source) -> [ExternalRelease]:
         self.external_releases = self.release_collector.collect_releases(source)
@@ -40,7 +47,7 @@ class MusicCataloger(Librarian):
             external_release = ExternalRelease(
                 name=publication_review.release_name,
                 artist=artist_name,
-                cover_url=publication_review.cover_url
+                cover_url=publication_review.cover_url,
             )
             release_id = self._create_release(artist, external_release)
 
@@ -61,7 +68,7 @@ class MusicCataloger(Librarian):
         return self.catalog.get_artists()
 
     def format_release_name(self, name: str) -> str:
-        formatted_name = name.replace('and', '&').title()
+        formatted_name = name.replace("and", "&").title()
 
         return formatted_name
 
@@ -69,24 +76,24 @@ class MusicCataloger(Librarian):
     def _create_artist(self, artist_name: str) -> Artist:
 
         artist_id = calculate_hash(artist_name)
-        artist = Artist(
-            id=artist_id,
-            name=artist_name,
-            releases=[]
-        )
+        artist = Artist(id=artist_id, name=artist_name, releases=[])
 
         if not self.new_artists.get(artist_id):
             self.new_artists[artist_id] = artist
 
         return self.new_artists[artist_id]
 
-    def _create_release(self, artist: Artist, external_release: ExternalRelease) -> Release:
+    def _create_release(
+        self, artist: Artist, external_release: ExternalRelease
+    ) -> Release:
 
         artist_name = artist.name
         release_name = self.format_release_name(external_release.name)
         release_id = calculate_hash(artist_name + release_name)
 
-        existing_release = next((x for x in artist.releases if x.id == release_id), None)
+        existing_release = next(
+            (x for x in artist.releases if x.id == release_id), None
+        )
         release = Release(
             id=calculate_hash(artist_name + release_name),
             name=release_name,
@@ -95,7 +102,7 @@ class MusicCataloger(Librarian):
             total_tracks=external_release.total_tracks,
             type=external_release.type,
             cover_url=external_release.cover_url,
-            reviews=[]
+            reviews=[],
         )
 
         if not existing_release:
@@ -104,7 +111,9 @@ class MusicCataloger(Librarian):
 
         return release
 
-    def _create_review(self, publication_review: PublicationReview, artist: Artist, release: Release) -> Review:
+    def _create_review(
+        self, publication_review: PublicationReview, artist: Artist, release: Release
+    ) -> Review:
 
         # TODO: Check for pre-existing review?
         artist_name = artist.name
@@ -119,7 +128,7 @@ class MusicCataloger(Librarian):
             publication_name=publication_name,
             score=publication_review.score,
             date=publication_review.date,
-            link=publication_review.link
+            link=publication_review.link,
         )
 
         for i, release in enumerate(self.new_artists[artist.id].releases):

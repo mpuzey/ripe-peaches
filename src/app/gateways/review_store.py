@@ -18,11 +18,11 @@ class ReviewStore(Store):
         for review_id, stored_review in stored_reviews.items():
             review = Review(
                 id=review_id,
-                publication_name=stored_review.get('publication_name'),
-                score=stored_review.get('score'),
-                date=stored_review.get('date'),
-                link=stored_review.get('link'),
-                cover_url=stored_review.get('cover_url')
+                publication_name=stored_review.get("publication_name"),
+                score=stored_review.get("score"),
+                date=stored_review.get("date"),
+                link=stored_review.get("link"),
+                cover_url=stored_review.get("cover_url"),
             )
             reviews[review_id] = review
 

@@ -6,7 +6,12 @@ from src.app.gateways.review_store import ReviewStore
 from src.collector.web import metacritic, aoty
 from src.collector.use_cases.merge import merge_artist_dicts
 
-from config import METACRITIC_PUBLICATIONS, METACRITIC_PUBLICATIONS_SAMPLE, AOTY_PUBLICATIONS, AOTY_PUBLICATIONS_SAMPLE
+from config import (
+    METACRITIC_PUBLICATIONS,
+    METACRITIC_PUBLICATIONS_SAMPLE,
+    AOTY_PUBLICATIONS,
+    AOTY_PUBLICATIONS_SAMPLE,
+)
 from src.app.db.file_adapter import FileAdapter
 
 
@@ -14,14 +19,19 @@ class CollectorService:
 
     def __init__(self, music_cataloger, enricher):
         self.music_cataloger = music_cataloger
-        self.review_store = ReviewStore(FileAdapter('reviews'))
-        self.release_store = ReleaseStore(FileAdapter('releases'), self.review_store)
-        self.artist_store = ArtistStore(FileAdapter('artists'), ReleaseStore(FileAdapter('releases'), self.review_store))
+        self.review_store = ReviewStore(FileAdapter("reviews"))
+        self.release_store = ReleaseStore(FileAdapter("releases"), self.review_store)
+        self.artist_store = ArtistStore(
+            FileAdapter("artists"),
+            ReleaseStore(FileAdapter("releases"), self.review_store),
+        )
         self.enricher = enricher
 
     def collect_reviews(self):
 
-        self.music_cataloger.collect_reviews(metacritic, publications=METACRITIC_PUBLICATIONS)
+        self.music_cataloger.collect_reviews(
+            metacritic, publications=METACRITIC_PUBLICATIONS
+        )
         self.music_cataloger.collect_reviews(aoty, publications=AOTY_PUBLICATIONS)
 
         recently_reviewed_artists = self.music_cataloger.catalog_reviews()
@@ -29,9 +39,11 @@ class CollectorService:
         archived_artists = self.artist_store.get_all()
 
         known_artists = merge_artist_dicts(archived_artists, recently_reviewed_artists)
-        print('enriching release data')
+        print("enriching release data")
 
-        enriched_artists = asyncio.run(self.enricher.add_release_dates(artists=known_artists))
+        enriched_artists = asyncio.run(
+            self.enricher.add_release_dates(artists=known_artists)
+        )
         enriched_artists2 = enriched_artists.copy()
 
         self.artist_store.put(enriched_artists)

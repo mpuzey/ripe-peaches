@@ -8,11 +8,11 @@ from abc import ABC, abstractmethod
 class Librarian(ABC):
 
     @abstractmethod
-    def collect_reviews(self,  source, **kwargs) -> [PublicationReview]:
+    def collect_reviews(self, source, **kwargs) -> [PublicationReview]:
         pass
 
     @abstractmethod
-    def collect_releases(self,  source) -> [ExternalRelease]:
+    def collect_releases(self, source) -> [ExternalRelease]:
         pass
 
     @abstractmethod

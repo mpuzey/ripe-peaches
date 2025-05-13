@@ -21,19 +21,19 @@ class ReleaseStore(Store):
         for release_id, stored_release in stored_releases.items():
             reviews = []
 
-            for review_id in stored_release.get('reviews'):
+            for review_id in stored_release.get("reviews"):
                 review = stored_reviews.get(review_id)
                 reviews.append(review)
 
             release = Release(
                 id=release_id,
-                name=stored_release.get('name'),
-                spotify_url=stored_release.get('spotify_url'),
-                total_tracks=stored_release.get('total_tracks'),
-                date=stored_release.get('date'),
-                type=stored_release.get('type'),
-                cover_url=stored_release.get('cover_url'),
-                reviews=reviews
+                name=stored_release.get("name"),
+                spotify_url=stored_release.get("spotify_url"),
+                total_tracks=stored_release.get("total_tracks"),
+                date=stored_release.get("date"),
+                type=stored_release.get("type"),
+                cover_url=stored_release.get("cover_url"),
+                reviews=reviews,
             )
             releases[release_id] = release
 
@@ -50,10 +50,13 @@ class ReleaseStore(Store):
                 for review in release.reviews:
                     # TODO: this is a workaround for two similarly named releases under one artist causing review ids to be set as of review
                     if isinstance(review, str):
-                        print('review is string not object?: ' + review)
+                        print("review is string not object?: " + review)
                     if isinstance(review, Review):
-                        if review.id == 'cfddd806b40d65bea4302b624c6f7bcb63f6e852f53e8660421c873d8d22c309':
-                            print('publication name ' +  review.publication_name)
+                        if (
+                            review.id
+                            == "cfddd806b40d65bea4302b624c6f7bcb63f6e852f53e8660421c873d8d22c309"
+                        ):
+                            print("publication name " + review.publication_name)
                         review_ids.append(review.id)
                         review_documents[review.id] = review.__dict__
                     # review_ids.append(review.id)
