@@ -7,3 +7,4 @@ aiohttp==3.8.4
 beautifulsoup4==4.11.1
 mock== 5.1.0
 requests==2.31.0
+dataclasses-json==0.5.7
