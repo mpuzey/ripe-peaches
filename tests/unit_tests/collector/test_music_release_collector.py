@@ -1,6 +1,6 @@
 import unittest
 
-from mock import MagicMock
+from unittest.mock import MagicMock
 
 from src.collector.controllers.music_release_collector import MusicReleaseCollector
 from src.entities.artist import Artist

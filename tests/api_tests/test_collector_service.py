@@ -1,6 +1,6 @@
 import unittest
 import asyncio
-from mock import call, patch
+from unittest.mock import call, patch
 
 from tests.api_tests import in_memory_test_data
 from tests.api_tests import store_time_test_data

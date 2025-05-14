@@ -1,5 +1,6 @@
-""" This is the main module for the application. It's in charge of creating and configuring the
-tornado web server. """
+"""This is the main module for the application. It's in charge of creating and configuring the
+tornado web server."""
+
 import tornado.ioloop
 import tornado.web
 
@@ -18,21 +19,22 @@ def start_app():
 
 
 def make_app():
-    """ This function returns an Application instance loaded with the necessary request handlers
+    """This function returns an Application instance loaded with the necessary request handlers
     for the app.
     """
+    # Initialize stores
+    review_store = ReviewStore(FileAdapter("reviews"))
+    score_store = ScoreStore(FileAdapter("scores"), FileAdapter("releases"))
 
-    review_store = ReviewStore(FileAdapter('reviews'))
-    score_store = ScoreStore(FileAdapter('scores'), FileAdapter('releases'))
+    return tornado.web.Application(
+        [
+            (r"/", ScoresHandler, {"store": score_store}),
+            (r"/public/(.*)", tornado.web.StaticFileHandler, {"path": PUBLIC_ROOT}),
+            (r"/reviews", ReviewsHandler, {"store": review_store}),
+        ]
+    )
 
-    return tornado.web.Application([
-        (r'/', ScoresHandler, {'store': score_store}),
-        (r'/public/(.*)', tornado.web.StaticFileHandler, {'path': PUBLIC_ROOT}),
-        (r'/reviews', ReviewsHandler, {'store': review_store})
-    ])
 
-
-if __name__ == '__main__':
-    """ This function is the entry point for the application. """
+if __name__ == "__main__":
+    """This function is the entry point for the application."""
     start_app()
-
