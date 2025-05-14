@@ -22,7 +22,8 @@ def get_releases():
             'date': '2019-02-15',
             'type': 'album',
             'total_tracks': 12,
-            'spotify_url': 'https://spotify.com'
+            'spotify_url': 'https://spotify.com',
+            'cover_url': None
         },
         '9c50562e8ffce69c6d66b50ba509c4ce622a2154f45372a24646457e793db75d': {
             'id': '9c50562e8ffce69c6d66b50ba509c4ce622a2154f45372a24646457e793db75d',
@@ -31,7 +32,8 @@ def get_releases():
             'date': '2019-01-15',
             'type': 'album',
             'total_tracks': 10,
-            'spotify_url': 'https://spotify.com'
+            'spotify_url': 'https://spotify.com',
+            'cover_url': None
         }
     }
 
@@ -43,13 +45,15 @@ def get_reviews():
             'publication_name': 'The Quietus',
             'date': 'Posted Jun 20, 2018',
             'link': 'http://thequietus.com/articles/24811-yob-our-raw-heart-album-review',
-            'score': 80
+            'score': 80,
+            'cover_url': None
         },
         '7f5079ae824c21a92a82b85e6d212f3004f26ee1bd5556b6f76f213d884ff877': {
             'id': '7f5079ae824c21a92a82b85e6d212f3004f26ee1bd5556b6f76f213d884ff877',
             'publication_name': '57-the-needle-drop',
             'date': None, 'link': 'https://www.youtube.com/watch?v=d5jWckdWqpM',
-            'score': 80
+            'score': 80,
+            'cover_url': None
         }
     }
 
@@ -81,7 +85,8 @@ def get_spotify_releases():
                 'type': 'album',
                 'spotify_url': 'https://spotify.com',
                 'total_tracks': 12,
-                'reviews': []
+                'reviews': [],
+                'cover_url': None
             },
         '3a2fbceb5e63dab764532cb463047c7150f6f814492a20efc924c92c5fa66797':
             {
@@ -91,6 +96,7 @@ def get_spotify_releases():
                 'type': 'album',
                 'spotify_url': 'https://spotify.com',
                 'total_tracks': 10,
-                'reviews': []
+                'reviews': [],
+                'cover_url': None
             }
     }
