@@ -1,6 +1,6 @@
 import unittest
 
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 from src.collector.web import metacritic
 from src.entities.publication_review import PublicationReview
@@ -15,6 +15,7 @@ class TestMetacritic(unittest.TestCase):
 
         response = MagicMock()
         response.text = get_reviews_html()
+        response.status_code = 200
         mock_requests.get.return_value = response
         expected_reviews = [
             PublicationReview(
@@ -23,7 +24,8 @@ class TestMetacritic(unittest.TestCase):
                 publication_name='The Quietus',
                 release_name='Our Raw Heart',
                 score=80,
-                link='http://thequietus.com/articles/24811-yob-our-raw-heart-album-review'
+                link='http://thequietus.com/articles/24811-yob-our-raw-heart-album-review',
+                cover_url=None
             )
         ]
 
@@ -36,6 +38,7 @@ class TestMetacritic(unittest.TestCase):
 
         response = MagicMock()
         response.text = get_first_review_html()
+        response.status_code = 200
         mock_requests.get.return_value = response
         expected_reviews = [
             PublicationReview(
@@ -44,7 +47,8 @@ class TestMetacritic(unittest.TestCase):
                 publication_name='The Quietus',
                 release_name='DAYTONA',
                 score=80,
-                link='http://thequietus.com/articles/24834-pusha-t-daytona-album-review'
+                link='http://thequietus.com/articles/24834-pusha-t-daytona-album-review',
+                cover_url=None
             )
         ]
 
@@ -57,6 +61,7 @@ class TestMetacritic(unittest.TestCase):
 
         response = MagicMock()
         response.text = get_review_without_full_review()
+        response.status_code = 200
         mock_requests.get.return_value = response
         expected_reviews = [
             PublicationReview(
@@ -65,7 +70,8 @@ class TestMetacritic(unittest.TestCase):
                 publication_name='The Quietus',
                 release_name='Our Raw Heart',
                 score=80,
-                link=None
+                link=None,
+                cover_url=None
             )
         ]
 

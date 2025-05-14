@@ -61,30 +61,22 @@ def extract_reviews(html) -> [PublicationReview]:
     """Extract reviews from the Metacritic HTML"""
     reviews = []
     soup = BeautifulSoup(html, "html.parser")
-    reviews_html = soup.findAll(
-        "li", attrs={"class": "review critic_review first_review"}
+    reviews_html = soup.find_all(
+        "li", class_=lambda c: c and "review" in c and "critic_review" in c
     )
-    reviews_html.extend(soup.findAll("li", attrs={"class": "review critic_review"}))
-
     if not reviews_html:
         print("No review items found. The HTML structure may have changed.")
-        # Save HTML for inspection
         with open("metacritic_debug.html", "w", encoding="utf-8") as f:
             f.write(html)
         print("Saved HTML to metacritic_debug.html for inspection")
         return []
-
     print(f"Metacritic: Found {len(reviews_html)} review items")
-
-    # Process in batches
     for i in range(0, len(reviews_html), BATCH_SIZE):
         batch = reviews_html[i : i + BATCH_SIZE]
         batch_reviews = process_review_batch(batch)
         reviews.extend(batch_reviews)
-        # Small delay between batches
         if i + BATCH_SIZE < len(reviews_html):
             time.sleep(1)
-
     return reviews
 
 
@@ -120,27 +112,20 @@ def extract_data(review_html) -> Optional[PublicationReview]:
     publication_name = review_html.find(
         "li", attrs={"class": "review_action publication_title"}
     ).text
-
     date, link = extract_full_review(review_html)
-
-    review_product_href = review_html.find("div", attrs={"class": "review_product"}).a[
-        "href"
-    ]
-
-    # Regular processing for real URLs
+    review_product_href = review_html.find("div", attrs={"class": "review_product"}).a["href"]
     groups = re.search(ARTIST_PARTS_REGEX, review_product_href)
+    print(f"DEBUG: release_name={release_name}, score={score}, publication_name={publication_name}, date={date}, link={link}, href={review_product_href}, groups={groups}")
     if not groups:
         print(
             "failed to parse metacritic html for release: %s got artist: %s"
             % (release_name, review_product_href)
         )
         return None
-
     artist_parts = groups.group(1).split("-")
     artist = " ".join([part.capitalize() for part in artist_parts])
-
     cover_url = None
-
+    print(f"DEBUG: Returning PublicationReview(artist={artist}, release_name={release_name}, score={score}, publication_name={publication_name}, date={date}, link={link}, cover_url={cover_url})")
     return PublicationReview(
         artist=artist,
         release_name=release_name,

@@ -6,7 +6,7 @@ refactors the tests and API need not. We should only need to add and change test
 functionality, a bug to fix or a missing scenario to cover.
 """
 
-from mock import patch
+from unittest.mock import patch
 import asyncio
 from copy import deepcopy
 
