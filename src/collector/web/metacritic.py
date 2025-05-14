@@ -113,9 +113,13 @@ def extract_data(review_html) -> Optional[PublicationReview]:
         "li", attrs={"class": "review_action publication_title"}
     ).text
     date, link = extract_full_review(review_html)
-    review_product_href = review_html.find("div", attrs={"class": "review_product"}).a["href"]
+    review_product_href = review_html.find("div", attrs={"class": "review_product"}).a[
+        "href"
+    ]
     groups = re.search(ARTIST_PARTS_REGEX, review_product_href)
-    print(f"DEBUG: release_name={release_name}, score={score}, publication_name={publication_name}, date={date}, link={link}, href={review_product_href}, groups={groups}")
+    print(
+        f"DEBUG: release_name={release_name}, score={score}, publication_name={publication_name}, date={date}, link={link}, href={review_product_href}, groups={groups}"
+    )
     if not groups:
         print(
             "failed to parse metacritic html for release: %s got artist: %s"
@@ -125,7 +129,9 @@ def extract_data(review_html) -> Optional[PublicationReview]:
     artist_parts = groups.group(1).split("-")
     artist = " ".join([part.capitalize() for part in artist_parts])
     cover_url = None
-    print(f"DEBUG: Returning PublicationReview(artist={artist}, release_name={release_name}, score={score}, publication_name={publication_name}, date={date}, link={link}, cover_url={cover_url})")
+    print(
+        f"DEBUG: Returning PublicationReview(artist={artist}, release_name={release_name}, score={score}, publication_name={publication_name}, date={date}, link={link}, cover_url={cover_url})"
+    )
     return PublicationReview(
         artist=artist,
         release_name=release_name,
