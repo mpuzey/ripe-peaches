@@ -10,3 +10,4 @@ class Review:
     score: int
     date: str
     link: str
+    cover_url: str = None

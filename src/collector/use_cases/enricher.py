@@ -172,6 +172,7 @@ class Enricher:
                 release.date = release_details.date
                 release.total_tracks = release_details.total_tracks
                 release.spotify_url = release_details.spotify_url
+                release.cover_url = release_details.cover_url
                 self.releases_enriched += 1
                 break
 

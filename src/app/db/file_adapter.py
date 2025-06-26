@@ -52,7 +52,16 @@ def _merge_document(new_document, existing_documents):
     existing_document = existing_documents.get(id)
 
     for key, value in new_document.items():
-        if not existing_document.get(key):
+        # Special handling for cover_url - prefer existing non-null value
+        if key == 'cover_url':
+            if not existing_document.get(key) and value:
+                # If existing is null/missing but new has a value, use the new value
+                documents[id][key] = value
+                print(f"Added new cover URL for {id}: {value}")
+            elif existing_document.get(key) and value and existing_document.get(key) != value:
+                # Both have values but they're different - keep existing and log
+                print(f"Keeping existing cover URL for {id}: {existing_document.get(key)} (new value was: {value})")
+        elif not existing_document.get(key):
             documents[id][key] = value
 
     for key, value in existing_document.items():

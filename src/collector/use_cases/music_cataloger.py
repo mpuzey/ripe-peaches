@@ -39,7 +39,8 @@ class MusicCataloger(Librarian):
 
             external_release = ExternalRelease(
                 name=publication_review.release_name,
-                artist=artist_name
+                artist=artist_name,
+                cover_url=publication_review.cover_url
             )
             release_id = self._create_release(artist, external_release)
 
@@ -93,6 +94,7 @@ class MusicCataloger(Librarian):
             spotify_url=external_release.spotify_url,
             total_tracks=external_release.total_tracks,
             type=external_release.type,
+            cover_url=external_release.cover_url,
             reviews=[]
         )
 

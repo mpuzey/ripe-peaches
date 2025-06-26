@@ -1,0 +1,59 @@
+name: Dependency Security Check
+
+on:
+  schedule:
+    - cron: '0 0 * * 1'  # Run weekly on Mondays
+  pull_request:
+    paths:
+      - 'requirements.txt'
+      - '.github/workflows/dependency-check.yml'
+
+jobs:
+  dependency-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python 3.9
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.9"
+      
+      - name: Install safety tool
+        run: |
+          python -m pip install --upgrade pip
+          pip install safety
+      
+      - name: Check dependencies for vulnerabilities
+        id: safety
+        run: |
+          safety check -r requirements.txt --output json > safety-output.json || true
+          echo "::set-output name=has_vulnerabilities::$(cat safety-output.json | jq 'length > 0')"
+      
+      - name: Generate vulnerability report
+        if: ${{ steps.safety.outputs.has_vulnerabilities == 'true' && github.event_name == 'pull_request' }}
+        run: |
+          echo "## ⚠️ Dependency Vulnerability Report" > report.md
+          echo "" >> report.md
+          echo "The following vulnerabilities were found in dependencies:" >> report.md
+          echo '```' >> report.md
+          safety check -r requirements.txt >> report.md
+          echo '```' >> report.md
+          echo "" >> report.md
+          echo "Consider upgrading these dependencies before merging." >> report.md
+          
+      - name: Comment PR with vulnerability report
+        if: ${{ steps.safety.outputs.has_vulnerabilities == 'true' && github.event_name == 'pull_request' }}
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const fs = require('fs');
+            const report = fs.readFileSync('report.md', 'utf8');
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: report
+            }); 

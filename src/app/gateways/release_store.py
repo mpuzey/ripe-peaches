@@ -32,6 +32,7 @@ class ReleaseStore(Store):
                 total_tracks=stored_release.get('total_tracks'),
                 date=stored_release.get('date'),
                 type=stored_release.get('type'),
+                cover_url=stored_release.get('cover_url'),
                 reviews=reviews
             )
             releases[release_id] = release
