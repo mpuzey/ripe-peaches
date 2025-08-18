@@ -12,3 +12,4 @@ class Score:
     artist_name: str
     score: int
     reviews_counted: int
+    cover_url: str = None

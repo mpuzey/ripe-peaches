@@ -1,6 +1,6 @@
 import unittest
 
-from mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 
 from src.collector.web import aoty
 from src.entities.publication_review import PublicationReview

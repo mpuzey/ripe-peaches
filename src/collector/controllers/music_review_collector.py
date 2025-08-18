@@ -9,17 +9,20 @@ class MusicReviewCollector(ReviewCollector):
 
     def collect_reviews(self, source, **kwargs) -> [PublicationReview]:
 
-        publications = kwargs.get('publications')
+        publications = kwargs.get("publications")
         for publication in publications:
-            print('scraping ' + publication)
+            print("scraping " + publication)
             publication_reviews = source.get_reviews(publication)
 
             if not publication_reviews:
-                print('No reviews available for the following publication: %s' % repr(publication))
+                print(
+                    "No reviews available for the following publication: %s"
+                    % repr(publication)
+                )
                 continue
 
             self.publication_reviews.extend(publication_reviews)
 
-        print('finished scraping!')
+        print("finished scraping!")
 
         return self.publication_reviews

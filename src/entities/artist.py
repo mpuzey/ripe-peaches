@@ -11,7 +11,7 @@ class Artist:
     id: str
     name: str
     releases: List[Release]
-    
+
     def copy(self):
         """Creates a deep copy of the artist including all releases"""
         return copy.deepcopy(self)

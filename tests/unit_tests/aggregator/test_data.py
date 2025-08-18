@@ -18,15 +18,16 @@ def get_artist_sample():
                             publication_name='The Quietus',
                             date='Posted Jul 16, 2018',
                             link='http://thequietus.com/articles/24982-rp-boo-i-ll-tell-you-what-album-review',
-                            score=80
-
+                            score=80,
+                            cover_url=None
                         ),
                         Review(
                             id='c2daf7b6cd3733dd28bca48311d68a7bcc476bc0a628a128b4aa25be6095e3f1',
                             publication_name='Pitchfork',
                             date='Posted Jul 17, 2018',
                             link='http://some-pitchwork-review-link',
-                            score=60
+                            score=60,
+                            cover_url=None
                         )
                     ]
                 )
@@ -45,15 +46,16 @@ def get_artist_sample():
                             publication_name='The Quietus',
                             date='Posted Jul 16, 2018',
                             link='http://thequietus.com/articles/24925-okzharp-manthe-ribane-closer-apart-lead-album-review',
-                            score=80
-
+                            score=80,
+                            cover_url=None
                         ),
                         Review(
                             id='d0f9f586742633de7ada3b7766e512c67e322f6579c02d42045a79a42028f2be',
                             publication_name='Pitchfork',
                             date='Posted Jul 17, 2018',
                             link='http://some-pitchwork-review-link',
-                            score=100
+                            score=100,
+                            cover_url=None
                         )
                     ]
                 )

@@ -4,3 +4,4 @@
 **/src/app/db/*.json
 **/src/app/db/backups/*
 *.env
+*node_modules

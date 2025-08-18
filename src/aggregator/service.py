@@ -11,17 +11,17 @@ class AggregatorService:
     def __init__(self, aggregator):
         self.aggregator = aggregator
 
-        self.review_store = ReviewStore(FileAdapter('reviews'))
-        self.release_store = ReleaseStore(FileAdapter('releases'), self.review_store)
-        self.artist_store = ArtistStore(FileAdapter('artists'), self.release_store)
-        self.score_store = ScoreStore(FileAdapter('scores'), self.release_store)
+        self.review_store = ReviewStore(FileAdapter("reviews"))
+        self.release_store = ReleaseStore(FileAdapter("releases"), self.review_store)
+        self.artist_store = ArtistStore(FileAdapter("artists"), self.release_store)
+        self.score_store = ScoreStore(FileAdapter("scores"), self.release_store)
 
     def start(self):
 
         artists = self.artist_store.get_all()
 
-        print('aggregating scores for artist releases...')
+        print("aggregating scores for artist releases...")
         scores = self.aggregator.aggregate_artists(artists)
-        print('finished aggregating scores!')
+        print("finished aggregating scores!")
 
         self.score_store.put(scores)

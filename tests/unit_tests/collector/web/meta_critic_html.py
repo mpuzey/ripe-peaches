@@ -1,5 +1,6 @@
 def get_reviews_html():
     return """
+<ul>
 <li class="review critic_review">
     <div class="review_wrap">
         <div class="review_content">
@@ -37,11 +38,13 @@ def get_reviews_html():
         </div>
     </div>
 </li>
+</ul>
 """
 
 
 def get_review_without_full_review():
     return """
+<ul>
 <li class="review critic_review">
     <div class="review_wrap">
         <div class="review_content">
@@ -76,11 +79,13 @@ def get_review_without_full_review():
         </div>
     </div>
 </li>
+</ul>
 """
 
 
 def get_first_review_html():
     return """
+<ul>
 <li class="review critic_review first_review">
     <div class="review_wrap">
         <div class="review_content">
@@ -117,4 +122,6 @@ def get_first_review_html():
             </div>
         </div>
     </div>
-</li>"""
+</li>
+</ul>
+"""

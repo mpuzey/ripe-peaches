@@ -12,14 +12,16 @@ def get_publication_reviews() -> List[PublicationReview]:
             publication_name='The Quietus',
             release_name='Our Raw Heart',
             score=80,
-            link='http://thequietus.com/articles/24811-yob-our-raw-heart-album-review'
+            link='http://thequietus.com/articles/24811-yob-our-raw-heart-album-review',
+            cover_url=None
         ),
         PublicationReview(
             artist='Sleep',
             publication_name='57-the-needle-drop',
             release_name='The Sciences',
             score=80,
-            link='https://www.youtube.com/watch?v=d5jWckdWqpM'
+            link='https://www.youtube.com/watch?v=d5jWckdWqpM',
+            cover_url=None
         )
     ]
 
@@ -32,7 +34,8 @@ def get_enriched_releases() -> List[ExternalRelease]:
             date='2019-02-15',
             type='album',
             spotify_url='https://spotify.com',
-            total_tracks=12
+            total_tracks=12,
+            cover_url=None
         ),
         ExternalRelease(
             name='The Sciences',
@@ -40,7 +43,8 @@ def get_enriched_releases() -> List[ExternalRelease]:
             date='2019-01-15',
             type='album',
             spotify_url='https://spotify.com',
-            total_tracks=10
+            total_tracks=10,
+            cover_url=None
         )
     ]
 
@@ -53,7 +57,8 @@ def get_external_releases() -> List[ExternalRelease]:
             date='2019-02-15',
             type='album',
             spotify_url='https://spotify.com',
-            total_tracks=12
+            total_tracks=12,
+            cover_url=None
         ),
         ExternalRelease(
             name='Franz Ferdinand',
@@ -61,6 +66,7 @@ def get_external_releases() -> List[ExternalRelease]:
             date='2019-01-15',
             type='album',
             spotify_url='https://spotify.com',
-            total_tracks=10
+            total_tracks=10,
+            cover_url=None
         )
     ]

@@ -12,7 +12,9 @@ class MusicReleaseCollector(ReleaseCollector):
         external_releases = source.get_releases()
 
         if not external_releases:
-            print('No releases available for the following publication: %s' % repr(source))
+            print(
+                "No releases available for the following publication: %s" % repr(source)
+            )
 
         self.external_releases.extend(external_releases)
 
